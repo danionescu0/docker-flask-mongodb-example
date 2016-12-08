@@ -2,6 +2,11 @@
 Uses docker-compose with a python flask microservice and mongodb instance to make a sample application
 that generates random numbers and lists them.
 
+## Technollogies involved
+[Docker](https://opensource.com/resources/what-docker), [docker-compose](https://docs.docker.com/compose/), [python](https://www.python.org/doc/essays/blurb/), [flask microframework](http://flask.pocoo.org/)
+
+* How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+* How to install docker compose: https://docs.docker.com/compose/install/
 
 ## Specifications
 * The api will provide a url for generating a random number between a and b,
