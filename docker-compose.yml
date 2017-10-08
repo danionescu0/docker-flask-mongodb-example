@@ -1,10 +1,20 @@
 version: '2'
+
 services:
-    web:
+    web-random:
         build: .
         ports:
             - "80:5000"
         depends_on:
             - mongo
+
+    web-crud:
+        build: .
+        ports:
+            - "81:5000"
+        entrypoint: python ./flask-mongodb-example/crud.py
+        depends_on:
+            - mongo
+
     mongo:
         image: mongo:3.4.0

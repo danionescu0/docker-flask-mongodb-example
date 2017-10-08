@@ -1,9 +1,12 @@
-FROM ubuntu:14.04
-RUN apt-get update && apt-get install -y -q python-all python-pip
-COPY requirements.txt /var/local/
-RUN pip install -qr /var/local/requirements.txt
-COPY server.py /var/local/
-RUN pip install -qr /var/local/requirements.txt
-WORKDIR /var/local
+FROM python:3.5-jessie
+
+
+RUN apt-get update
+WORKDIR /root
+RUN mkdir flask-mongodb-example
+COPY ./ ./flask-mongodb-example/
+RUN cat ./flask-mongodb-example/requirements.txt
+RUN pip install -qr ./flask-mongodb-example/requirements.txt
+
+ENTRYPOINT ["python", "./flask-mongodb-example/random_demo.py"]
 EXPOSE 5000
-CMD ["python", "server.py"]
