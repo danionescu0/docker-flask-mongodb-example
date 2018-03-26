@@ -4,6 +4,7 @@ from flask import Flask, Response
 from pymongo import MongoClient
 from bson import json_util
 
+
 app = Flask(__name__)
 random_numbers = MongoClient('mongo', 27017).demo.random_numbers
 
@@ -21,7 +22,7 @@ def random_generator(lower, upper):
                 "$slice" : 5
             }
         }},
-        upsert = True
+        upsert=True
     )
 
     return Response(number, status=200, mimetype='application/json')

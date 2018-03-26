@@ -16,5 +16,22 @@ services:
         depends_on:
             - mongo
 
+    web-mqtt:
+        build: .
+        ports:
+            - "82:5000"
+        entrypoint: python ./flask-mongodb-example/mqtt.py
+        depends_on:
+            - mongo
+            - mqtt
+        tty: true
+
     mongo:
         image: mongo:3.4.0
+        ports:
+            - "27017:27017"
+
+    mqtt:
+        image: eclipse-mosquitto
+        ports:
+            - "1883:1883"
