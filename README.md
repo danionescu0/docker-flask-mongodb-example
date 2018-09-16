@@ -17,11 +17,14 @@ The applications will run in parallel using docker-compose
 2. the crud on port 81
 3. MQTT service will run on default port 1883
 
+![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.png)
+
 ## Technollogies involved
 [Docker](https://opensource.com/resources/what-docker), [docker-compose](https://docs.docker.com/compose/), 
 [python](https://www.python.org/doc/essays/blurb/), 
 [flask microframework](http://flask.pocoo.org/)
 [Mosquitto MQTT] (https://mosquitto.org/)
+[Curl] (https://curl.haxx.se/)
 
 * How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 * How to install docker compose: https://docs.docker.com/compose/install/
