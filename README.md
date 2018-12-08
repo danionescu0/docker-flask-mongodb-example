@@ -11,11 +11,14 @@ The third one will use a MQTT server (Mosquitto) to allow to publish sensor upda
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
 for each sensor and publish it to a separate topic
 
+Fourth usecase is a fulltextsearch engine backed by fulltext mongoDb index
+
 The applications will run in parallel using docker-compose
 
 1. random_demo will run on port 80
 2. the crud on port 81
 3. MQTT service will run on default port 1883
+4. fulltext_search will run on port 82
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.png)
 
@@ -128,3 +131,18 @@ mosquitto_sub -h localhost  -p 1883 -d -t averages/some_sensor
 This will just listen for updates for the topic "averages/some_sensor" and get a running average 
 for the sensor "some_sensor". Each time someone publishes a new value for a sensor, the 
 python script will calculate the average values of last 5 values and publishes it
+
+
+4) **Fulltext service**
+
+This service exposes a REST API for inserting a text into the full text database, and retriving last 10 matches
+
+* To index a new expression like "ana has many more apples":
+````
+curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fulltext
+````
+
+* To get all indexed expressions containing word "who"
+````
+curl -i "http://localhost:882/search/who"
+````

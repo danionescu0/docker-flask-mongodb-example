@@ -35,6 +35,7 @@ def last_number_list():
 
     return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
 
+
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     app.config['DEBUG'] = True

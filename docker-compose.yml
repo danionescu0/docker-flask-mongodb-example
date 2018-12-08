@@ -18,13 +18,19 @@ services:
 
     web-mqtt:
         build: .
-        ports:
-            - "82:5000"
         entrypoint: python ./flask-mongodb-example/mqtt.py
         depends_on:
             - mongo
             - mqtt
         tty: true
+
+    web-fulltext-search:
+        build: .
+        ports:
+            - "82:5000"
+        entrypoint: python ./flask-mongodb-example/fulltext_search.py
+        depends_on:
+            - mongo
 
     mongo:
         image: mongo:3.4.0
