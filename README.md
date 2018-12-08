@@ -2,16 +2,16 @@
 
 **A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto:**
 
-First usecase an api that generates random numbers and lists them
+**First** usecase an api that generates random numbers and lists them
 
-Second one deals with crud operations CRUD (create, read, update, delete) 
+**Second** one deals with crud operations CRUD (create, read, update, delete) 
 application over a user collection
 
-The third one will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
+The **third** one will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
 for each sensor and publish it to a separate topic
 
-Fourth usecase is a fulltextsearch engine backed by fulltext mongoDb index
+**Fourth** usecase is a fulltext search engine backed by fulltext mongoDb index
 
 The applications will run in parallel using docker-compose
 
@@ -144,5 +144,5 @@ curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fullte
 
 * To get all indexed expressions containing word "who"
 ````
-curl -i "http://localhost:882/search/who"
+curl -i "http://localhost:82/search/who"
 ````
