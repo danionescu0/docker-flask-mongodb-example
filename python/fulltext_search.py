@@ -6,9 +6,9 @@ from bson import json_util
 
 
 app = Flask(__name__)
+time.sleep(5) # hack for the mongoDb database to get running
 fulltext_search = MongoClient('mongo', 27017).demo.fulltext_search
 
-time.sleep(5) # hack for the mongoDb database to get running
 
 @app.route("/fulltext", methods=["PUT"])
 def add_expression():

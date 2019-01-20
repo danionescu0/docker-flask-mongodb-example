@@ -6,9 +6,9 @@ from bson import json_util
 
 
 app = Flask(__name__)
+time.sleep(5) # hack for the mongoDb database to get running
 random_numbers = MongoClient('mongo', 27017).demo.random_numbers
 
-time.sleep(5) # hack for the mongoDb database to get running
 
 @app.route("/random/<int:lower>/<int:upper>")
 def random_generator(lower, upper):

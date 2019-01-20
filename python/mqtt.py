@@ -5,8 +5,8 @@ import statistics
 from pymongo import MongoClient
 
 
-sensors = MongoClient('mongo', 27017).demo.sensors
 time.sleep(5) # hack for the mongoDb database and mqtt to get running
+sensors = MongoClient('mongo', 27017).demo.sensors
 client = mqtt.Client()
 
 
@@ -20,12 +20,12 @@ def on_message(client, userdata, msg):
     if sensor_id.find('averages/') != -1:
         return
     sensors.update(
-        {"_id" : sensor_id},
-        {"$push" : {
-            "items" : {
+        {"_id": sensor_id},
+        {"$push": {
+            "items": {
                 "$each": [{"value" : sensor_value, "date": datetime.datetime.utcnow()}],
-                "$sort" : {"date" : -1},
-                "$slice" : 5
+                "$sort": {"date" : -1},
+                "$slice": 5
             }
         }},
         upsert = True

@@ -33,7 +33,7 @@ services:
             - mongo
 
     mongo:
-        image: mongo:3.4.0
+        image: mongo:4.0.5-xenial
         ports:
             - "27017:27017"
 

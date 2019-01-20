@@ -5,8 +5,8 @@ from flask import Flask, request, Response
 from pymongo import MongoClient, errors
 
 app = Flask(__name__)
-users = MongoClient('mongo', 27017).demo.users
 time.sleep(5) # hack for the mongoDb database to get running
+users = MongoClient('mongo', 27017).demo.users
 
 
 @app.route("/users/<int:userid>", methods=["PUT"])
