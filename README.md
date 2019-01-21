@@ -55,7 +55,7 @@ sudo apt-get install mosquitto-clients
 
 The random number collection has only one documents with '_is' lasts
 and an "items" key that will be a capped array
-
+MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 * Generate a random number between 10 and 100: 
 ````
 curl -i "http://localhost/random/10/100"
@@ -136,7 +136,7 @@ python script will calculate the average values of last 5 values and publishes i
 4) **Fulltext service**
 
 This service exposes a REST API for inserting a text into the full text database, and retriving last 10 matches
-
+MongoDb official documentation (text search): https://docs.mongodb.com/manual/text-search/
 * To index a new expression like "ana has many more apples":
 ````
 curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fulltext
@@ -146,3 +146,10 @@ curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fullte
 ````
 curl -i "http://localhost:82/search/who"
 ````
+
+5) **Geospacial search service **
+
+The service will allow to insert locations with coordonats (latitude and longitude), and will expose an REST API
+to all locations near a point.
+
+MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
