@@ -2,16 +2,20 @@
 
 **A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto:**
 
-**First** usecase an api that generates random numbers and lists them
+**1** usecase an api that generates random numbers and lists them
 
-**Second** one deals with crud operations CRUD (create, read, update, delete) 
+**2** one deals with crud operations CRUD (create, read, update, delete) 
 application over a user collection
 
-The **third** one will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
+**3** will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
 for each sensor and publish it to a separate topic
 
-**Fourth** usecase is a fulltext search engine backed by fulltext mongoDb index
+**4** fulltext search engine backed by fulltext mongoDb index
+
+**5** geospacial search service that supports adding places, and quering the placing by coordonates and distance
+
+
 
 The applications will run in parallel using docker-compose
 
@@ -19,8 +23,11 @@ The applications will run in parallel using docker-compose
 2. the crud on port 81
 3. MQTT service will run on default port 1883
 4. fulltext_search will run on port 82
+5. geospacial search service will rund on port 83
 
-![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.png)
+Before running check that the ports are available and free on your machine!
+
+![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
 ## Technollogies involved
 [Docker](https://opensource.com/resources/what-docker), [docker-compose](https://docs.docker.com/compose/), 
@@ -153,3 +160,13 @@ The service will allow to insert locations with coordonats (latitude and longitu
 to all locations near a point.
 
 MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
+
+* To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
+````
+curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455"  http://localhost:5000/location
+````
+
+* To get all locations near 26.1 latitude and 44.4 longitude in a range of 5000 meeters (5 km)
+````
+curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
+````

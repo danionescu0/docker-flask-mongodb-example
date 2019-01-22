@@ -14,12 +14,12 @@ random_numbers = MongoClient('mongo', 27017).demo.random_numbers
 def random_generator(lower, upper):
     number = str(random.randint(lower, upper))
     random_numbers.update(
-        {"_id" : "lasts"},
-        {"$push" : {
-            "items" : {
+        {"_id": "lasts"},
+        {"$push": {
+            "items": {
                 "$each": [{"value" : number, "date": datetime.datetime.utcnow()}],
-                "$sort" : {"date" : -1},
-                "$slice" : 5
+                "$sort": {"date" : -1},
+                "$slice": 5
             }
         }},
         upsert=True

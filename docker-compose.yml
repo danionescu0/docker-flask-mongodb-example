@@ -32,6 +32,14 @@ services:
         depends_on:
             - mongo
 
+    web-geolocation-search:
+        build: .
+        ports:
+            - "83:5000"
+        entrypoint: python ./flask-mongodb-example/geolocation_search.py
+        depends_on:
+            - mongo
+
     mongo:
         image: mongo:4.0.5-xenial
         ports:
