@@ -1,58 +1,74 @@
 ## Purpose
 
-**A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto:**
+**A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto, swagger to serve as a demo**
 
-**1** usecase an api that generates random numbers and lists them
+The applications will run in parallel using docker-compose on different ports:
 
-**2** one deals with crud operations CRUD (create, read, update, delete) 
-application over a user collection
+**1** usecase an API that generates random numbers and lists them (port 80)
 
-**3** will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
+**2** CRUD operations over a user collection (port 81)
+
+**3** will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT  (port 1883)
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
 for each sensor and publish it to a separate topic
 
-**4** fulltext search engine backed by fulltext mongoDb index
+**4** fulltext search engine backed by fulltext mongoDb index (port 82)
 
-**5** geospacial search service that supports adding places, and quering the placing by coordonates and distance
+**5** geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
-
-
-The applications will run in parallel using docker-compose
-
-1. random_demo will run on port 80
-2. the crud on port 81
-3. MQTT service will run on default port 1883
-4. fulltext_search will run on port 82
-5. geospacial search service will rund on port 83
-
-Before running check that the ports are available and free on your machine!
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
 ## Technollogies involved
-[Docker](https://opensource.com/resources/what-docker), [docker-compose](https://docs.docker.com/compose/), 
-[python](https://www.python.org/doc/essays/blurb/), 
-[flask microframework](http://flask.pocoo.org/)
-[Mosquitto MQTT] (https://mosquitto.org/)
-[Curl] (https://curl.haxx.se/)
+* [Docker](https://opensource.com/resources/what-docker)
+
+A container system
+
+* [docker-compose](https://docs.docker.com/compose/)
+
+Docker containers orchestraion system
+
+* [python](https://www.python.org/doc/essays/blurb/)
+
+* [MongoDb] (https://www.mongodb.com/)
+
+General purpose NoSQL database system
+
+* [flask microframework](http://flask.pocoo.org/)
+
+Python web framework 
+
+* [Mosquitto MQTT] (https://mosquitto.org/)
+
+MQTT endpoint
+
+* [Curl] (https://curl.haxx.se/)
+
+Linux tool for performing HTTP requests
+
+* [Swagger](https://swagger.io/)
+
+A tool for documention HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
 
 * How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 * How to install docker compose: https://docs.docker.com/compose/install/
 
 
-
 ## Run the microservice
+Before running check that the ports are available and free on your machine!
+
 ````
 docker-compose up
 ````
 
-## Using the microservice
-For applications 1 and 2 after we start the server using the command above, we'll be testing 
-the requests using linux [curl][https://curl.haxx.se/docs/manpage.html]
+## Testing the architecture
+For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.html]
+An alternative to manual HTTP testing you could use Swagger, for example for crud operations in a browser open: 
+http://localhost:81/apidocs to see the Swagger UI and to perform test requests from there!
 
-For the application 3 we'll be using mosquitto cli to test the pub-sub it's working
 
-To install mosquitto cli tool:
+For the MQTT application we'll use mosquitto cli
+In most unix systems curl is already installed, to install mosquitto cli use:
 ````
 sudo apt-get install mosquitto-clients
 ````

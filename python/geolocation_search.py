@@ -1,18 +1,38 @@
 import os, json, time
 
 from flask import Flask, request, Response
+from flasgger import Swagger
 from pymongo import MongoClient, GEOSPHERE
-
 from bson import json_util
 
 
 app = Flask(__name__)
+swagger = Swagger(app)
 time.sleep(5) # hack for the mongoDb database to get running
 places = MongoClient('mongo', 27017).demo.places
 
 
 @app.route("/location", methods=["POST"])
 def new_location():
+    """Add a place (name, latitude and longitude)
+    ---
+    parameters:
+      - name: name
+        in: formData
+        type: string
+        required: true
+      - name: lat
+        in: formData
+        type: string
+        required: true
+      - name: lng
+        in: formData
+        type: string
+        required: true
+    responses:
+      200:
+        description: Place added
+    """
     request_params = request.form
     if 'name' not in request_params or 'lat' not in request_params or 'lng' not in request_params:
         return Response('Name, lat, lng must be present in parameters!', status=404, mimetype='application/json')
@@ -23,8 +43,45 @@ def new_location():
 
     return Response('', status=200, mimetype='application/json')
 
+
 @app.route("/location/<string:lat>/<string:lng>")
 def get_near(lat, lng):
+    """Get all points near a location given coordonates, and radius
+    ---
+    parameters:
+      - name: lat
+        in: path
+        type: string
+        required: true
+      - name: lng
+        in: path
+        type: string
+        required: true
+      - name: max_distance
+        in: query
+        type: int32
+        required: false
+      - name: limit
+        in: query
+        type: int32
+        required: false
+    definitions:
+      Place:
+        type: object
+        properties:
+          name:
+            type: string
+          lat:
+            type: double
+          long:
+            type: double
+    responses:
+      200:
+        description: Places list
+        schema:
+          $ref: '#/definitions/Place'
+          type: array
+    """
     max_distance = int(request.args.get('max_distance', 10000))
     limit = int(request.args.get('limit', 10))
     cursor = places.find(
@@ -46,5 +103,4 @@ def get_near(lat, lng):
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     places.create_index([('location', GEOSPHERE)], name='location_index')
-    app.config['DEBUG'] = True
-    app.run(host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=port)
