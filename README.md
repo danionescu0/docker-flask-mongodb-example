@@ -4,51 +4,40 @@
 
 The applications will run in parallel using docker-compose on different ports:
 
-**1** usecase an API that generates random numbers and lists them (port 80)
+**1** [Random service](#random-service) generates random numbers and lists them (port 80)
 
-**2** CRUD operations over a user collection (port 81)
+**2** [CRUD service](#CRUD-service) Create, read, update and detele operations over a user collection (port 81)
 
-**3** will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT  (port 1883)
+**3** [MQTT service](#MQTT-service) will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT  (port 1883)
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
 for each sensor and publish it to a separate topic
 
-**4** fulltext search engine backed by fulltext mongoDb index (port 82)
+**4** [Fulltext service](#Fulltext-service) fulltext search engine backed by fulltext mongoDb index (port 82)
 
-**5** geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
+**5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
+
 
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
+If you consider this demo usefull please consider to give it a star so other will find it quicker :)
+
 ## Technollogies involved
-* [Docker](https://opensource.com/resources/what-docker)
+* [Docker](https://opensource.com/resources/what-docker) A container system
 
-A container system
+* [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
 
-* [docker-compose](https://docs.docker.com/compose/)
+* [python](https://www.python.org/doc/essays/blurb/) Programming language
 
-Docker containers orchestraion system
+* [MongoDb] (https://www.mongodb.com/) General purpose NoSQL database system
 
-* [python](https://www.python.org/doc/essays/blurb/)
+* [flask microframework](http://flask.pocoo.org/) Python web framework 
 
-* [MongoDb] (https://www.mongodb.com/)
+* [Mosquitto MQTT] (https://mosquitto.org/) MQTT server
 
-General purpose NoSQL database system
+* [Curl] (https://curl.haxx.se/) Linux tool for performing HTTP requests
 
-* [flask microframework](http://flask.pocoo.org/)
-
-Python web framework 
-
-* [Mosquitto MQTT] (https://mosquitto.org/)
-
-MQTT endpoint
-
-* [Curl] (https://curl.haxx.se/)
-
-Linux tool for performing HTTP requests
-
-* [Swagger](https://swagger.io/)
-
-A tool for documention HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
+* [Swagger](https://swagger.io/) A tool for documention HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
 
 * How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 * How to install docker compose: https://docs.docker.com/compose/install/
@@ -74,7 +63,7 @@ sudo apt-get install mosquitto-clients
 ````
 
 
-1) **Random service**
+# Random service
 
 The random number collection has only one documents with '_is' lasts
 and an "items" key that will be a capped array
@@ -90,7 +79,7 @@ curl -i "http://localhost/random/10/100"
 curl -i "http://localhost/random-list"
 ````
 
-2) **CRUD service**
+# CRUD service
 
 The user collections contains _id which is the userid, a name and a email:
 
@@ -125,7 +114,7 @@ example for with id 1:
 curl -X DELETE -i "http://localhost:81/users/1"
 ````
 
-3) **MQTT service**
+# MQTT service
 
 * To update a sensor with id: "some_sensor" and value "some_value" use:
 
@@ -156,7 +145,7 @@ for the sensor "some_sensor". Each time someone publishes a new value for a sens
 python script will calculate the average values of last 5 values and publishes it
 
 
-4) **Fulltext service**
+# Fulltext service
 
 This service exposes a REST API for inserting a text into the full text database, and retriving last 10 matches
 MongoDb official documentation (text search): https://docs.mongodb.com/manual/text-search/
@@ -170,7 +159,7 @@ curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fullte
 curl -i "http://localhost:82/search/who"
 ````
 
-5) **Geospacial search service **
+# Geospacial search service
 
 The service will allow to insert locations with coordonats (latitude and longitude), and will expose an REST API
 to all locations near a point.
