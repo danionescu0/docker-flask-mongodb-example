@@ -55,9 +55,15 @@ For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.ht
 An alternative to manual HTTP testing you could use Swagger, for example for crud operations in a browser open: 
 http://localhost:81/apidocs to see the Swagger UI and to perform test requests from there!
 
+To load the test data i provided, you can use mongorestore after starting the services like this:
+````
+cd project directory
+mongorestore -d demo ./resources/demo/
+````
+
 
 For the MQTT application we'll use mosquitto cli
-In most unix systems curl is already installed, to install mosquitto cli use:
+In most UNIX systems curl is already installed, to install mosquitto cli use:
 ````
 sudo apt-get install mosquitto-clients
 ````

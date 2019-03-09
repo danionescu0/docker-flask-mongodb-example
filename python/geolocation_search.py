@@ -38,7 +38,7 @@ def new_location():
         return Response('Name, lat, lng must be present in parameters!', status=404, mimetype='application/json')
     places.insert_one({
         'name': request_params['name'],
-        'location': {'type': 'Point', 'coordinates': [float(request_params['lat']), float(request_params['lng'])]}
+        'location': {'type': 'Point', 'coordinates': [float(request_params['lng']), float(request_params['lat'])]}
     })
 
     return Response('', status=200, mimetype='application/json')
@@ -88,13 +88,13 @@ def get_near(lat, lng):
         {'location':
              {'$near':
                   {
-                      '$geometry': {'type': 'Point',  'coordinates': [float(lat), float(lng)]},
+                      '$geometry': {'type': 'Point',  'coordinates': [float(lng), float(lat)]},
                       '$maxDistance': max_distance
                   }
               }
         }
     ).limit(limit)
-    extracted = [{'name': d['name'], 'lat': d['location']['coordinates'][0], 'lng': d['location']['coordinates'][1]}
+    extracted = [{'name': d['name'], 'lat': d['location']['coordinates'][1], 'lng': d['location']['coordinates'][0]}
                  for d in cursor]
 
     return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
