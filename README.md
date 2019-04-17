@@ -16,12 +16,12 @@ for each sensor and publish it to a separate topic
 
 **5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
-**6** [Stresstesting using locusts tool](Stresstesting-using-locusts) Stresstest work in progress
+
+If you consider this demo usefull give it a star so other will find it quicker :)
 
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
-If you consider this demo usefull please consider to give it a star so other will find it quicker :)
 
 ## Technollogies involved
 * [Docker](https://opensource.com/resources/what-docker) A container system
@@ -60,6 +60,18 @@ To load the test data i provided, you can use mongorestore after starting the se
 ````
 cd project directory
 mongorestore -d demo ./resources/demo/
+````
+
+# Stresstesting using locusts tool
+
+Work in progress..
+
+Installation: https://docs.locust.io/en/stable/installation.html
+Quickstart: https://docs.locust.io/en/stable/quickstart.html
+
+Usage for crud microservice
+````
+locust -f random-demo.py --host=http://localhost:80
 ````
 
 
@@ -181,16 +193,4 @@ curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455"  http://l
 * To get all locations near 26.1 latitude and 44.4 longitude in a range of 5000 meeters (5 km)
 ````
 curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
-````
-
-# Stresstesting using locusts tool
-
-Work in progress..
-
-Installation: https://docs.locust.io/en/stable/installation.html
-Quickstart: https://docs.locust.io/en/stable/quickstart.html
-
-Usage for crud microservice
-````
-locust -f crud.py --host=http://localhost:79
 ````

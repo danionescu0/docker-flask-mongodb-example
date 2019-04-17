@@ -2,19 +2,16 @@ from locust import HttpLocust, TaskSet, task
 
 
 class CrudStresstest(TaskSet):
-    def on_start(self):
-        print("Starting tests")
-
-    def on_stop(self):
-        print("Tests finished")
-
-    @task(2)
-    def index(self):
-        self.client.get("/random-list")
 
     @task(1)
-    def profile(self):
-        self.client.get("/random-list")
+    def add_user(self):
+        userid = '4'
+        user = {
+            'id': userid,
+            'email': 'some-email@yahoo.com',
+            'name': 'testuser'
+        }
+        self.client.put('/users/' + userid, user)
 
 
 class CrudUsecase(HttpLocust):
