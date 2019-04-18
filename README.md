@@ -2,6 +2,8 @@
 
 **A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto, swagger to serve as a demo**
 
+**If you consider this demo usefull give it a star so other will find it quicker :)**
+
 The applications will run in parallel using docker-compose on different ports:
 
 **1** [Random service](#random-service) generates random numbers and lists them (port 80)
@@ -17,14 +19,14 @@ for each sensor and publish it to a separate topic
 **5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
 
-If you consider this demo usefull give it a star so other will find it quicker :)
-
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
 
 ## Technollogies involved
 * [Docker](https://opensource.com/resources/what-docker) A container system
+* How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+* How to install docker compose: https://docs.docker.com/compose/install/
 
 * [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
 
@@ -40,8 +42,8 @@ If you consider this demo usefull give it a star so other will find it quicker :
 
 * [Swagger](https://swagger.io/) A tool for documention HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
 
-* How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
-* How to install docker compose: https://docs.docker.com/compose/install/
+* [Locust.io](https://locust.io/) A open source load testing tool. Here is used as a stress test tool
+
 
 
 ## Run the microservice
@@ -52,28 +54,35 @@ docker-compose up
 ````
 
 ## Testing the architecture
+
+**Manual testing:**
+
 For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.html]
-An alternative to manual HTTP testing you could use Swagger, for example for crud operations in a browser open: 
+An alternative manual HTTP testing you could use Swagger, for example for crud operations in a browser open: 
 http://localhost:81/apidocs to see the Swagger UI and to perform test requests from there!
 
 To load the test data i provided, you can use mongorestore after starting the services like this:
 ````
-cd project directory
-mongorestore -d demo ./resources/demo/
+cd docker-flask-mongodb-example
+docker compose up
+mongorestore -d demo ./resources/demo-data/
 ````
 
-# Stresstesting using locusts tool
+**Stresstesting using locusts tool**
 
-Work in progress..
+Using locust.io
 
 Installation: https://docs.locust.io/en/stable/installation.html
 Quickstart: https://docs.locust.io/en/stable/quickstart.html
 
-Usage for crud microservice
+Testing random demo microservice:
 ````
 locust -f random-demo.py --host=http://localhost:80
 ````
-
+Testing crud microservice:
+````
+locust -f crud.py --host=http://localhost:81
+````
 
 For the MQTT application we'll use mosquitto cli
 In most UNIX systems curl is already installed, to install mosquitto cli use:

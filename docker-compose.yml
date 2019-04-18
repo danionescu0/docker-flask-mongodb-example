@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
     web-random:
@@ -12,7 +12,7 @@ services:
         build: .
         ports:
             - "81:5000"
-        entrypoint: python ./flask-mongodb-example/random-demo.py
+        entrypoint: python ./flask-mongodb-example/random_demo.py
         depends_on:
             - mongo
 
