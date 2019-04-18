@@ -27,7 +27,7 @@ def random_generator():
         required: false
     responses:
       200:
-        description: Random number added succesfully
+        description: Random number added successfully
         type: int
     """
     request_params = request.form

@@ -3,6 +3,7 @@ import os, json, time
 
 from flask import Flask, request, Response
 from pymongo import MongoClient, errors
+from bson import json_util
 from flasgger import Swagger
 
 
@@ -114,6 +115,53 @@ def get_user(userid):
         return Response("", status=404, mimetype='application/json')
 
     return Response(json.dumps(user), status=200, mimetype='application/json')
+
+@app.route("/users", methods=["GET"])
+def get_users():
+    """Example endpoint returning all users with pagination
+    ---
+    parameters:
+      - name: limit
+        in: query
+        type: integer
+        required: false
+      - name: offset
+        in: query
+        type: integer
+        required: false
+    definitions:
+      User:
+        type: object
+        properties:
+          _id:
+            type: int32
+          email:
+            type: string
+          name:
+            type: string
+    responses:
+      200:
+        description: List of user models
+        schema:
+          $ref: '#/definitions/User'
+      404:
+        description: Users not found
+    """
+    request_args = request.args
+    limit = int(request_args.get('limit')) if 'limit' in request_args else 10
+    offset = int(request_args.get('offset')) if 'offset' in request_args else 0
+    print(limit)
+    user_list = users.find().limit(limit).skip(offset)
+    if None == users:
+        return Response("", status=404, mimetype='application/json')
+
+    extracted = [
+        {'userid': d['_id'],
+         'name': d['name'],
+         'email': d['email']
+         } for d in user_list]
+
+    return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
 
 
 @app.route("/users/<int:userid>", methods=["DELETE"])

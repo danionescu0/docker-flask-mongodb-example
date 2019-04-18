@@ -25,8 +25,10 @@ for each sensor and publish it to a separate topic
 
 ## Technollogies involved
 * [Docker](https://opensource.com/resources/what-docker) A container system
-* How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
-* How to install docker compose: https://docs.docker.com/compose/install/
+
+How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+
+How to install docker compose: https://docs.docker.com/compose/install/
 
 * [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
 
@@ -98,7 +100,7 @@ and an "items" key that will be a capped array
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 * Generate a random number between 10 and 100: 
 ````
-curl -i "http://localhost/random/10/100"
+curl- X PUT -i "http://localhost/random" -d lower=10 -d upper=20
 ````
 
 * View last 5 generated numbers list: 

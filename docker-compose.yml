@@ -5,6 +5,7 @@ services:
         build: .
         ports:
             - "80:5000"
+        entrypoint: python ./flask-mongodb-example/random_demo.py
         depends_on:
             - mongo
 
@@ -12,7 +13,7 @@ services:
         build: .
         ports:
             - "81:5000"
-        entrypoint: python ./flask-mongodb-example/random_demo.py
+        entrypoint: python ./flask-mongodb-example/crud.py
         depends_on:
             - mongo
 
