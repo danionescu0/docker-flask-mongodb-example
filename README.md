@@ -63,6 +63,12 @@ For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.ht
 An alternative manual HTTP testing you could use Swagger, for example for crud operations in a browser open: 
 http://localhost:81/apidocs to see the Swagger UI and to perform test requests from there!
 
+For the MQTT application we'll use mosquitto cli
+In most UNIX systems curl is already installed, to install mosquitto cli use:
+````
+sudo apt-get install mosquitto-clients
+````
+
 To load the test data i provided, you can use mongorestore after starting the services like this:
 ````
 cd docker-flask-mongodb-example
@@ -86,12 +92,17 @@ Testing crud microservice:
 locust -f crud.py --host=http://localhost:81
 ````
 
-For the MQTT application we'll use mosquitto cli
-In most UNIX systems curl is already installed, to install mosquitto cli use:
+Testing fulltext_search microservice:
 ````
-sudo apt-get install mosquitto-clients
+locust -f fulltext_search.py --host=http://localhost:82
 ````
 
+Testing geolocation_search microservice:
+````
+locust -f geolocation_search.py --host=http://localhost:83
+````
+
+After starting any service open http://localhost:8089 to acces the testing UI
 
 # Random service
 

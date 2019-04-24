@@ -26,7 +26,7 @@ def add_expression():
         description: Creation succeded
     """
     request_params = request.form
-    if 'expression' not in request_params and 'name' not in request_params:
+    if 'expression' not in request_params:
         return Response('"Expression" must be present as a POST parameter!', status=404, mimetype='application/json')
     fulltext_search.save(
             {
