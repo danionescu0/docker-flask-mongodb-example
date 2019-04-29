@@ -106,12 +106,21 @@ After starting any service open http://localhost:8089 to acces the testing UI
 
 # Random service
 
-The random number collection has only one documents with '_is' lasts
-and an "items" key that will be a capped array
+This service generates random numbers and store them in a capped array (last 5 of them). Also it can generate
+and return a random number.
+ 
+The random number collection has only one documents with '_id' lasts and an "items" key that will be a capped array.
+
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
-* Generate a random number between 10 and 100: 
+
+* Generate a random number between 10 and 100 and returns it:
 ````
-curl- X PUT -i "http://localhost/random" -d lower=10 -d upper=20
+curl -i "http://localhost/random?lower=10&upper=100"
+````
+
+* Generate a random number between 10 and 100 and saves it into the capped array: 
+````
+curl -X PUT -i "http://localhost/random" -d lower=10 -d upper=20
 ````
 
 * View last 5 generated numbers list: 
@@ -122,7 +131,8 @@ curl -i "http://localhost/random-list"
 
 # CRUD service
 
-The user collections contains _id which is the userid, a name and a email:
+CRUD stands for create, read, update, delete operations. I've written a demo for these operations on a collections
+of users. A user has a userid, name and email fields.
 
 
 * PUT request, this request will add a user with a userid, name and email:
@@ -156,6 +166,9 @@ curl -X DELETE -i "http://localhost:81/users/1"
 ````
 
 # MQTT service
+
+This usecase uses MQTT protocol instead of HTTP to communicate. It involves storing last 5 numerical values of a sensor,
+running a moving average on them and publishing the average each time on a different topic.
 
 * To update a sensor with id: "some_sensor" and value "some_value" use:
 

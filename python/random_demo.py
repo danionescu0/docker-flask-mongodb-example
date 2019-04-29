@@ -13,7 +13,7 @@ random_numbers = MongoClient('mongo', 27017).demo.random_numbers
 
 
 @app.route("/random", methods=["PUT"])
-def random_generator():
+def random_insert():
     """Add a number number to the list of last 5 numbers
     ---
     parameters:
@@ -43,6 +43,34 @@ def random_generator():
         }},
         upsert=True
     )
+
+    return Response(number, status=200, mimetype='application/json')
+
+@app.route("/random", methods=["GET"])
+def random_generator():
+    """Returns a random number in interval
+    ---
+    parameters:
+      - name: lower
+        in: query
+        type: int32
+        required: false
+      - name: upper
+        in: query
+        type: int32
+        required: false
+    responses:
+      200:
+        description: Random number generated
+        type: int
+    """
+    request_args = request.args
+    print(request_args)
+    lower = int(request_args.get('lower')) if 'lower' in request_args else 10
+    upper = int(request_args.get('upper')) if 'upper' in request_args else 0
+    print(lower, upper)
+    number = str(random.randint(lower, upper))
+    print(number)
 
     return Response(number, status=200, mimetype='application/json')
 
