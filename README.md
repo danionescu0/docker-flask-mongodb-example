@@ -18,6 +18,7 @@ for each sensor and publish it to a separate topic
 
 **5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
+**6** [Baesian] (#Baesian) baesian average demo; work in progress
 
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -111,6 +112,15 @@ and return a random number.
  
 The random number collection has only one documents with '_id' lasts and an "items" key that will be a capped array.
 
+Sample data in "random_numbers" collection document:
+````
+{
+  "_id" : "lasts",
+  "items": [3, 9, 2, 1, 2]
+}
+...
+````
+
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 
 * Generate a random number between 10 and 100 and returns it:
@@ -134,6 +144,15 @@ curl -i "http://localhost/random-list"
 CRUD stands for create, read, update, delete operations. I've written a demo for these operations on a collections
 of users. A user has a userid, name and email fields.
 
+Sample data in user collection document:
+````
+{
+  "_id" : 12,
+  "email": "some@gmail.com",
+  "name": "some name"
+}
+...
+````
 
 * PUT request, this request will add a user with a userid, name and email:
 
@@ -170,6 +189,23 @@ curl -X DELETE -i "http://localhost:81/users/1"
 This usecase uses MQTT protocol instead of HTTP to communicate. It involves storing last 5 numerical values of a sensor,
 running a moving average on them and publishing the average each time on a different topic.
 
+Sample data in sensors collection document:
+````
+	"_id" : "some_sensor",
+	"items" : [
+		{
+			"value" : 23,
+			"date" : ISODate("2019-03-09T17:49:10.585Z")
+		},
+		{
+			"value" : 5,
+			"date" : ISODate("2019-03-09T17:49:08.766Z")
+		},
+        ... 3 more
+	]
+...
+````
+
 * To update a sensor with id: "some_sensor" and value "some_value" use:
 
 ````
@@ -203,6 +239,17 @@ python script will calculate the average values of last 5 values and publishes i
 
 This service exposes a REST API for inserting a text into the full text database, and retriving last 10 matches
 MongoDb official documentation (text search): https://docs.mongodb.com/manual/text-search/
+
+Sample data in fulltext_search collection document:
+````
+{
+	"_id" : ObjectId("5c44c5104f2137000c9d8cb2"),
+	"app_text" : "ana has many more apples",
+	"indexed_date" : ISODate("2019-01-20T18:59:28.060Z")
+}
+...
+````
+
 * To index a new expression like "ana has many more apples":
 ````
 curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fulltext
@@ -218,6 +265,22 @@ curl -i "http://localhost:82/search/who"
 The service will allow to insert locations with coordonats (latitude and longitude), and will expose an REST API
 to all locations near a point.
 
+Sample data in places collection document:
+````
+{
+	"_id" : ObjectId("5c83f901fc91f1000c29fb4d"),
+	"location" : {
+		"type" : "Point",
+		"coordinates" : [
+			-75.1652215,
+			39.9525839
+		]
+	},
+	"name" : "Philadelphia"
+}
+..
+````
+
 MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
 
 * To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
@@ -229,3 +292,7 @@ curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455"  http://l
 ````
 curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
 ````
+
+# Baesian
+
+Work in progress
