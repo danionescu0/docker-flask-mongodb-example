@@ -5,7 +5,6 @@ import paho.mqtt.client as mqtt
 from pymongo import MongoClient
 
 
-time.sleep(5) # hack for the mongoDb database and mqtt to get running
 sensors = MongoClient('mongo', 27017).demo.sensors
 client = mqtt.Client()
 

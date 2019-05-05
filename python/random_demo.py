@@ -8,7 +8,6 @@ from bson import json_util
 
 app = Flask(__name__)
 swagger = Swagger(app)
-time.sleep(5) # hack for the mongoDb database to get running
 random_numbers = MongoClient('mongo', 27017).demo.random_numbers
 
 

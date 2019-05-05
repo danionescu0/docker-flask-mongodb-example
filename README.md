@@ -2,7 +2,7 @@
 
 **A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto, swagger to serve as a demo**
 
-**If you consider this demo usefull give it a star so other will find it quicker :)**
+**If you consider this demo usefull give it a star so others will find it quicker :)**
 
 The applications will run in parallel using docker-compose on different ports:
 
@@ -18,7 +18,7 @@ for each sensor and publish it to a separate topic
 
 **5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
-**6** [Baesian] (#Baesian) baesian average demo; work in progress
+**6** [Baesian_average] (#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average)
 
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -290,9 +290,89 @@ curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455"  http://l
 
 * To get all locations near 26.1 latitude and 44.4 longitude in a range of 5000 meeters (5 km)
 ````
-curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
+curl -i "http://localhost:84/location/26.1/44.4?max_distance=50000"
 ````
 
-# Baesian
+# Baesian average
 
-Work in progress
+This is a naive implementation of the baesian average (https://en.wikipedia.org/wiki/Bayesian_average).
+
+It's naive because it's not built with scalability in mind. 
+
+The baesian average is used in rating systems to add weight to the number of votes. 
+
+In this example we'll use items and users. A user is represented by it's id and it rates items from 0 - 10
+
+A Item it's represented by an id and a name and it's rated by the users.
+
+A full rating example:
+
+Items:
+- id: 1, name: Hamlet, votes by users: 10
+- id: 2, name: Cicero, votes by users: 9, 10, 9
+- id: 3, name: Alfred, votes by users: 10, 4, 8, 8
+
+How to calculate Baesian average for item 2:
+
+avg_num_votes = 2.333   //The average number of votes for all items (1+3+4) / 3
+
+avg_rating = 8.5 //The average rating for all items (10+9+10+9+10+4+8+8) / 8
+
+item_num_votes = 3  //The number of votes for current item (Item 2) 
+
+item_rating = 9.33     //The average rating for current item (Item 2): (9+10+9)/3
+ 
+bayesian_average = 8.941 // ((avg_num_votes * avg_rating) + (item_num_votes * item_rating)) / (avg_num_votes + item_num_votes)
+                    
+Averages:
+                    
+Element 1: 8.909        
+
+Element 2: 8.941
+
+Element 3: 7.9
+
+You can see although Hamlet has an 10, and Cicero has two 9's and one 10 the baesian average of Cicero is the highest
+
+Sample data in baesian collection document:
+````
+{
+	"_id" : 2,
+	"name" : "Cicero",
+	"marks" : [
+		{
+			"userid" : 5,
+			"mark" : 9
+		},
+		{
+			"userid" : 3,
+			"mark" : 10
+		},
+		{
+			"userid" : 2,
+			"mark" : 9
+		}
+	],
+	"nr_votes" : 3,
+	"sum_votes" : 27
+}
+````
+
+To create an item:
+````
+curl -X POST -i "http://localhost:84/item/3" -d name=some_name
+````
+
+To vote an item:
+
+ex: user with id 9 votes item 3 with mark 8
+
+````
+curl -X PUT -i "http://localhost:84/item/vote/3" -d mark=8 -d userid=9
+````
+
+To get an item, along with it's average:
+
+````
+curl -i "http://localhost:84/item" 
+````

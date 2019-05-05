@@ -41,6 +41,14 @@ services:
         depends_on:
             - mongo
 
+    web-baesian:
+        build: .
+        ports:
+            - "84:5000"
+        entrypoint: python ./flask-mongodb-example/baesian.py
+        depends_on:
+            - mongo
+
     mongo:
         image: mongo:4.0.5-xenial
         ports:
