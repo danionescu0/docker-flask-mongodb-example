@@ -77,7 +77,7 @@ docker compose up
 mongorestore -d demo ./resources/demo-data/
 ````
 
-**Stresstesting using locusts tool**
+**Stress testing using locusts tool**
 
 Using locust.io
 

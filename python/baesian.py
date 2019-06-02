@@ -119,7 +119,6 @@ def get_item(itemid):
     baesian_average = round(((average_nr_votes * average_rating) +
                        (item_nr_votes * item_average_rating)) / (average_nr_votes + item_nr_votes), 3)
     item_data['baesian_average'] = baesian_average
-    print(average_rating, item_average_rating, item_data)
 
     return Response(json.dumps(item_data), status=200, mimetype='application/json')
 

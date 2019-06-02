@@ -6,6 +6,9 @@ services:
         ports:
             - "80:5000"
         entrypoint: python ./flask-mongodb-example/random_demo.py
+        deploy:
+          restart_policy:
+            condition: on-failure
         depends_on:
             - mongo
 
@@ -14,12 +17,18 @@ services:
         ports:
             - "81:5000"
         entrypoint: python ./flask-mongodb-example/crud.py
+        deploy:
+          restart_policy:
+            condition: on-failure
         depends_on:
             - mongo
 
     web-mqtt:
         build: .
         entrypoint: python ./flask-mongodb-example/mqtt.py
+        deploy:
+          restart_policy:
+            condition: on-failure
         depends_on:
             - mongo
             - mqtt
@@ -30,6 +39,9 @@ services:
         ports:
             - "82:5000"
         entrypoint: python ./flask-mongodb-example/fulltext_search.py
+        deploy:
+          restart_policy:
+            condition: on-failure
         depends_on:
             - mongo
 
@@ -38,6 +50,9 @@ services:
         ports:
             - "83:5000"
         entrypoint: python ./flask-mongodb-example/geolocation_search.py
+        deploy:
+            restart_policy:
+                condition: on-failure
         depends_on:
             - mongo
 
@@ -46,15 +61,24 @@ services:
         ports:
             - "84:5000"
         entrypoint: python ./flask-mongodb-example/baesian.py
+        deploy:
+            restart_policy:
+                condition: on-failure
         depends_on:
             - mongo
 
     mongo:
         image: mongo:4.0.5-xenial
+        deploy:
+            restart_policy:
+                condition: always
         ports:
             - "27017:27017"
 
     mqtt:
         image: eclipse-mosquitto
+        deploy:
+            restart_policy:
+                condition: always
         ports:
             - "1883:1883"
