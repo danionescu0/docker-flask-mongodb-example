@@ -64,12 +64,9 @@ def random_generator():
         type: int
     """
     request_args = request.args
-    print(request_args)
     lower = int(request_args.get('lower')) if 'lower' in request_args else 10
     upper = int(request_args.get('upper')) if 'upper' in request_args else 0
-    print(lower, upper)
     number = str(random.randint(lower, upper))
-    print(number)
 
     return Response(number, status=200, mimetype='application/json')
 

@@ -67,6 +67,19 @@ services:
         depends_on:
             - mongo
 
+    web-photo-process:
+        build: .
+        ports:
+            - "85:5000"
+        entrypoint: python ./flask-mongodb-example/photo_process.py
+        volumes:
+            - ./container-storage:/root/storage
+        deploy:
+            restart_policy:
+                condition: on-failure
+        depends_on:
+            - mongo
+
     mongo:
         image: mongo:4.0.5-xenial
         deploy:

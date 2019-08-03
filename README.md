@@ -20,6 +20,8 @@ for each sensor and publish it to a separate topic
 
 **6** [Baesian_average] (#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average)
 
+**7** [Photo preocess] (#Photo-process) This is a demo of disk manipulation using docker volumes. Photos will be stored on disk retrived and resized / rotated
+(Work in progress)
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
@@ -375,4 +377,19 @@ To get an item, along with it's average:
 
 ````
 curl -i "http://localhost:84/item" 
+````
+
+# Photo process
+
+In this usecase we'll use docker volumes to map the local folder called "container-storage" inside the Docker image.
+
+The python webserver will write / delete images in this folder.
+
+The Api will expose methods for adding and deleting images along with resizing and rotating 
+
+(Work in progress)
+
+To get a image by id, and rezise it by height:
+````
+curl -X POST -i "http://localhost:85/photos/1" -d resize=100
 ````
