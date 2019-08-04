@@ -42,7 +42,6 @@ def random_insert():
         }},
         upsert=True
     )
-
     return Response(number, status=200, mimetype='application/json')
 
 @app.route("/random", methods=["GET"])
@@ -67,7 +66,6 @@ def random_generator():
     lower = int(request_args.get('lower')) if 'lower' in request_args else 10
     upper = int(request_args.get('upper')) if 'upper' in request_args else 0
     number = str(random.randint(lower, upper))
-
     return Response(number, status=200, mimetype='application/json')
 
 
@@ -87,7 +85,6 @@ def last_number_list():
     """
     last_numbers = list(random_numbers.find({"_id": "lasts"}))
     extracted = [d['value'] for d in last_numbers[0]['items']]
-
     return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
 
 

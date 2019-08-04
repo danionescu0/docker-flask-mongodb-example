@@ -1,6 +1,6 @@
 ## Purpose
 
-**A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto, swagger to serve as a demo**
+**A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto, swagger and locusts**
 
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
@@ -18,10 +18,10 @@ for each sensor and publish it to a separate topic
 
 **5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
-**6** [Baesian_average] (#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average)
+**6** [Baesian_average](#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average) (port 84)
 
-**7** [Photo preocess] (#Photo-process) This is a demo of disk manipulation using docker volumes. Photos will be stored on disk retrived and resized / rotated
-(Work in progress)
+**7** [Photo preocess](#Photo-process) This is a demo of disk manipulation using docker volumes. Photos will be stored on disk retrived and resized / rotated (port 85)
+
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
@@ -37,13 +37,13 @@ How to install docker compose: https://docs.docker.com/compose/install/
 
 * [python](https://www.python.org/doc/essays/blurb/) Programming language
 
-* [MongoDb] (https://www.mongodb.com/) General purpose NoSQL database system
+* [MongoDb](https://www.mongodb.com/) General purpose NoSQL database system
 
 * [flask microframework](http://flask.pocoo.org/) Python web framework 
 
-* [Mosquitto MQTT] (https://mosquitto.org/) MQTT server
+* [Mosquitto MQTT](https://mosquitto.org/) MQTT server
 
-* [Curl] (https://curl.haxx.se/) Linux tool for performing HTTP requests
+* [Curl](https://curl.haxx.se/) Linux tool for performing HTTP requests
 
 * [Swagger](https://swagger.io/) A tool for documention HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
 
@@ -54,6 +54,12 @@ How to install docker compose: https://docs.docker.com/compose/install/
 ## Run the microservice
 Before running check that the ports are available and free on your machine!
 
+On linux run the following command and check the output, if the ports 80 to 85, 1883 and 27017 are not available please change the ports accordingly in the code. 
+````
+netstat -nltp
+````
+
+Start the microservice architecture:
 ````
 docker-compose up
 ````
@@ -84,6 +90,7 @@ mongorestore -d demo ./resources/demo-data/
 Using locust.io
 
 Installation: https://docs.locust.io/en/stable/installation.html
+
 Quickstart: https://docs.locust.io/en/stable/quickstart.html
 
 Testing random demo microservice:
@@ -125,6 +132,8 @@ Sample data in "random_numbers" collection document:
 
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 
+Swagger url: http://localhost/apidocs
+
 * Generate a random number between 10 and 100 and returns it:
 ````
 curl -i "http://localhost/random?lower=10&upper=100"
@@ -155,6 +164,10 @@ Sample data in user collection document:
 }
 ...
 ````
+
+Swagger url: http://localhost:81/apidocs
+
+Using Curl:
 
 * PUT request, this request will add a user with a userid, name and email:
 
@@ -252,6 +265,10 @@ Sample data in fulltext_search collection document:
 ...
 ````
 
+Swagger url: http://localhost:82/apidocs
+
+Using Curl:
+
 * To index a new expression like "ana has many more apples":
 ````
 curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fulltext
@@ -285,9 +302,14 @@ Sample data in places collection document:
 
 MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
 
+
+Swagger url: http://localhost:84/apidocs
+
+Using Curl:
+
 * To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
 ````
-curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455"  http://localhost:5000/location
+curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" http://localhost:84/location
 ````
 
 * To get all locations near 26.1 latitude and 44.4 longitude in a range of 5000 meeters (5 km)
@@ -360,6 +382,10 @@ Sample data in baesian collection document:
 }
 ````
 
+Swagger url: http://localhost:84/apidocs
+
+Using Curl:
+
 To create an item:
 ````
 curl -X POST -i "http://localhost:84/item/3" -d name=some_name
@@ -387,9 +413,21 @@ The python webserver will write / delete images in this folder.
 
 The Api will expose methods for adding and deleting images along with resizing and rotating 
 
-(Work in progress)
+Swagger url: http://localhost:85/apidocs
 
-To get a image by id, and rezise it by height:
+Using Curl:
+
+To get image with id 1, and rezise it by height 100
 ````
-curl -X POST -i "http://localhost:85/photos/1" -d resize=100
+curl -i "http://localhost:85/photo/1?resize=100"
+````
+
+To delete image with id 1:
+````
+curl -X DELETE http://localhost:85/photo/1
+````
+
+To add a image with id 1:
+````
+curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/1
 ````

@@ -44,7 +44,6 @@ def add_user(userid):
         })
     except errors.DuplicateKeyError as e:
         return Response('Duplicate user id!', status=404, mimetype='application/json')
-
     return Response('', status=200, mimetype='application/json')
 
 
@@ -78,7 +77,6 @@ def update_user(userid):
     if 'name' in request_params:
         set['name'] = request_params['name']
     users.update_one({'_id': userid}, {'$set': set})
-
     return Response('', status=200, mimetype='application/json')
 
 
@@ -112,8 +110,8 @@ def get_user(userid):
     user = users.find_one({'_id': userid})
     if None == user:
         return Response("", status=404, mimetype='application/json')
-
     return Response(json.dumps(user), status=200, mimetype='application/json')
+
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -159,7 +157,6 @@ def get_users():
          'name': d['name'],
          'email': d['email']
          } for d in user_list]
-
     return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
 
 
@@ -177,7 +174,6 @@ def delete_user(userid):
         description: User deleted
     """
     users.delete_one({'_id': userid})
-
     return Response('', status=200, mimetype='application/json')
 
 

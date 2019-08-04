@@ -1,4 +1,4 @@
-import os, json, time
+import os, json
 
 from flask import Flask, request, Response
 from flasgger import Swagger
@@ -39,7 +39,6 @@ def new_location():
         'name': request_params['name'],
         'location': {'type': 'Point', 'coordinates': [float(request_params['lng']), float(request_params['lat'])]}
     })
-
     return Response('', status=200, mimetype='application/json')
 
 
@@ -95,7 +94,6 @@ def get_near(lat, lng):
     ).limit(limit)
     extracted = [{'name': d['name'], 'lat': d['location']['coordinates'][1], 'lng': d['location']['coordinates'][0]}
                  for d in cursor]
-
     return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
 
 

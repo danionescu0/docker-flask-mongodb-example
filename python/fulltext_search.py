@@ -33,7 +33,6 @@ def add_expression():
                 'indexed_date': datetime.datetime.utcnow()
             }
     )
-
     return Response({}, status=200, mimetype='application/json')
 
 
@@ -71,7 +70,6 @@ def search(searched_expression):
         ('score', {'$meta': 'textScore'})
     ]).limit(10)
     results = [{'text': result['app_text'], 'date': result['indexed_date'].isoformat()} for result in results]
-
     return Response(json.dumps(list(results), default=json_util.default), status=200, mimetype='application/json')
 
 
@@ -79,5 +77,4 @@ if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
     #first create the fulltext index
     fulltext_search.create_index([('app_text', TEXT)], name='fulltextsearch_index', default_language='english')
-    #then run the app
     app.run(debug=True, host='0.0.0.0', port=port)

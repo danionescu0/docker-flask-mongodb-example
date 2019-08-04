@@ -1,19 +1,18 @@
 import os
 
 import io
+import json
 from PIL import Image
 from flasgger import Swagger
-from pymongo import MongoClient
 from flask import Flask, Response, request
 
 
 app = Flask(__name__)
 swagger = Swagger(app)
-photos = MongoClient('mongo', 27017).demo.photos
 storage_path = '/root/storage'
 
 
-def get_photo_by_id(photo_id):
+def get_photo_path(photo_id):
     return "{0}/{1}.jpg".format(storage_path, str(photo_id))
 
 
@@ -27,6 +26,7 @@ def get_resized_by_height(img, new_height):
 @app.route("/photo/<int:id>", methods=["GET"])
 def get_photo(id):
     """Returns the photo by id
+    ---
     parameters:
       - name: id
         in: path
@@ -45,9 +45,9 @@ def get_photo(id):
     request_args = request.args
     resize = int(request_args.get('resize')) if 'resize' in request_args else 0
     try:
-        img = Image.open(get_photo_by_id(id))
+        img = Image.open(get_photo_path(id))
     except IOError:
-        return Response("Error loading image", status=400, mimetype='application/json')
+        return Response(json.dumps({'error': 'Error loading image'}), status=404, mimetype='application/json')
     if resize > 0:
         img = get_resized_by_height(img, resize)
     output = io.BytesIO()
@@ -55,6 +55,59 @@ def get_photo(id):
     image_data = output.getvalue()
     output.close()
     return Response(image_data, status=200, mimetype='image/jpeg')
+
+
+@app.route("/photo/<int:id>", methods=["PUT"])
+def set_photo(id):
+    """Add jpeg photo on disk:
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+      - name: file
+        required: false
+        in: formData
+        type: file
+    responses:
+      200:
+        description: Added succesfully
+      404:
+        description: Error saving photo
+    """
+    if 'file' not in request.files:
+        return Response(json.dumps({'error': 'File parameter not present!'}), status=404, mimetype='application/json')
+    file = request.files['file']
+    if file.mimetype != 'image/jpeg':
+        return Response(json.dumps({'error': 'File mimetype must pe jpeg!'}), status=404, mimetype='application/json')
+    try:
+        file.save(get_photo_path(id))
+    except Exception as e:
+        return Response(json.dumps({'error': 'Could not save file to disk!'}), status=404, mimetype='application/json')
+    return Response(json.dumps({'status': 'success'}), status=200, mimetype='application/json')
+
+
+@app.route("/photo/<int:id>", methods=["DELETE"])
+def delete_photo(id):
+    """Delete photo by id:
+    ---
+    parameters:
+      - name: id
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Deleted succesfully
+      404:
+        description: Error deleting
+    """
+    try:
+        os.remove(get_photo_path(id))
+    except OSError as e:
+        return Response(json.dumps({'error': 'File does not exists!'}), status=404, mimetype='application/json')
+    return Response(json.dumps({'status': 'success'}), status=200, mimetype='application/json')
 
 
 if __name__ == "__main__":
