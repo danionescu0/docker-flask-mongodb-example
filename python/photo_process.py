@@ -2,7 +2,7 @@ import os
 
 import io
 import json
-from PIL import Image
+from PIL import Image, ImageEnhance
 from flasgger import Swagger
 from flask import Flask, Response, request
 
@@ -36,6 +36,15 @@ def get_photo(id):
         in: query
         type: integer
         required: false
+      - name: rotate
+        in: query
+        type: integer
+        required: false
+      - name: brightness
+        in: query
+        type: float
+        required: false
+        maximum: 20
     responses:
       200:
         description: The actual photo
@@ -44,12 +53,22 @@ def get_photo(id):
     """
     request_args = request.args
     resize = int(request_args.get('resize')) if 'resize' in request_args else 0
+    rotate = int(request.args.get('rotate')) if 'rotate' in request_args else 0
+    brightness = float (request.args.get('brightness')) if 'brightness' in request_args else 0
+    if brightness > 20:
+        return Response("Maximum value for brightness is 20", status=404, mimetype='application/json')
+
     try:
         img = Image.open(get_photo_path(id))
     except IOError:
         return Response(json.dumps({'error': 'Error loading image'}), status=404, mimetype='application/json')
     if resize > 0:
         img = get_resized_by_height(img, resize)
+    if rotate > 0:
+        img = img.rotate(rotate)
+    if brightness > 0:
+        enhancer = ImageEnhance.Brightness(img)
+        img = enhancer.enhance(brightness)
     output = io.BytesIO()
     img.save(output, format='JPEG')
     image_data = output.getvalue()
