@@ -74,7 +74,6 @@ def search(searched_expression):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
     #first create the fulltext index
     fulltext_search.create_index([('app_text', TEXT)], name='fulltextsearch_index', default_language='english')
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=5000)

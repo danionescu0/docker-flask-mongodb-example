@@ -98,6 +98,5 @@ def get_near(lat, lng):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
     places.create_index([('location', GEOSPHERE)], name='location_index')
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=5000)

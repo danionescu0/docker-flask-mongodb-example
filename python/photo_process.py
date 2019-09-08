@@ -1,7 +1,9 @@
+# Note: the image search algorithm is a naive implementation and it's for demo purposes only
 import os
-
 import io
 import json
+import imagehash
+
 from PIL import Image, ImageEnhance
 from flasgger import Swagger
 from flask import Flask, Response, request
@@ -12,15 +14,41 @@ swagger = Swagger(app)
 storage_path = '/root/storage'
 
 
-def get_photo_path(photo_id):
+class FileHashSearch:
+    hashes = {}
+
+    def load_from_path(self, path: str) -> None:
+        for root, subdirs, files in os.walk(path):
+            for file in os.listdir(root):
+                filePath = os.path.join(root, file)
+                hash = imagehash.average_hash(Image.open(filePath))
+                print("Loading file: {0}".format(os.path.splitext(file)[0]))
+                self.hashes[hash] = os.path.splitext(file)[0]
+
+    def add(self, file, id) -> None:
+        self.hashes[imagehash.average_hash(Image.open(file.stream))] = id
+
+    def delete(self, id: int) -> None:
+        self.hashes = {k:v for k, v in self.hashes.items() if v != str(id)}
+
+    def get_similar(self, hash, similarity: int = 10):
+        return [self.hashes[current_hash] for id, current_hash in enumerate(self.hashes) if hash - current_hash < similarity]
+
+
+def get_photo_path(photo_id: str):
     return "{0}/{1}.jpg".format(storage_path, str(photo_id))
 
 
-def get_resized_by_height(img, new_height):
+def get_resized_by_height(img, new_height: int):
     width, height = img.size
     hpercent = (new_height / float(height))
     wsize = int((float(width) * float(hpercent)))
     return img.resize((wsize, new_height), Image.ANTIALIAS)
+
+
+file_hash_search = FileHashSearch()
+file_hash_search.load_from_path(storage_path)
+
 
 
 @app.route("/photo/<int:id>", methods=["GET"])
@@ -76,6 +104,44 @@ def get_photo(id):
     return Response(image_data, status=200, mimetype='image/jpeg')
 
 
+@app.route("/photo/similar", methods=["PUT"])
+def get_photos_like_this():
+    """Find similar photos:
+    ---
+    parameters:
+      - name: file
+        required: false
+        in: formData
+        type: file
+      - name: similarity
+        in: query
+        type: int
+        required: false
+        maximum: 40
+    definitions:
+      Number:
+        type: int
+    responses:
+      200:
+        description: Found
+        schema:
+          $ref: '#/definitions/Number'
+          type: array
+      404:
+        description: Erros occured
+    """
+    if 'file' not in request.files:
+        return Response(json.dumps({'error': 'File parameter not present!'}), status=404, mimetype='application/json')
+    file = request.files['file']
+    if file.mimetype != 'image/jpeg':
+        return Response(json.dumps({'error': 'File mimetype must pe jpeg!'}), status=404, mimetype='application/json')
+    request_args = request.args
+    similarity = int(request.args.get('similarity')) if 'similarity' in request_args else 10
+    result = file_hash_search.get_similar(imagehash.average_hash(Image.open(file.stream)), similarity)
+
+    return Response(json.dumps(result), status=200, mimetype='application/json')
+
+
 @app.route("/photo/<int:id>", methods=["PUT"])
 def set_photo(id):
     """Add jpeg photo on disk:
@@ -104,6 +170,7 @@ def set_photo(id):
         file.save(get_photo_path(id))
     except Exception as e:
         return Response(json.dumps({'error': 'Could not save file to disk!'}), status=404, mimetype='application/json')
+    file_hash_search.add(file, id)
     return Response(json.dumps({'status': 'success'}), status=200, mimetype='application/json')
 
 
@@ -124,11 +191,11 @@ def delete_photo(id):
     """
     try:
         os.remove(get_photo_path(id))
+        file_hash_search.delete(id)
     except OSError as e:
         return Response(json.dumps({'error': 'File does not exists!'}), status=404, mimetype='application/json')
     return Response(json.dumps({'status': 'success'}), status=200, mimetype='application/json')
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=5000)

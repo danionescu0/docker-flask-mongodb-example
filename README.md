@@ -20,7 +20,8 @@ for each sensor and publish it to a separate topic
 
 **6** [Baesian_average](#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average) (port 84)
 
-**7** [Photo preocess](#Photo-process) This is a demo of disk manipulation using docker volumes. Photos will be stored on disk retrived and resized / rotated (port 85)
+**7** [Photo process](#Photo-process) This is a demo of disk manipulation using docker volumes. 
+Photos will be stored on disk retrived and resized / rotated. Also a search by image API will be available (port 85)
 
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -411,7 +412,15 @@ In this usecase we'll use docker volumes to map the local folder called "contain
 
 The python webserver will write / delete images in this folder.
 
-The Api will expose methods for adding and deleting images along with resizing and rotating 
+One interesting feature of this api is to search similar images. For example you cand take one photo from the 
+container-storage folder, rename it, and modify the brightness or slightly crop it and then try to find it using the API.
+
+To achive this the script will load all images from disk, hash them using a hasing function and compare the hash differences.
+It's only a naive implementation for demo purposes, it's main drawbacks are memory limit (all hashes should fit in memory)
+and linear search times, the complexity of the search it's linear with the number of photo hashed and saved.
+
+
+The API will expose methods for adding and deleting images along with resizing and rotating and search by similar image
 
 Swagger url: http://localhost:85/apidocs
 
@@ -430,4 +439,9 @@ curl -X DELETE http://localhost:85/photo/1
 To add a image with id 1:
 ````
 curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/1
+````
+
+To search images similar with a given one:
+````
+curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 ````
