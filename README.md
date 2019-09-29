@@ -8,7 +8,7 @@ The applications will run in parallel using docker-compose on different ports:
 
 **1** [Random service](#random-service) generates random numbers and lists them (port 80)
 
-**2** [CRUD service](#CRUD-service) Create, read, update and detele operations over a user collection (port 81)
+**2** [User CRUD service](#CRUD-service) Create, read, update and detele operations over a user collection (port 81)
 
 **3** [MQTT service](#MQTT-service) will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT  (port 1883)
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
@@ -23,6 +23,9 @@ for each sensor and publish it to a separate topic
 **7** [Photo process](#Photo-process) This is a demo of disk manipulation using docker volumes. 
 Photos will be stored on disk retrived and resized / rotated. Also a search by image API will be available (port 85)
 
+**8** [Book collection](#Book-collection) A virtual book library, has api methods for managing books, and borrowing book mechanisms.
+The users must have "profiles" created using the User CRUD service. This api used flask rest plus (https://flask-restplus.readthedocs.io/en/stable/) 
+and it's a work in progress!
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
@@ -445,3 +448,12 @@ To search images similar with a given one:
 ````
 curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 ````
+
+# Book-collection
+
+Work in progress.
+
+A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
+Books can be borrowed and an accounting mechanism for this is in place.
+
+The Swagger UI page will be at http://localhost:85
