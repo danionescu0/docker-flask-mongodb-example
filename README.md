@@ -453,6 +453,8 @@ curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 
 Work in progress.
 
+Uses Flask Restplus: https://flask-restplus.readthedocs.io
+
 A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
 Books can be borrowed and an accounting mechanism for this is in place.
 
