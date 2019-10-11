@@ -7,7 +7,11 @@ from pymongo import MongoClient, errors
 
 app = Flask(__name__)
 api = Api(app=app)
-bookcollection = MongoClient('localhost', 27017).demo.bookcollection
+
+mongo_client = MongoClient('localhost', 27017)
+bookcollection = mongo_client.demo.bookcollection
+borrowcollection = mongo_client.demo.borrowcollection
+
 
 book_model = api.model('Book', {
     'isbn': fields.String(description='ISBN', required=True),
@@ -16,6 +20,52 @@ book_model = api.model('Book', {
     'publisher': fields.String(description='Book publisher', required=True),
     'nr_available': fields.Integer(min=0, description='Nr books available for lend', required=True),
 })
+
+borrow_model = api.model('Borrow', {
+    'id': fields.String(min=0, description='Unique uuid for borrowing', required=True),
+    'userid': fields.Integer(min=0, description='Userid of the borrower', required=True),
+    'isbn': fields.String(description='ISBN', required=True),
+    'borrow_date': fields.DateTime(required=True),
+    'return_date': fields.DateTime(required=True),
+})
+
+
+pagination_parser = reqparse.RequestParser()
+pagination_parser.add_argument('limit', type=int, help='Limit')
+pagination_parser.add_argument('offset', type=int, help='Offset')
+
+
+@api.route("/borrow/<string:id>")
+class Borrow(Resource):
+    def get(self, id):
+        borrow = borrowcollection.find_one({'id': id})
+        del borrow['_id']
+        if None == borrow:
+            return Response("", status=404, mimetype='application/json')
+        return Response(json.dumps(borrow), status=200, mimetype='application/json')
+
+    @api.doc(responses={200: 'Ok'})
+    @api.expect(borrow_model)
+    def put(self, id):
+        print(api.payload)
+        borrowcollection.insert_one(api.payload)
+        return Response('', status=200, mimetype='application/json')
+
+
+@api.route("/borrows")
+class BorrowList(Resource):
+    @api.marshal_with(borrow_model, as_list=True)
+    @api.expect(pagination_parser, validate=True)
+    def get(self):
+        args = pagination_parser.parse_args(request)
+        books = borrowcollection.find().limit(args['limit']).skip(args['offset'])
+        extracted = [
+            {'userid': d['userid'],
+             'isbn': d['isbn'],
+             'borrow_date': d['borrow_date'],
+             'return_date': d['return_date'],
+             } for d in books]
+        return extracted
 
 
 @api.route("/book/<string:isbn>")
@@ -38,11 +88,6 @@ class Book(Resource):
         return Response('', status=200, mimetype='application/json')
 
 
-pagination_parser = reqparse.RequestParser()
-pagination_parser.add_argument('limit', type=int, help='Limit')
-pagination_parser.add_argument('offset', type=int, help='Offset')
-pagination_parser.add_argument('name')
-
 @api.route("/books")
 class BookList(Resource):
     @api.marshal_with(book_model, as_list=True)
@@ -50,7 +95,6 @@ class BookList(Resource):
     def get(self):
         args = pagination_parser.parse_args(request)
         books = bookcollection.find().limit(args['limit']).skip(args['offset'])
-        print(args)
         extracted = [
             {'isbn': d['isbn'],
              'name': d['name'],
