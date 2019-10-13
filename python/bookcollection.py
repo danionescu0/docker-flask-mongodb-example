@@ -1,4 +1,5 @@
 import json
+import requests
 
 from flask import Flask, request, Response
 from flask_restplus import Api, Resource, fields, reqparse
@@ -29,10 +30,28 @@ borrow_model = api.model('Borrow', {
     'return_date': fields.DateTime(required=True),
 })
 
+class User:
+    def __init__(self, exists: bool, userid: int, name: str, email: str) -> None:
+        self.exists = exists
+        self.userid = userid
+        self.name = name
+        self.email = email
+
 
 pagination_parser = reqparse.RequestParser()
 pagination_parser.add_argument('limit', type=int, help='Limit')
 pagination_parser.add_argument('offset', type=int, help='Offset')
+
+
+def get_user(id: int) -> User:
+    response = requests.get(url="http://localhost:81/users/" + str(id))
+    if response.status_code != 200:
+        return User(False, id, None, None)
+    try:
+        result = response.json()
+        return User(True, id, result['name'], result['email'])
+    except:
+        return User(False, id, None, None)
 
 
 @api.route("/borrow/<string:id>")
@@ -42,13 +61,33 @@ class Borrow(Resource):
         del borrow['_id']
         if None == borrow:
             return Response("", status=404, mimetype='application/json')
+        user = get_user(borrow['userid'])
+        borrow['user_name'] = user.name
+        borrow['user_email'] = user.email
+        book = bookcollection.find_one({'isbn': borrow['isbn']})
+        if None == book:
+            return Response("", status=404, mimetype='application/json')
+        borrow['book_name'] = book['name']
+        borrow['book_author'] = book['author']
+
         return Response(json.dumps(borrow), status=200, mimetype='application/json')
 
     @api.doc(responses={200: 'Ok'})
     @api.expect(borrow_model)
     def put(self, id):
-        print(api.payload)
+        user = get_user(api.payload['userid'])
+        if not user.exists:
+            return Response('Userid not found', status=404, mimetype='application/json')
+        book = bookcollection.find_one({'isbn': api.payload['isbn']})
+        if book is None:
+            return Response('ISBN not found', status=404, mimetype='application/json')
+        if book['nr_available'] < 1:
+            return Response('Book is not available anymore', status=404, mimetype='application/json')
         borrowcollection.insert_one(api.payload)
+        bookcollection.update_one(
+            {'isbn': api.payload['isbn']},
+            {'$inc': {'nr_available': -1}}
+        )
         return Response('', status=200, mimetype='application/json')
 
 
@@ -60,7 +99,8 @@ class BorrowList(Resource):
         args = pagination_parser.parse_args(request)
         books = borrowcollection.find().limit(args['limit']).skip(args['offset'])
         extracted = [
-            {'userid': d['userid'],
+            {'id': d['id'],
+             'userid': d['userid'],
              'isbn': d['isbn'],
              'borrow_date': d['borrow_date'],
              'return_date': d['return_date'],

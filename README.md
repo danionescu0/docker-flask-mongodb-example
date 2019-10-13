@@ -138,6 +138,8 @@ MongoDb official documentation (array operations): https://docs.mongodb.com/manu
 
 Swagger url: http://localhost/apidocs
 
+Api methods using Curl:
+
 * Generate a random number between 10 and 100 and returns it:
 ````
 curl -i "http://localhost/random?lower=10&upper=100"
@@ -171,7 +173,7 @@ Sample data in user collection document:
 
 Swagger url: http://localhost:81/apidocs
 
-Using Curl:
+Api methods using Curl:
 
 * PUT request, this request will add a user with a userid, name and email:
 
@@ -271,7 +273,7 @@ Sample data in fulltext_search collection document:
 
 Swagger url: http://localhost:82/apidocs
 
-Using Curl:
+Api methods using Curl:
 
 * To index a new expression like "ana has many more apples":
 ````
@@ -306,10 +308,9 @@ Sample data in places collection document:
 
 MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
 
-
 Swagger url: http://localhost:84/apidocs
 
-Using Curl:
+Api methods using Curl:
 
 * To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
 ````
@@ -427,7 +428,7 @@ The API will expose methods for adding and deleting images along with resizing a
 
 Swagger url: http://localhost:85/apidocs
 
-Using Curl:
+Api methods using Curl:
 
 To get image with id 1, and rezise it by height 100
 ````
@@ -458,4 +459,31 @@ Uses Flask Restplus: https://flask-restplus.readthedocs.io
 A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
 Books can be borrowed and an accounting mechanism for this is in place.
 
-The Swagger UI page will be at http://localhost:85
+The Swagger url will be atL http://localhost:85
+
+Api methods using Curl:
+ 
+Add a book:
+
+Get a book:
+````
+curl -i "http://localhost:85/book/1" 
+````
+
+List all books:
+````
+curl -i "http://localhost:85/books" 
+````
+
+Delete a book:
+````
+curl -X DELETE -i "http://localhost:85/book/1" 
+````
+
+Borrow book:
+
+List a book borrow:
+
+List all book borrows:
+
+Return a book:

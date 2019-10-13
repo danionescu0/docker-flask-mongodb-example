@@ -147,7 +147,6 @@ def get_users():
     request_args = request.args
     limit = int(request_args.get('limit')) if 'limit' in request_args else 10
     offset = int(request_args.get('offset')) if 'offset' in request_args else 0
-    print(limit)
     user_list = users.find().limit(limit).skip(offset)
     if None == users:
         return Response("", status=404, mimetype='application/json')
