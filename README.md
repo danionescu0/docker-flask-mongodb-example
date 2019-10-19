@@ -1,6 +1,6 @@
 ## Purpose
 
-**A working demo usage of docker, docker-compose, mongodb, python3, docker-compose, mosquitto, swagger and locusts**
+**A working demo usage of Docker, Docker-compose, MongoDb, Python3, Mosquitto, Swagger and Locusts**
 
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
@@ -58,7 +58,7 @@ How to install docker compose: https://docs.docker.com/compose/install/
 ## Run the microservice
 Before running check that the ports are available and free on your machine!
 
-On linux run the following command and check the output, if the ports 80 to 85, 1883 and 27017 are not available please change the ports accordingly in the code. 
+On linux run the following command and check the output, if the ports 80 to 85, 1883 and 27017 are not available please change the ports accordingly in docker-compose.yaml 
 ````
 netstat -nltp
 ````
@@ -72,17 +72,22 @@ docker-compose up
 
 **Manual testing:**
 
-For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.html]
-An alternative manual HTTP testing you could use Swagger, for example for crud operations in a browser open: 
+For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.html]. In most UNIX systems curl is already installed.
+If you're using Debian/Ubuntu and you don't have curl try using:
+
+````
+sudo apt-get install curl
+````
+
+An alternative manual HTTP testing you could use Swagger, for example for users crud operations in a browser open: 
 http://localhost:81/apidocs to see the Swagger UI and to perform test requests from there!
 
-For the MQTT application we'll use mosquitto cli
-In most UNIX systems curl is already installed, to install mosquitto cli use:
+For the MQTT application we'll use mosquitto cli:To install mosquitto cli in Debian / Ubuntu use:
 ````
 sudo apt-get install mosquitto-clients
 ````
 
-To load the test data i provided, you can use mongorestore after starting the services like this:
+To load the test data i provided in MongoDb, you can use mongorestore after starting the services like this:
 ````
 cd docker-flask-mongodb-example
 docker compose up
@@ -101,9 +106,9 @@ Testing random demo microservice:
 ````
 locust -f random-demo.py --host=http://localhost:80
 ````
-Testing crud microservice:
+Testing users microservice:
 ````
-locust -f crud.py --host=http://localhost:81
+locust -f users.py --host=http://localhost:81
 ````
 
 Testing fulltext_search microservice:
@@ -124,6 +129,8 @@ This service generates random numbers and store them in a capped array (last 5 o
 and return a random number.
  
 The random number collection has only one documents with '_id' lasts and an "items" key that will be a capped array.
+
+MongoDb capped array: https://www.mongodb.com/blog/post/push-to-sorted-array
 
 Sample data in "random_numbers" collection document:
 ````
@@ -156,9 +163,9 @@ curl -X PUT -i "http://localhost/random" -d lower=10 -d upper=20
 curl -i "http://localhost/random-list"
 ````
 
-# CRUD service
+# User CRUD service
 
-CRUD stands for create, read, update, delete operations. I've written a demo for these operations on a collections
+CRUD stands for Create, Read, Update and Delete operations. I've written a demo for these operations on a collections
 of users. A user has a userid, name and email fields.
 
 Sample data in user collection document:
@@ -210,6 +217,14 @@ curl -X DELETE -i "http://localhost:81/users/1"
 This usecase uses MQTT protocol instead of HTTP to communicate. It involves storing last 5 numerical values of a sensor,
 running a moving average on them and publishing the average each time on a different topic.
 
+MQTT official link: http://mqtt.org/
+
+MQTT explained: https://randomnerdtutorials.com/what-is-mqtt-and-how-it-works/
+
+MQTT info, tools stuff: https://github.com/hobbyquaker/awesome-mqtt#tools
+
+MongoDb capped array: https://www.mongodb.com/blog/post/push-to-sorted-array
+
 Sample data in sensors collection document:
 ````
 	"_id" : "some_sensor",
@@ -227,12 +242,12 @@ Sample data in sensors collection document:
 ...
 ````
 
-* To update a sensor with id: "some_sensor" and value "some_value" use:
+* To update a sensor with id: "some_sensor" and value "15" use:
 
 ````
-mosquitto_pub -h localhost  -p 1883  -d -t some_sensor -m some_value
+mosquitto_pub -h localhost -p 1883  -d -t some_sensor -m 15
 ````
-This will publish to mosquitto in a topic named "some_sensor" and value "some_value".
+This will publish to mosquitto in a topic named "some_sensor" and value "15".
 
 Our python script will listen to this topic too, and save in the mongo sensors collections
 the value for the sensor in a capped array.
@@ -259,6 +274,7 @@ python script will calculate the average values of last 5 values and publishes i
 # Fulltext service
 
 This service exposes a REST API for inserting a text into the full text database, and retriving last 10 matches
+
 MongoDb official documentation (text search): https://docs.mongodb.com/manual/text-search/
 
 Sample data in fulltext_search collection document:
@@ -290,6 +306,8 @@ curl -i "http://localhost:82/search/who"
 The service will allow to insert locations with coordonats (latitude and longitude), and will expose an REST API
 to all locations near a point.
 
+MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
+
 Sample data in places collection document:
 ````
 {
@@ -305,8 +323,6 @@ Sample data in places collection document:
 }
 ..
 ````
-
-MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
 
 Swagger url: http://localhost:84/apidocs
 
@@ -454,10 +470,11 @@ curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 
 Work in progress.
 
-Uses Flask Restplus: https://flask-restplus.readthedocs.io
-
 A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
 Books can be borrowed and an accounting mechanism for this is in place.
+
+Uses Flask Restplus: https://flask-restplus.readthedocs.io
+
 
 The Swagger url will be atL http://localhost:85
 

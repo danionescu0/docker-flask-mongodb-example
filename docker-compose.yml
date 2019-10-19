@@ -2,7 +2,11 @@ version: '3'
 
 services:
     web-random:
-        build: .
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements.txt
+        image: web-random-image
         ports:
             - "80:5000"
         entrypoint: python ./flask-mongodb-example/random_demo.py
@@ -12,11 +16,15 @@ services:
         depends_on:
             - mongo
 
-    web-crud:
-        build: .
+    web-users:
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements.txt
+        image: web-users-image
         ports:
             - "81:5000"
-        entrypoint: python ./flask-mongodb-example/crud.py
+        entrypoint: python ./flask-mongodb-example/users.py
         deploy:
           restart_policy:
             condition: on-failure
@@ -24,7 +32,11 @@ services:
             - mongo
 
     web-mqtt:
-        build: .
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements-mqtt.txt
+        image: web-mqtt-image
         entrypoint: python ./flask-mongodb-example/mqtt.py
         deploy:
           restart_policy:
@@ -35,7 +47,11 @@ services:
         tty: true
 
     web-fulltext-search:
-        build: .
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements.txt
+        image: web-fulltext-image
         ports:
             - "82:5000"
         entrypoint: python ./flask-mongodb-example/fulltext_search.py
@@ -46,7 +62,11 @@ services:
             - mongo
 
     web-geolocation-search:
-        build: .
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements.txt
+        image: web-geolocation-image
         ports:
             - "83:5000"
         entrypoint: python ./flask-mongodb-example/geolocation_search.py
@@ -57,7 +77,11 @@ services:
             - mongo
 
     web-baesian:
-        build: .
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements.txt
+        image: web-baesian-image
         ports:
             - "84:5000"
         entrypoint: python ./flask-mongodb-example/baesian.py
@@ -68,7 +92,11 @@ services:
             - mongo
 
     web-photo-process:
-        build: .
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements-photo.txt
+        image: web-photo-image
         ports:
             - "85:5000"
         entrypoint: python ./flask-mongodb-example/photo_process.py

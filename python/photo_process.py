@@ -22,7 +22,6 @@ class FileHashSearch:
             for file in os.listdir(root):
                 filePath = os.path.join(root, file)
                 hash = imagehash.average_hash(Image.open(filePath))
-                print("Loading file: {0}".format(os.path.splitext(file)[0]))
                 self.hashes[hash] = os.path.splitext(file)[0]
 
     def add(self, file, id) -> None:
@@ -61,10 +60,12 @@ def get_photo(id):
         type: string
         required: true
       - name: resize
+        description: Resize by width in pixels
         in: query
         type: integer
         required: false
       - name: rotate
+        description: Rotate left in degrees
         in: query
         type: integer
         required: false
@@ -114,6 +115,7 @@ def get_photos_like_this():
         in: formData
         type: file
       - name: similarity
+        description: How similar the file should be, minimum 0 maximum 40
         in: query
         type: int
         required: false
