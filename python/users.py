@@ -1,6 +1,5 @@
 import json
 
-
 from flask import Flask, request, Response
 from pymongo import MongoClient, errors
 from bson import json_util
@@ -44,7 +43,7 @@ def add_user(userid):
         })
     except errors.DuplicateKeyError as e:
         return Response('Duplicate user id!', status=404, mimetype='application/json')
-    return Response('', status=200, mimetype='application/json')
+    return Response(json.dumps(users.find_one({'_id': userid})), status=200, mimetype='application/json')
 
 
 @app.route("/users/<int:userid>", methods=["POST"])
@@ -77,12 +76,12 @@ def update_user(userid):
     if 'name' in request_params:
         set['name'] = request_params['name']
     users.update_one({'_id': userid}, {'$set': set})
-    return Response('', status=200, mimetype='application/json')
+    return Response(json.dumps(users.find_one({'_id': userid})), status=200, mimetype='application/json')
 
 
 @app.route("/users/<int:userid>", methods=["GET"])
 def get_user(userid):
-    """Example endpoint returning details about a user
+    """Details about a user
     ---
     parameters:
       - name: userid
@@ -94,7 +93,7 @@ def get_user(userid):
         type: object
         properties:
           _id:
-            type: int32
+            type: int
           email:
             type: string
           name:
@@ -131,7 +130,7 @@ def get_users():
         type: object
         properties:
           _id:
-            type: int32
+            type: int
           email:
             type: string
           name:
@@ -141,15 +140,13 @@ def get_users():
         description: List of user models
         schema:
           $ref: '#/definitions/User'
-      404:
-        description: Users not found
     """
     request_args = request.args
     limit = int(request_args.get('limit')) if 'limit' in request_args else 10
     offset = int(request_args.get('offset')) if 'offset' in request_args else 0
     user_list = users.find().limit(limit).skip(offset)
     if None == users:
-        return Response("", status=404, mimetype='application/json')
+        return Response(json.dumps([]), status=200, mimetype='application/json')
 
     extracted = [
         {'userid': d['_id'],
@@ -164,7 +161,7 @@ def delete_user(userid):
     """Delete operation for a user
     ---
     parameters:
-      - name: palette
+      - name: userid
         in: path
         type: string
         required: true

@@ -1,4 +1,4 @@
-import os, json
+import json
 
 from flask import Flask, request, Response
 from flasgger import Swagger
@@ -35,11 +35,14 @@ def new_location():
     request_params = request.form
     if 'name' not in request_params or 'lat' not in request_params or 'lng' not in request_params:
         return Response('Name, lat, lng must be present in parameters!', status=404, mimetype='application/json')
+    latitude = float(request_params['lng'])
+    longitude = float(request_params['lat'])
     places.insert_one({
         'name': request_params['name'],
-        'location': {'type': 'Point', 'coordinates': [float(request_params['lng']), float(request_params['lat'])]}
+        'location': {'type': 'Point', 'coordinates': [latitude, longitude]}
     })
-    return Response('', status=200, mimetype='application/json')
+    return Response(json.dumps({'name': request_params['name'], 'lat': latitude, 'lng': longitude}),
+                    status=200, mimetype='application/json')
 
 
 @app.route("/location/<string:lat>/<string:lng>")
@@ -57,11 +60,11 @@ def get_near(lat, lng):
         required: true
       - name: max_distance
         in: query
-        type: int32
+        type: int
         required: false
       - name: limit
         in: query
-        type: int32
+        type: int
         required: false
     definitions:
       Place:

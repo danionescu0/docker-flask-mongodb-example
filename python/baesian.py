@@ -1,8 +1,7 @@
-import os, json, time
-
+import json
 
 from flask import Flask, request, Response
-from pymongo import MongoClient, errors
+from pymongo import MongoClient
 from flasgger import Swagger
 
 
@@ -31,9 +30,9 @@ def upsert_item(itemid):
     request_params = request.form
     if 'name' not in request_params:
         return Response('Name not present in parameters!', status=404, mimetype='application/json')
-    baesian.update_one({'_id': itemid}, {'$set': {'name': request_params['name']}}, upsert = True)
+    baesian.update_one({'_id': itemid}, {'$set': {'name': request_params['name']}}, upsert=True)
 
-    return Response('', status=200, mimetype='application/json')
+    return Response(json.dumps({"_id": itemid, 'name': request_params['name']}), status=200, mimetype='application/json')
 
 
 @app.route("/item/vote/<int:itemid>", methods=["PUT"])
@@ -86,13 +85,13 @@ def get_item(itemid):
         type: object
         properties:
           _id:
-            type: int32
+            type: int
           name:
             type: string
           marks:
             type: array
-          sum_votes: int32
-          nr_votes: int32
+          sum_votes: int
+          nr_votes: int
           baesian_average: float
     responses:
       200:

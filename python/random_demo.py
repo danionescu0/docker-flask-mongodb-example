@@ -18,11 +18,11 @@ def random_insert():
     parameters:
       - name: lower
         in: formData
-        type: int32
+        type: int
         required: false
       - name: upper
         in: formData
-        type: int32
+        type: int
         required: false
     responses:
       200:
@@ -51,11 +51,11 @@ def random_generator():
     parameters:
       - name: lower
         in: query
-        type: int32
+        type: int
         required: false
       - name: upper
         in: query
-        type: int32
+        type: int
         required: false
     responses:
       200:
@@ -65,6 +65,8 @@ def random_generator():
     request_args = request.args
     lower = int(request_args.get('lower')) if 'lower' in request_args else 10
     upper = int(request_args.get('upper')) if 'upper' in request_args else 0
+    if upper < lower:
+        return Response(json.dumps({'error': 'Upper boundary must be greater or equal than lower boundary'}), status=400, mimetype='application/json')
     number = str(random.randint(lower, upper))
     return Response(number, status=200, mimetype='application/json')
 

@@ -476,7 +476,7 @@ Books can be borrowed and an accounting mechanism for this is in place.
 Uses Flask Restplus: https://flask-restplus.readthedocs.io
 
 
-The Swagger url will be atL http://localhost:85
+The Swagger url will be at http://localhost:85
 
 Api methods using Curl:
  

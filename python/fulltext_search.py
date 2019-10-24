@@ -1,4 +1,4 @@
-import os, json, datetime, time
+import json, datetime
 
 from flask import Flask, request, Response
 from flasgger import Swagger
@@ -27,13 +27,12 @@ def add_expression():
     request_params = request.form
     if 'expression' not in request_params:
         return Response('"Expression" must be present as a POST parameter!', status=404, mimetype='application/json')
-    fulltext_search.save(
-            {
+    document = {
                 'app_text': request_params['expression'],
                 'indexed_date': datetime.datetime.utcnow()
             }
-    )
-    return Response({}, status=200, mimetype='application/json')
+    fulltext_search.save(document)
+    return Response(json.dumps(document, default=json_util.default), status=200, mimetype='application/json')
 
 
 @app.route("/search/<string:searched_expression>")
@@ -74,6 +73,6 @@ def search(searched_expression):
 
 
 if __name__ == "__main__":
-    #first create the fulltext index
+    #create the fulltext index
     fulltext_search.create_index([('app_text', TEXT)], name='fulltextsearch_index', default_language='english')
     app.run(debug=True, host='0.0.0.0', port=5000)
