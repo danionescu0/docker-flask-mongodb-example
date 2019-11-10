@@ -75,6 +75,7 @@ class Borrow(Resource):
     @api.doc(responses={200: 'Ok'})
     @api.expect(borrow_model)
     def put(self, id):
+        api.payload['id'] = id
         user = get_user(api.payload['userid'])
         if not user.exists:
             return Response('Userid not found', status=404, mimetype='application/json')
@@ -88,7 +89,8 @@ class Borrow(Resource):
             {'isbn': api.payload['isbn']},
             {'$inc': {'nr_available': -1}}
         )
-        return Response('', status=200, mimetype='application/json')
+        del api.payload['_id']
+        return Response(json.dumps(api.payload), status=200, mimetype='application/json')
 
 
 @api.route("/borrows")
@@ -120,8 +122,13 @@ class Book(Resource):
     @api.doc(responses={200: 'Ok'})
     @api.expect(book_model)
     def put(self, isbn):
-        bookcollection.insert_one(api.payload)
-        return Response('', status=200, mimetype='application/json')
+        api.payload['isbn'] = isbn
+        try:
+            bookcollection.insert_one(api.payload)
+        except errors.DuplicateKeyError:
+            return Response(json.dumps({'error': 'Isbn already exists'}), status=404, mimetype='application/json')
+        del api.payload['_id']
+        return Response(json.dumps(api.payload), status=200, mimetype='application/json')
 
     def delete(self, isbn):
         bookcollection.delete_one({'isbn': isbn})
@@ -146,4 +153,5 @@ class BookList(Resource):
 
 
 if __name__ == "__main__":
+    bookcollection.create_index('isbn', unique=True)
     app.run(debug=True, host='0.0.0.0', port=5000)

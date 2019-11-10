@@ -25,7 +25,7 @@ Photos will be stored on disk retrived and resized / rotated. Also a search by i
 
 **8** [Book collection](#Book-collection) A virtual book library, has api methods for managing books, and borrowing book mechanisms.
 The users must have "profiles" created using the User CRUD service. This api used flask rest plus (https://flask-restplus.readthedocs.io/en/stable/) 
-and it's a work in progress!
+
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
@@ -468,7 +468,12 @@ curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 
 # Book-collection
 
-Work in progress.
+Still some refinements should be made to the api, and the documentation below enhanced:
+
+- return a book api method
+
+- use transactions when borrow and return a book
+
 
 A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
 Books can be borrowed and an accounting mechanism for this is in place.
