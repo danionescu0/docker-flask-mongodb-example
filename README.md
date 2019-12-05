@@ -82,7 +82,7 @@ sudo apt-get install curl
 An alternative manual HTTP testing you could use Swagger, for example for users crud operations in a browser open: 
 http://localhost:81/apidocs to see the Swagger UI and to perform test requests from there!
 
-For the MQTT application we'll use mosquitto cli:To install mosquitto cli in Debian / Ubuntu use:
+For the MQTT application we'll use mosquitto cli: To install mosquitto cli in Debian / Ubuntu use:
 ````
 sudo apt-get install mosquitto-clients
 ````
@@ -143,7 +143,7 @@ Sample data in "random_numbers" collection document:
 
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 
-Swagger url: http://localhost/apidocs
+Swagger url: http://localhost/apidocs  
 
 Api methods using Curl:
 
@@ -242,32 +242,32 @@ Sample data in sensors collection document:
 ...
 ````
 
-* To update a sensor with id: "some_sensor" and value "15" use:
+* To update a sensor with id: "some_sensor" and value "15.2" use:
 
 ````
-mosquitto_pub -h localhost -p 1883  -d -t some_sensor -m 15
+mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{'sensor_id': 'temperature', 'sensor_value': 15.2}"
 ````
-This will publish to mosquitto in a topic named "some_sensor" and value "15".
+This will publish to mosquitto in the "sensors" topic the following json: {'sensor_id": 'temperature', 'sensor_value': 15.2}
 
 Our python script will listen to this topic too, and save in the mongo sensors collections
 the value for the sensor in a capped array.
 
 After it writes the new values, it reads the last 5 values and computes an average (running average)
-and publish it to topic "average/some_sensor"
+and publish it to topic "average/temperature"
 
-* To get updates for sensor "some_sensor" use:
+* To get updates for all sensors use:
 ````
-mosquitto_sub -h localhost  -p 1883 -d -t some_sensor
+mosquitto_sub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors
 ````
-This will just listen for updates for the topic "some_sensor"
+This will just listen for updates for the topic "sensors"
 
-* To get updates for the average 5 values for sensor "some_sensor" use:
+* To get updates for the average 5 values for sensor "temperature" use:
 ````
-mosquitto_sub -h localhost  -p 1883 -d -t averages/some_sensor
+mosquitto_sub -h localhost -u some_user -P some_pass -p 1883 -d -t averages/temperature
 ````
 
-This will just listen for updates for the topic "averages/some_sensor" and get a running average 
-for the sensor "some_sensor". Each time someone publishes a new value for a sensor, the 
+This will just listen for updates for the topic "averages/temperature" and get a running average 
+for the sensor "temperature". Each time someone publishes a new value for a sensor, the 
 python script will calculate the average values of last 5 values and publishes it
 
 

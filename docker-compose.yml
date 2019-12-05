@@ -8,7 +8,7 @@ services:
                 requirements: ./flask-mongodb-example/requirements.txt
         image: web-random-image
         ports:
-            - "80:5000"
+            - "800:5000"
         entrypoint: python ./flask-mongodb-example/random_demo.py
         deploy:
           restart_policy:
@@ -117,7 +117,8 @@ services:
             - "27017:27017"
 
     mqtt:
-        image: eclipse-mosquitto
+        build:
+          context: ./docker-mosquitto
         deploy:
             restart_policy:
                 condition: always

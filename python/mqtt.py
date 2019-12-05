@@ -1,3 +1,4 @@
+import json
 import time, datetime
 import statistics
 
@@ -7,39 +8,45 @@ from pymongo import MongoClient
 
 sensors = MongoClient('mongo', 27017).demo.sensors
 client = mqtt.Client()
+client.username_pw_set('some_user', 'some_pass')
 
 
 # on connect to MQTT server subscribes to all topics
 def on_connect(client, userdata, flags, rc):
-    client.subscribe('#')
+    client.subscribe('sensors')
 
 
 def on_message(client, userdata, msg):
-    sensor_value = float(msg.payload.decode("utf-8"))
-    sensor_id = msg.topic
-    # skip processing if it's averages topic to avoid an infinit loop
-    if sensor_id.find('averages/') != -1:
+    try:
+        message = msg.payload.decode("utf-8")
+        decoded_data = json.loads(message)
+    except Exception as e:
+        print('could not decode message {0}'.format(message))
+        print(str(e))
         return
-    sensors.update(
-        {"_id": sensor_id},
+
+    # skip processing if it's averages topic to avoid an infinit loop
+    sensors.update_one(
+        {"_id": decoded_data['sensor_id']},
         {"$push": {
             "items": {
-                "$each": [{"value" : sensor_value, "date": datetime.datetime.utcnow()}],
-                "$sort": {"date" : -1},
+                "$each": [{"value": decoded_data['sensor_value'], "date": datetime.datetime.utcnow()}],
+                "$sort": {"date": -1},
                 "$slice": 5
             }
         }},
-        upsert = True
+        upsert=True
     )
     # obtain the mongo sensor data by id
-    sensor_data = list(sensors.find({"_id" : sensor_id}))
+    sensor_data = list(sensors.find({"_id" : decoded_data['sensor_id']}))
     # we extract the sensor last values from sensor_data
     sensor_values = [d['value'] for d in sensor_data[0]['items']]
-    client.publish('averages/{0}'.format(sensor_id), statistics.mean(sensor_values), 2)
+    client.publish('averages/{0}'.format(decoded_data['sensor_id']), statistics.mean(sensor_values), 2)
 
 
 client.on_connect = on_connect
 client.on_message = on_message
+
 client.connect('mqtt', 1883, 60)
 client.loop_start()
 
