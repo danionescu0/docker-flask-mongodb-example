@@ -25,6 +25,7 @@ Photos will be stored on disk retrived and resized / rotated. Also a search by i
 
 **8** [Book collection](#Book-collection) A virtual book library, has api methods for managing books, and borrowing book mechanisms.
 The users must have "profiles" created using the User CRUD service. This api used flask rest plus (https://flask-restplus.readthedocs.io/en/stable/) 
+(port 86)
 
 
 ![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -104,7 +105,7 @@ Quickstart: https://docs.locust.io/en/stable/quickstart.html
 
 Testing random demo microservice:
 ````
-locust -f random-demo.py --host=http://localhost:80
+locust -f random-demo.py --host=http://localhost:800
 ````
 Testing users microservice:
 ````
@@ -122,6 +123,7 @@ locust -f geolocation_search.py --host=http://localhost:83
 ````
 
 After starting any service open http://localhost:8089 to acces the testing UI
+
 
 # Random service
 
@@ -143,24 +145,24 @@ Sample data in "random_numbers" collection document:
 
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 
-Swagger url: http://localhost/apidocs  
+Swagger url: http://localhost:800/apidocs  
 
 Api methods using Curl:
 
 * Generate a random number between 10 and 100 and returns it:
 ````
-curl -i "http://localhost/random?lower=10&upper=100"
+curl -i "http://localhost:800/random?lower=10&upper=100"
 ````
 
 * Generate a random number between 10 and 100 and saves it into the capped array: 
 ````
-curl -X PUT -i "http://localhost/random" -d lower=10 -d upper=20
+curl -X PUT -i "http://localhost:800/random" -d lower=10 -d upper=20
 ````
 
 * View last 5 generated numbers list: 
 
 ````
-curl -i "http://localhost/random-list"
+curl -i "http://localhost:800/random-list"
 ````
 
 # User CRUD service
@@ -481,31 +483,46 @@ Books can be borrowed and an accounting mechanism for this is in place.
 Uses Flask Restplus: https://flask-restplus.readthedocs.io
 
 
-The Swagger url will be at http://localhost:85
+The Swagger url will be at http://localhost:86
 
 Api methods using Curl:
  
 Add a book:
+````
+curl -X PUT "http://localhost:86/book/978-1607965503" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"isbn\": \"978-1607965503\", \"name\": \"Lincoln the Unknown\", \"author\": \"Dale Carnegie\", \"publisher\": \"snowballpublishing\", \"nr_available\": 5}"
 
+````
 Get a book:
 ````
-curl -i "http://localhost:85/book/1" 
+curl -i "curl -X GET "http://localhost:86/book/978-1607965503" -H "accept: application/json"" 
 ````
 
 List all books:
 ````
-curl -i "http://localhost:85/books" 
+curl -X GET "http://localhost:86/books?limit=5&offset=0" -H "accept: application/json" 
 ````
 
 Delete a book:
 ````
-curl -X DELETE -i "http://localhost:85/book/1" 
+curl -X DELETE "http://localhost:86/book/1" -H "accept: application/json"
 ````
 
 Borrow book:
+````
+curl -X PUT "http://localhost:5000/borrow/1" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"id\": \"1\", \"userid\": 4, \"isbn\": \"978-1607965503\", \"borrow_date\": \"2019-12-12T09:32:51.715Z\", \"return_date\": \"2020-02-12T09:32:51.715Z\"}"
+````
 
 List a book borrow:
+````
+curl -X GET "http://localhost:86/borrow/1" -H "accept: application/json"
+````
 
 List all book borrows:
+````
+curl -X GET "http://localhost:86/borrows?limit=2&offset=0" -H "accept: application/json"
+````
+
 
 Return a book:
+
+Will be implemented

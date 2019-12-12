@@ -108,6 +108,24 @@ services:
         depends_on:
             - mongo
 
+    web-book-collection:
+        build:
+            context: .
+            args:
+                requirements: ./flask-mongodb-example/requirements-restplus.txt
+        image: web-bookcollection-image
+        environment:
+             - PYTHONUNBUFFERED=1
+        ports:
+            - "86:5000"
+        entrypoint: python ./flask-mongodb-example/bookcollection.py
+        deploy:
+            restart_policy:
+                condition: on-failure
+        depends_on:
+            - mongo
+            - web-users
+
     mongo:
         image: mongo:4.0.5-xenial
         deploy:

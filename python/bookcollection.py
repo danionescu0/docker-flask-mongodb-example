@@ -9,9 +9,10 @@ from pymongo import MongoClient, errors
 app = Flask(__name__)
 api = Api(app=app)
 
-mongo_client = MongoClient('localhost', 27017)
+mongo_client = MongoClient('mongo', 27017)
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
+users_host = 'http://web-users:5000'
 
 
 book_model = api.model('Book', {
@@ -44,7 +45,14 @@ pagination_parser.add_argument('offset', type=int, help='Offset')
 
 
 def get_user(id: int) -> User:
-    response = requests.get(url="http://localhost:81/users/" + str(id))
+    try:
+        print('{0}/users/{1}'.format(users_host, str(id)))
+        response = requests.get(url='{0}/users/{1}'.format(users_host, str(id)))
+        print(response.text)
+        print(response.status_code)
+    except Exception as e:
+        print(str(e))
+        return User(False, id, None, None)
     if response.status_code != 200:
         return User(False, id, None, None)
     try:
