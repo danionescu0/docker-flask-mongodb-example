@@ -6,16 +6,21 @@ from flask_restplus import Api, Resource, fields, reqparse
 from pymongo import MongoClient, errors
 
 
-app = Flask(__name__)
-api = Api(app=app)
-
+users_host = 'http://web-users:5000'
 mongo_client = MongoClient('mongo', 27017)
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
-users_host = 'http://web-users:5000'
 
+app = Flask(__name__)
+api = Api(
+    app=app,
+    title="Book collection",
+    description="Simulates a book library with users and book borrwing"
+)
+book_api = api.namespace('book', description='Book api')
+borrow_api = api.namespace('borrow', description='Boorrow, returing api')
 
-book_model = api.model('Book', {
+book_model = book_api.model('Book', {
     'isbn': fields.String(description='ISBN', required=True),
     'name': fields.String(description='Name of the book', required=True),
     'author': fields.String(description='Book author', required=True),
@@ -23,12 +28,18 @@ book_model = api.model('Book', {
     'nr_available': fields.Integer(min=0, description='Nr books available for lend', required=True),
 })
 
-borrow_model = api.model('Borrow', {
+borrow_model = borrow_api.model('Borrow', {
     'id': fields.String(min=0, description='Unique uuid for borrowing', required=True),
     'userid': fields.Integer(min=0, description='Userid of the borrower', required=True),
     'isbn': fields.String(description='ISBN', required=True),
     'borrow_date': fields.DateTime(required=True),
-    'return_date': fields.DateTime(required=True),
+    'return_date': fields.DateTime(required=False),
+    'max_return_date': fields.DateTime(required=True),
+})
+
+return_model = borrow_api.model('Return', {
+    'id': fields.String(min=0, description='Unique uuid for borrowing', required=True),
+    'return_date': fields.DateTime(required=False),
 })
 
 class User:
@@ -46,10 +57,7 @@ pagination_parser.add_argument('offset', type=int, help='Offset')
 
 def get_user(id: int) -> User:
     try:
-        print('{0}/users/{1}'.format(users_host, str(id)))
         response = requests.get(url='{0}/users/{1}'.format(users_host, str(id)))
-        print(response.text)
-        print(response.status_code)
     except Exception as e:
         print(str(e))
         return User(False, id, None, None)
@@ -62,94 +70,120 @@ def get_user(id: int) -> User:
         return User(False, id, None, None)
 
 
-@api.route("/borrow/<string:id>")
+@borrow_api.route("/return/<string:id>")
+class Return(Resource):
+    @borrow_api.doc(responses={200: 'Ok'})
+    @borrow_api.expect(return_model)
+    def put(self, id):
+        borrow_api.payload['id'] = id
+        borrow = borrowcollection.find_one({'id': id})
+        if None is borrow:
+            return Response(json.dumps({'error': 'Borrow id not found'}), status=404, mimetype='application/json')
+        if 'return_date' in borrow:
+            return Response(json.dumps({'error': 'Book already returned'}), status=404, mimetype='application/json')
+        del borrow['_id']
+        bookcollection.update_one(
+            {'isbn': borrow['isbn']},
+            {'$inc': {'nr_available': 1}}
+        )
+        borrowcollection.update_one(
+            {'id': borrow_api.payload['id']},
+            {'$set': {'return_date': borrow_api.payload['return_date']}}
+        )
+        return Response(json.dumps(borrow_api.payload), status=200, mimetype='application/json')
+
+
+@borrow_api.route("/<string:id>")
 class Borrow(Resource):
     def get(self, id):
         borrow = borrowcollection.find_one({'id': id})
+        if None is borrow:
+            return Response(json.dumps({'error': 'Borrow id not found'}), status=404, mimetype='application/json')
         del borrow['_id']
-        if None == borrow:
-            return Response("", status=404, mimetype='application/json')
         user = get_user(borrow['userid'])
         borrow['user_name'] = user.name
         borrow['user_email'] = user.email
         book = bookcollection.find_one({'isbn': borrow['isbn']})
-        if None == book:
-            return Response("", status=404, mimetype='application/json')
+        if None is book:
+            return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
         borrow['book_name'] = book['name']
         borrow['book_author'] = book['author']
-
         return Response(json.dumps(borrow), status=200, mimetype='application/json')
 
-    @api.doc(responses={200: 'Ok'})
-    @api.expect(borrow_model)
+    @borrow_api.doc(responses={200: 'Ok'})
+    @borrow_api.expect(borrow_model)
     def put(self, id):
-        api.payload['id'] = id
-        user = get_user(api.payload['userid'])
+        borrow = borrowcollection.find_one({'id': id})
+        if None is not borrow:
+            return Response(json.dumps({'error': 'Borrow already used'}), status=404, mimetype='application/json')
+        borrow_api.payload['id'] = id
+        user = get_user(borrow_api.payload['userid'])
         if not user.exists:
-            return Response('Userid not found', status=404, mimetype='application/json')
-        book = bookcollection.find_one({'isbn': api.payload['isbn']})
+            return Response(json.dumps({'error': 'User not found'}), status=404, mimetype='application/json')
+        book = bookcollection.find_one({'isbn': borrow_api.payload['isbn']})
         if book is None:
-            return Response('ISBN not found', status=404, mimetype='application/json')
+            return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
         if book['nr_available'] < 1:
-            return Response('Book is not available anymore', status=404, mimetype='application/json')
-        borrowcollection.insert_one(api.payload)
+            return Response(json.dumps({'error': 'Book is not available yet'}), status=404, mimetype='application/json')
+        borrowcollection.insert_one(borrow_api.payload)
         bookcollection.update_one(
-            {'isbn': api.payload['isbn']},
+            {'isbn': borrow_api.payload['isbn']},
             {'$inc': {'nr_available': -1}}
         )
-        del api.payload['_id']
-        return Response(json.dumps(api.payload), status=200, mimetype='application/json')
+        del borrow_api.payload['_id']
+        return Response(json.dumps(borrow_api.payload), status=200, mimetype='application/json')
 
 
-@api.route("/borrows")
+@borrow_api.route("")
 class BorrowList(Resource):
-    @api.marshal_with(borrow_model, as_list=True)
-    @api.expect(pagination_parser, validate=True)
+    @borrow_api.marshal_with(borrow_model, as_list=True)
+    @borrow_api.expect(pagination_parser, validate=True)
     def get(self):
         args = pagination_parser.parse_args(request)
-        books = borrowcollection.find().limit(args['limit']).skip(args['offset'])
+        books = borrowcollection.find().sort('id', 1).limit(args['limit']).skip(args['offset'])
         extracted = [
             {'id': d['id'],
              'userid': d['userid'],
              'isbn': d['isbn'],
              'borrow_date': d['borrow_date'],
-             'return_date': d['return_date'],
+             'return_date': d['return_date'] if 'return_date' in d else None,
+             'max_return_date': d['max_return_date'],
              } for d in books]
         return extracted
 
 
-@api.route("/book/<string:isbn>")
+@book_api.route("/<string:isbn>")
 class Book(Resource):
     def get(self, isbn):
         book = bookcollection.find_one({'isbn': isbn})
+        if None is book:
+            return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
         del book['_id']
-        if None == book:
-            return Response("", status=404, mimetype='application/json')
         return Response(json.dumps(book), status=200, mimetype='application/json')
 
-    @api.doc(responses={200: 'Ok'})
-    @api.expect(book_model)
+    @book_api.doc(responses={200: 'Ok'})
+    @book_api.expect(book_model)
     def put(self, isbn):
-        api.payload['isbn'] = isbn
+        book_api.payload['isbn'] = isbn
         try:
-            bookcollection.insert_one(api.payload)
+            bookcollection.insert_one(book_api.payload)
         except errors.DuplicateKeyError:
             return Response(json.dumps({'error': 'Isbn already exists'}), status=404, mimetype='application/json')
-        del api.payload['_id']
-        return Response(json.dumps(api.payload), status=200, mimetype='application/json')
+        del book_api.payload['_id']
+        return Response(json.dumps(book_api.payload), status=200, mimetype='application/json')
 
     def delete(self, isbn):
         bookcollection.delete_one({'isbn': isbn})
         return Response('', status=200, mimetype='application/json')
 
 
-@api.route("/books")
+@book_api.route("")
 class BookList(Resource):
-    @api.marshal_with(book_model, as_list=True)
-    @api.expect(pagination_parser, validate=True)
+    @book_api.marshal_with(book_model, as_list=True)
+    @book_api.expect(pagination_parser, validate=True)
     def get(self):
         args = pagination_parser.parse_args(request)
-        books = bookcollection.find().limit(args['limit']).skip(args['offset'])
+        books = bookcollection.find().sort('id', 1).limit(args['limit']).skip(args['offset'])
         extracted = [
             {'isbn': d['isbn'],
              'name': d['name'],

@@ -482,8 +482,7 @@ Books can be borrowed and an accounting mechanism for this is in place.
 
 Uses Flask Restplus: https://flask-restplus.readthedocs.io
 
-
-The Swagger url will be at http://localhost:86
+The Swagger is http://localhost:86
 
 Api methods using Curl:
  
@@ -499,7 +498,7 @@ curl -i "curl -X GET "http://localhost:86/book/978-1607965503" -H "accept: appli
 
 List all books:
 ````
-curl -X GET "http://localhost:86/books?limit=5&offset=0" -H "accept: application/json" 
+curl -X GET "http://localhost:86/book?limit=5&offset=0" -H "accept: application/json" 
 ````
 
 Delete a book:
@@ -519,10 +518,10 @@ curl -X GET "http://localhost:86/borrow/1" -H "accept: application/json"
 
 List all book borrows:
 ````
-curl -X GET "http://localhost:86/borrows?limit=2&offset=0" -H "accept: application/json"
+curl -X GET "http://localhost:86/borrow?limit=2&offset=0" -H "accept: application/json"
 ````
 
-
 Return a book:
-
-Will be implemented
+````
+curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"id\": \"16\", \"return_date\": \"2019-12-13T08:48:47.899Z\"}"
+````
