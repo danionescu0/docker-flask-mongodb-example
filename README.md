@@ -250,7 +250,7 @@ Sample data in sensors collection document:
 * To update a sensor with id: "some_sensor" and value "15.2" use:
 
 ````
-mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{'sensor_id': 'temperature', 'sensor_value': 15.2}"
+mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{\"sensor_id\": \"temperature\", \"sensor_value\": 15.2}"
 ````
 This will publish to mosquitto in the "sensors" topic the following json: {'sensor_id": 'temperature', 'sensor_value': 15.2}
 

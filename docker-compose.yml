@@ -41,9 +41,12 @@ services:
         deploy:
           restart_policy:
             condition: on-failure
+        environment:
+             - PYTHONUNBUFFERED=1
         depends_on:
             - mongo
             - mqtt
+            - influxdb
         tty: true
 
     web-fulltext-search:
@@ -126,6 +129,24 @@ services:
             - mongo
             - web-users
 
+    influxdb:
+        build: docker-influxdb
+        env_file: configuration.env
+        ports:
+          - '8086:8086'
+        volumes:
+          - influxdb_data:/var/lib/influxdb
+
+    grafana:
+        build: docker-grafana
+        env_file: configuration.env
+        links:
+          - influxdb
+        ports:
+          - '3000:3000'
+        volumes:
+          - grafana_data:/var/lib/grafana
+
     mongo:
         image: mongo:4.2-bionic
         deploy:
@@ -142,3 +163,7 @@ services:
                 condition: always
         ports:
             - "1883:1883"
+
+volumes:
+    grafana_data: {}
+    influxdb_data: {}

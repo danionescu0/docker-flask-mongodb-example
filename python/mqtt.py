@@ -1,11 +1,13 @@
 import json
 import time, datetime
 import statistics
+import requests
 
 import paho.mqtt.client as mqtt
 from pymongo import MongoClient
 
 
+influxdb_url = 'http://influxdb:8086/write?db=influx'
 sensors = MongoClient('mongo', 27017).demo.sensors
 client = mqtt.Client()
 client.username_pw_set('some_user', 'some_pass')
@@ -37,6 +39,12 @@ def on_message(client, userdata, msg):
         }},
         upsert=True
     )
+    #add data to grafana through influxdb
+    try:
+        requests.post(url=influxdb_url, data='{0} value={1}'.format(
+            decoded_data['sensor_id'], decoded_data['sensor_value']))
+    except Exception as e:
+        print(str(e))
     # obtain the mongo sensor data by id
     sensor_data = list(sensors.find({"_id" : decoded_data['sensor_id']}))
     # we extract the sensor last values from sensor_data
