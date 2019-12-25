@@ -36,9 +36,9 @@ The users must have "profiles" created using the User CRUD service. This api use
 
 How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
 
-How to install docker compose: https://docs.docker.com/compose/install/
-
 * [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
+
+How to install docker compose: https://docs.docker.com/compose/install/
 
 * [python](https://www.python.org/doc/essays/blurb/) Programming language
 
@@ -66,10 +66,13 @@ netstat -nltp
 
 Start the microservice architecture:
 ````
+cd git_clonned_project_folder
+docker-compose build
 docker-compose up
 ````
+Note: The build step is necessary only when modifying the source code (git pull or manually edit sources)
 
-## Testing the architecture
+## Testing the architecturen
 
 **Manual testing:**
 
@@ -326,7 +329,7 @@ Sample data in places collection document:
 ..
 ````
 
-Swagger url: http://localhost:84/apidocs
+Swagger url: http://localhost:83/apidocs
 
 Api methods using Curl:
 
@@ -472,9 +475,7 @@ curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 
 Still some refinements should be made to the api, and the documentation below enhanced:
 
-- return a book api method
-
-- use transactions when borrow and return a book
+- use transactions when borrow and return a book (this requires a MongoDb cluster, it will be added in the future)
 
 
 A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 

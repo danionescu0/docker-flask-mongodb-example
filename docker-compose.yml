@@ -127,7 +127,7 @@ services:
             - web-users
 
     mongo:
-        image: mongo:4.0.5-xenial
+        image: mongo:4.2-bionic
         deploy:
             restart_policy:
                 condition: always
