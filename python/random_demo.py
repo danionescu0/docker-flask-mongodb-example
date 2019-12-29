@@ -1,4 +1,4 @@
-import random, os, json, datetime, time
+import random, json, datetime
 
 from flask import Flask, Response, request
 from flasgger import Swagger

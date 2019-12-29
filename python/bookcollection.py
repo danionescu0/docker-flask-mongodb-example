@@ -1,5 +1,6 @@
 import json
 import requests
+import dateutil.parser
 
 from flask import Flask, request, Response
 from flask_restplus import Api, Resource, fields, reqparse
@@ -88,9 +89,9 @@ class Return(Resource):
         )
         borrowcollection.update_one(
             {'id': borrow_api.payload['id']},
-            {'$set': {'return_date': borrow_api.payload['return_date']}}
+            {'$set': {'return_date': dateutil.parser.parse(borrow_api.payload['return_date'])}}
         )
-        return Response(json.dumps(borrow_api.payload), status=200, mimetype='application/json')
+        return Response(json.dumps(borrow_api.payload, default=str), status=200, mimetype='application/json')
 
 
 @borrow_api.route("/<string:id>")
@@ -108,7 +109,7 @@ class Borrow(Resource):
             return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
         borrow['book_name'] = book['name']
         borrow['book_author'] = book['author']
-        return Response(json.dumps(borrow), status=200, mimetype='application/json')
+        return Response(json.dumps(borrow, default=str), status=200, mimetype='application/json')
 
     @borrow_api.doc(responses={200: 'Ok'})
     @borrow_api.expect(borrow_model)
@@ -125,13 +126,17 @@ class Borrow(Resource):
             return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
         if book['nr_available'] < 1:
             return Response(json.dumps({'error': 'Book is not available yet'}), status=404, mimetype='application/json')
+        borrow_api.payload['borrow_date'] = dateutil.parser.parse(borrow_api.payload['borrow_date'])
+        borrow_api.payload['max_return_date'] = dateutil.parser.parse(borrow_api.payload['max_return_date'])
+        borrow_api.payload.pop('return_date', None)
         borrowcollection.insert_one(borrow_api.payload)
         bookcollection.update_one(
             {'isbn': borrow_api.payload['isbn']},
             {'$inc': {'nr_available': -1}}
         )
         del borrow_api.payload['_id']
-        return Response(json.dumps(borrow_api.payload), status=200, mimetype='application/json')
+        db_entry = borrowcollection.find_one({'id': id})
+        return Response(json.dumps(db_entry, default=str), status=200, mimetype='application/json')
 
 
 @borrow_api.route("")
@@ -140,7 +145,7 @@ class BorrowList(Resource):
     @borrow_api.expect(pagination_parser, validate=True)
     def get(self):
         args = pagination_parser.parse_args(request)
-        books = borrowcollection.find().sort('id', 1).limit(args['limit']).skip(args['offset'])
+        data = borrowcollection.find().sort('id', 1).limit(args['limit']).skip(args['offset'])
         extracted = [
             {'id': d['id'],
              'userid': d['userid'],
@@ -148,7 +153,7 @@ class BorrowList(Resource):
              'borrow_date': d['borrow_date'],
              'return_date': d['return_date'] if 'return_date' in d else None,
              'max_return_date': d['max_return_date'],
-             } for d in books]
+             } for d in data]
         return extracted
 
 
