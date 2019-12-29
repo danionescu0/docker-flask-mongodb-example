@@ -8,7 +8,8 @@ from bson import json_util
 
 app = Flask(__name__)
 swagger = Swagger(app)
-random_numbers = MongoClient('mongo', 27017).demo.random_numbers
+# random_numbers = MongoClient('mongo', 27017).demo.random_numbers
+random_numbers = MongoClient('localhost', 27017).demo.random_numbers
 
 
 @app.route("/random", methods=["PUT"])
@@ -86,7 +87,10 @@ def last_number_list():
           type: array
     """
     last_numbers = list(random_numbers.find({"_id": "lasts"}))
-    extracted = [d['value'] for d in last_numbers[0]['items']]
+    if len(last_numbers) == 0:
+        extracted = []
+    else:
+        extracted = [d['value'] for d in last_numbers[0]['items']]
     return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
 
 
