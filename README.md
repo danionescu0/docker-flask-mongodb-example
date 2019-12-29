@@ -1,14 +1,17 @@
 ## Purpose
 
-**A working demo usage of Docker, Docker-compose, MongoDb, Python3, Mosquitto, Swagger and Locusts**
+**A working demo usage of multiple technologies like: Docker, Docker-compose, MongoDb, Python3, Mosquitto, Swagger, Locusts, Grafana, InfluxDB**
+
+**Please consider adding issues of bugs and enhancements**
 
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
-The applications will run in parallel using docker-compose on different ports:
 
-**1** [Random service](#random-service) generates random numbers and lists them (port 80)
+The applications will run using docker-compose::
 
-**2** [User CRUD service](#CRUD-service) Create, read, update and detele operations over a user collection (port 81)
+**1** [Random service](#random-service) generates random numbers and lists them (port 800)
+
+**2** [User CRUD service](#User-CRUD-service) Create, read, update and detele operations over a user collection (port 81)
 
 **3** [MQTT service](#MQTT-service) will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT  (port 1883)
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average 
@@ -27,9 +30,13 @@ Photos will be stored on disk retrived and resized / rotated. Also a search by i
 The users must have "profiles" created using the User CRUD service. This api used flask rest plus (https://flask-restplus.readthedocs.io/en/stable/) 
 (port 86)
 
+**9** [Grafana and InfluxDb](#Grafana-and-InfluxDb) Grafana with InfluxDb storage. For showing graphs on sensors. 
+It is connected with the MQTT service. Every datapoint that passes through the MQTT service will be saved in InfluxDb and displayed in Grafana.
+(port 3000)
 
-![diagram.png](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 
+![Diagram](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
+![Grafana](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/grafana.png)
 
 ## Technollogies involved
 * [Docker](https://opensource.com/resources/what-docker) A container system
@@ -54,6 +61,10 @@ How to install docker compose: https://docs.docker.com/compose/install/
 
 * [Locust.io](https://locust.io/) A open source load testing tool. Here is used as a stress test tool
 
+* [Grafana](https://grafana.com/) Grafana is the open source analytics & monitoring solution for every database
+
+* [InfluxDb](https://www.influxdata.com/) Timeseries database, here used a storage to Grafana
+
 
 
 ## Run the microservice
@@ -72,7 +83,7 @@ docker-compose up
 ````
 Note: The build step is necessary only when modifying the source code (git pull or manually edit sources)
 
-## Testing the architecturen
+## Testing the architecture
 
 **Manual testing:**
 
@@ -98,7 +109,7 @@ docker compose up
 mongorestore -d demo ./resources/demo-data/
 ````
 
-**Stress testing using locusts tool**
+**Stress testing using locusts.io**
 
 Using locust.io
 
@@ -526,3 +537,26 @@ Return a book:
 ````
 curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"id\": \"16\", \"return_date\": \"2019-12-13T08:48:47.899Z\"}"
 ````
+
+# Grafana and InfluxDb
+
+Grafana with InfluxDb integration for displaying sensor data. the MQTT service sends datapoints to InfluxDb and Grafana displays the metrics.
+
+The Grafana web interface is abailable at: http://localhost:3000
+
+The grafana API methods are available here: https://grafana.com/docs/grafana/latest/http_api/
+
+The grafana docker image creates a dashboard called "SensorMetrics", so in the interface select it.
+
+Inserting humidity datapoint with value 61 data directly into the InfluxDb database:
+````
+curl -i -XPOST 'http://localhost:8086/write?db=influx' --data-binary 'humidity value=61'
+````
+
+Inserting humidity datapoint with value 61 using MQTT:
+````
+mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{\"sensor_id\": \"humidity\", \"sensor_value\": 61}"
+````
+
+After you have inserted some datapoints, to view the graphs first select the "SensorMetrics", then from the top right corner
+select "Last 5 minutes" and from sensortype selectbox type the sensor name (the one you inserted datapoints for) like "humidity".
