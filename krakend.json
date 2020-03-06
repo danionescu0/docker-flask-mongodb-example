@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "extra_config": {
+    "github_com/devopsfaith/krakend-gologging": {
+      "level": "INFO",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true,
+      "format": "default"
+    }
+  },
+  "timeout": "3000ms",
+  "cache_ttl": "3s",
+  "output_encoding": "json",
+  "name": "docker-flask-mongodb-example",
+  "endpoints": [
+    {
+      "endpoint": "/random",
+      "method": "GET",
+      "extra_config": {},
+      "output_encoding": "json",
+      "concurrent_calls": 1,
+      "querystring_params": [
+        "lower",
+        "upper"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/random",
+          "encoding": "json",
+          "sd": "static",
+          "extra_config": {},
+          "method": "GET",
+          "host": [
+            "http://localhost:800"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    }
+  ]
+}

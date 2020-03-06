@@ -8,8 +8,7 @@ from bson import json_util
 
 app = Flask(__name__)
 swagger = Swagger(app)
-# random_numbers = MongoClient('mongo', 27017).demo.random_numbers
-random_numbers = MongoClient('localhost', 27017).demo.random_numbers
+random_numbers = MongoClient('mongo', 27017).demo.random_numbers
 
 
 @app.route("/random", methods=["PUT"])

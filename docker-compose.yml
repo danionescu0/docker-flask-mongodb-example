@@ -1,4 +1,4 @@
-version: '3'
+version: '3.3'
 
 services:
     web-random:
@@ -164,6 +164,19 @@ services:
         ports:
             - "1883:1883"
 
+    krakend:
+        image: devopsfaith/krakend
+        volumes:
+            - ./:/etc/krakend/
+        configs:
+          - krakend_config
+        ports:
+            - "8080:8080"
+
 volumes:
     grafana_data: {}
     influxdb_data: {}
+
+configs:
+  krakend_config:
+    file: ./krakend.json
