@@ -10,7 +10,7 @@
     }
   },
   "timeout": "3000ms",
-  "cache_ttl": "3s",
+  "cache_ttl": "300s",
   "output_encoding": "json",
   "name": "docker-flask-mongodb-example",
   "endpoints": [
@@ -18,7 +18,7 @@
       "endpoint": "/random",
       "method": "GET",
       "extra_config": {},
-      "output_encoding": "json",
+      "output_encoding": "string",
       "concurrent_calls": 1,
       "querystring_params": [
         "lower",
@@ -27,16 +27,41 @@
       "backend": [
         {
           "url_pattern": "/random",
-          "encoding": "json",
+          "encoding": "string",
           "sd": "static",
           "extra_config": {},
           "method": "GET",
           "host": [
-            "http://localhost:800"
+            "http://web-random:5000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
+    },
+    {
+      "endpoint": "/users",
+      "method": "GET",
+      "extra_config": {},
+      "output_encoding": "string",
+      "concurrent_calls": 1,
+      "querystring_params": [
+        "limit",
+        "offset"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/users",
+          "encoding": "string",
+          "sd": "static",
+          "extra_config": {},
+          "method": "GET",
+          "host": [
+            "http://web-users:5000"
           ],
           "disable_host_sanitize": false
         }
       ]
     }
-  ]
+  ],
+  "disable_rest": false
 }

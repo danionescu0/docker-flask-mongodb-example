@@ -139,6 +139,29 @@ locust -f geolocation_search.py --host=http://localhost:83
 After starting any service open http://localhost:8089 to acces the testing UI
 
 
+**API gateway using Krakend**
+Website: https://www.krakend.io
+
+Web configurator: https://designer.krakend.io/
+
+The API gateway is installed inside this project using a docker container in docker.compose.yml, it loads it's 
+configuration from krakend.json 
+
+For demo purposes i've configured the gateway for two endpoints. The Krakend runs on port 8080
+
+1. the random generator service (web-random), GET request
+````
+curl -i "http://localhost:8080/random?upper=10&lower=5"
+````
+
+2. the users service, (web-users), GET all users request
+````
+curl -i "http://localhost:8080/users?limit=5&offset=0"
+````
+
+All requests can be configured through this gateway using the json file or the web configurator.
+
+
 # Random service
 
 This service generates random numbers and store them in a capped array (last 5 of them). Also it can generate
