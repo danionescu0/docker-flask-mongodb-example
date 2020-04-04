@@ -41,7 +41,7 @@ It is connected with the MQTT service. Every datapoint that passes through the M
 ## Technollogies involved
 * [Docker](https://opensource.com/resources/what-docker) A container system
 
-How to install docker: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04
+How to install docker on Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
 * [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
 
