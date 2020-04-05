@@ -565,11 +565,11 @@ curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json"
 
 Grafana with InfluxDb integration for displaying sensor data. the MQTT service sends datapoints to InfluxDb and Grafana displays the metrics.
 
-The Grafana web interface is abailable at: http://localhost:3000
+The Grafana web interface is abailable at: http://localhost:3000 
 
 The grafana API methods are available here: https://grafana.com/docs/grafana/latest/http_api/
 
-The grafana docker image creates a dashboard called "SensorMetrics", so in the interface select it.
+The grafana docker image creates a dashboard called "SensorMetrics", so in the interface go to home and select it.
 
 Inserting humidity datapoint with value 61 data directly into the InfluxDb database:
 ````
@@ -583,3 +583,31 @@ mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{
 
 After you have inserted some datapoints, to view the graphs first select the "SensorMetrics", then from the top right corner
 select "Last 5 minutes" and from sensortype selectbox type the sensor name (the one you inserted datapoints for) like "humidity".
+
+
+To connect to your local InfluxDb instance use for debug or for fun:
+````
+docker ps
+````
+You should get something like: 
+````
+CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS              PORTS                                        NAMES
+2dbf0b749e17        web-mqtt-image                          "python ./flask-mong…"   26 hours ago        Up 26 hours         5000/tcp                                     docker-flask-mongodb-example_web-mqtt_1
+1fa1be6ab050        web-baesian-image                       "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:84->5000/tcp                         docker-flask-mongodb-example_web-baesian_1
+d40f5ef73695        web-random-image                        "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:800->5000/tcp                        docker-flask-mongodb-example_web-random_1
+2d368aedf1da        web-photo-image                         "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:85->5000/tcp                         docker-flask-mongodb-example_web-photo-process_1
+841ed17fbf6a        web-users-image                         "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:81->5000/tcp                         docker-flask-mongodb-example_web-users_1
+469e0c6388a5        web-fulltext-image                      "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:82->5000/tcp                         docker-flask-mongodb-example_web-fulltext-search_1
+2b81e8eda0a4        web-geolocation-image                   "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:83->5000/tcp                         docker-flask-mongodb-example_web-geolocation-search_1
+764b415b2988        docker-flask-mongodb-example_grafana    "/app/entrypoint.sh"     26 hours ago        Up 26 hours         0.0.0.0:3000->3000/tcp                       docker-flask-mongodb-example_grafana_1
+d585a73657c6        mongo:4.2-bionic                        "docker-entrypoint.s…"   26 hours ago        Up 26 hours         0.0.0.0:27017->27017/tcp                     docker-flask-mongodb-example_mongo_1
+33d4dec53354        devopsfaith/krakend                     "/usr/bin/krakend ru…"   26 hours ago        Up 26 hours         8000/tcp, 8090/tcp, 0.0.0.0:8080->8080/tcp   docker-flask-mongodb-example_krakend_1
+035124f1b665        docker-flask-mongodb-example_influxdb   "/app/entrypoint.sh"     26 hours ago        Up 26 hours         0.0.0.0:8086->8086/tcp                       docker-flask-mongodb-example_influxdb_1
+7240b808bfb1        docker-flask-mongodb-example_mqtt       "/docker-entrypoint.…"   26 hours ago        Up 26 hours         0.0.0.0:1883->1883/tcp                       docker-flask-mongodb-example_mqtt_1
+````
+Now lunch the influx shell inside the container replacing 035124f1b665 with your own container id like so:
+
+````
+docker exec -it 035124f1b665 influx
+````
+And you're inside the influx shell, and you can issue commands, some examples here: https://docs.influxdata.com/influxdb/v1.7/introduction/getting-started/ 
