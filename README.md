@@ -570,6 +570,8 @@ The Grafana web interface is abailable at: http://localhost:3000
 The grafana API methods are available here: https://grafana.com/docs/grafana/latest/http_api/
 
 The grafana docker image creates a dashboard called "SensorMetrics", so in the interface go to home and select it.
+Tips, in the "sensortype" selector write humidity / temperature or whatever you inserted and then press enter on it. 
+I sometimes saw a bug, if you don't press enter it didn't select the corect sensortype as a default
 
 Inserting humidity datapoint with value 61 data directly into the InfluxDb database:
 ````
