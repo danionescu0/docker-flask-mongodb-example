@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: random-demo-deployment
+  namespace: default
+spec:
+  selector:
+      matchLabels:
+        component: web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: web
+    spec:
+      containers:
+        - name: webapp
+          image: danionescu/docker-flask-mongodb-example-python-default:stable
+          command: ["python", "/root/flask-mongodb-example/random_demo.py"]
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
