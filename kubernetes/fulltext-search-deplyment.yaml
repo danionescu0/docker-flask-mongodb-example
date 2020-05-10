@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: random-demo-deployment
+  name: fulltext-search-deployment
   namespace: default
 spec:
   selector:
     matchLabels:
-      app: random-demo
+      app: fulltext-search
   replicas: 1
   template:
     metadata:
       labels:
-        app: random-demo
+        app: fulltext-search
     spec:
       containers:
-        - name: random-demo-conainer
+        - name: fulltext-search-conainer
           image: danionescu/docker-flask-mongodb-example-python-default:stable
-          command: ["python", "/root/flask-mongodb-example/random_demo.py"]
+          command: ["python", "/root/flask-mongodb-example/fulltext_search.py"]
           imagePullPolicy: Always
           ports:
             - containerPort: 5000

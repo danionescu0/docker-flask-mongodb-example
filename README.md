@@ -161,6 +161,35 @@ curl -i "http://localhost:8080/users?limit=5&offset=0"
 
 All requests can be configured through this gateway using the json file or the web configurator.
 
+** Deployment using Kubernetes**
+
+Work in progress, it's not functional yet
+
+Prerequisites :
+
+- minikube installed: https://computingforgeeks.com/how-to-install-minikube-on-ubuntu-debian-linux/
+- kubectl installed
+
+Steps:
+1. Apply the kubernetes configuration:
+````
+kubectl apply -f ./kubernetes
+````
+2. Activate the minikube tunnel in a separate console
+````
+minikube tunnel
+````
+3. Look up services ips:
+```
+kubectl get services
+
+# it will show up smth like
+NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(S)          AGE
+fulltext-search-service   LoadBalancer   10.108.117.106   10.108.117.106   82:30902/TCP     6s
+random-demo-service       LoadBalancer   10.108.246.115   10.108.246.115   800:30858/TCP    6s
+```
+Now visit the app in your browser: http://external_ip_for_random_demo_service:800/apidocs
+
 
 # Random service
 
