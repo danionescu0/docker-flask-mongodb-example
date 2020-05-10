@@ -1,4 +1,5 @@
 import random, json, datetime
+import sys
 
 from flask import Flask, Response, request
 from flasgger import Swagger
@@ -8,7 +9,10 @@ from bson import json_util
 
 app = Flask(__name__)
 swagger = Swagger(app)
-random_numbers = MongoClient('mongo', 27017).demo.random_numbers
+mongo_host = 'mongo'
+if len(sys.argv) == 2:
+    mongo_host = sys.argv[1]
+random_numbers = MongoClient(mongo_host, 27017).demo.random_numbers
 
 
 @app.route("/random", methods=["PUT"])

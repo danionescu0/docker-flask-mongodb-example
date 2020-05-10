@@ -15,8 +15,8 @@ spec:
     spec:
       containers:
         - name: random-demo-conainer
-          image: danionescu/docker-flask-mongodb-example-python-default:stable
-          command: ["python", "/root/flask-mongodb-example/random_demo.py"]
+          image: danionescu/docker-flask-mongodb-example-python-default:latest
+          command: ["python", "/root/flask-mongodb-example/random_demo.py", "mongodb-service.default.svc.cluster.local"]
           imagePullPolicy: Always
           ports:
             - containerPort: 5000

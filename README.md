@@ -7,7 +7,7 @@
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
 
-The applications will run using docker-compose::
+The applications will run using docker-compose:
 
 **1** [Random service](#random-service) generates random numbers and lists them (port 800)
 
@@ -65,7 +65,8 @@ How to install docker compose: https://docs.docker.com/compose/install/
 
 * [InfluxDb](https://www.influxdata.com/) Timeseries database, here used a storage to Grafana
 
-
+* [Kubernetes](https://kubernetes.io/) Container orchestration tool
+  [Deployment using Kubernetes](#Deployment-using-Kubernetes) below
 
 ## Run the microservice
 Before running check that the ports are available and free on your machine!
@@ -161,9 +162,9 @@ curl -i "http://localhost:8080/users?limit=5&offset=0"
 
 All requests can be configured through this gateway using the json file or the web configurator.
 
-** Deployment using Kubernetes**
+# Deployment using Kubernetes
 
-Work in progress, it's not functional yet
+Works for full text search and random demo.
 
 Prerequisites :
 
@@ -188,7 +189,7 @@ NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP      PORT(
 fulltext-search-service   LoadBalancer   10.108.117.106   10.108.117.106   82:30902/TCP     6s
 random-demo-service       LoadBalancer   10.108.246.115   10.108.246.115   800:30858/TCP    6s
 ```
-Now visit the app in your browser: http://external_ip_for_random_demo_service:800/apidocs
+Now visit the app in your browser ex: http://external_ip_for_random_demo_service:800/apidocs
 
 
 # Random service

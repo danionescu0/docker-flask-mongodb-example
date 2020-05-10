@@ -1,4 +1,5 @@
 import json, datetime
+import sys
 
 from flask import Flask, request, Response
 from flasgger import Swagger
@@ -8,7 +9,10 @@ from bson import json_util
 
 app = Flask(__name__)
 swagger = Swagger(app)
-fulltext_search = MongoClient('mongo', 27017).demo.fulltext_search
+mongo_host = 'mongo'
+if len(sys.argv) == 2:
+    mongo_host = sys.argv[1]
+fulltext_search = MongoClient(mongo_host, 27017).demo.fulltext_search
 
 
 @app.route("/fulltext", methods=["PUT"])
