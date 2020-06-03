@@ -114,27 +114,39 @@ mongorestore -d demo ./resources/demo-data/
 
 Using locust.io
 
-Installation: https://docs.locust.io/en/stable/installation.html
+1. Installation: https://docs.locust.io/en/stable/installation.html
+ 
+ * This tests work work version 1.0.2, please ensure you're using this version
+ * Quickstart(optional): https://docs.locust.io/en/stable/quickstart.html
 
-Quickstart: https://docs.locust.io/en/stable/quickstart.html
+2. Ensure port 8089 is free
+
+3. Go to project root in console
+
+4. Run the following:
 
 Testing random demo microservice:
 ````
-locust -f random-demo.py --host=http://localhost:800
+locust -f stresstest-locusts/random-demo.py --host=http://localhost:800 --web-host localhost
 ````
 Testing users microservice:
 ````
-locust -f users.py --host=http://localhost:81
+locust -f stresstest-locusts/users.py --host=http://localhost:81 --web-host localhost
 ````
 
 Testing fulltext_search microservice:
 ````
-locust -f fulltext_search.py --host=http://localhost:82
+locust -f stresstest-locusts/fulltext_search.py --host=http://localhost:82 --web-host localhost
 ````
 
 Testing geolocation_search microservice:
 ````
-locust -f geolocation_search.py --host=http://localhost:83
+locust -f stresstest-locusts/geolocation_search.py --host=http://localhost:83 --web-host localhost
+````
+
+Testing baesian microservice:
+````
+locust -f stresstest-locusts/baesian.py --host=http://localhost:84 --web-host localhost
 ````
 
 After starting any service open http://localhost:8089 to acces the testing UI

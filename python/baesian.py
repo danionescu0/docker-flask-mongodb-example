@@ -30,7 +30,13 @@ def upsert_item(itemid):
     request_params = request.form
     if 'name' not in request_params:
         return Response('Name not present in parameters!', status=404, mimetype='application/json')
-    baesian.update_one({'_id': itemid}, {'$set': {'name': request_params['name']}}, upsert=True)
+    baesian.update_one(
+        {'_id': itemid},
+        {'$set':
+             {'name': request_params['name'], 'nr_votes': 0}
+        },
+        upsert=True
+    )
 
     return Response(json.dumps({"_id": itemid, 'name': request_params['name']}), status=200, mimetype='application/json')
 
