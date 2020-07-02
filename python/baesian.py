@@ -52,11 +52,11 @@ def add_vote(itemid):
         required: true
       - name: mark
         in: formData
-        type: int
+        type: integer
         required: false
       - name: userid
         in: formData
-        type: int
+        type: integer
         required: false
     responses:
       200:
@@ -91,14 +91,19 @@ def get_item(itemid):
         type: object
         properties:
           _id:
-            type: int
+            type: integer
           name:
             type: string
           marks:
             type: array
-          sum_votes: int
-          nr_votes: int
-          baesian_average: float
+            items:
+                type: integer
+          sum_votes:
+            type: integer
+          nr_votes:
+            type: integer
+          baesian_average:
+            type: float
     responses:
       200:
         description: Item model
@@ -110,6 +115,12 @@ def get_item(itemid):
     item_data = baesian.find_one({'_id': itemid})
     if None == item_data:
         return Response("", status=404, mimetype='application/json')
+    if 'marks' not in item_data:
+        item_data['nr_votes'] = 0
+        item_data['sum_votes'] = 0
+        item_data['baesian_average'] = 0
+        return Response(json.dumps(item_data), status=200, mimetype='application/json')
+
     average_nr_votes_pipeline = [
             {"$group": {"_id": "avg_nr_votes", "avg_nr_votes": {"$avg": "$nr_votes"}}},
         ]
@@ -124,8 +135,70 @@ def get_item(itemid):
     baesian_average = round(((average_nr_votes * average_rating) +
                        (item_nr_votes * item_average_rating)) / (average_nr_votes + item_nr_votes), 3)
     item_data['baesian_average'] = baesian_average
-
     return Response(json.dumps(item_data), status=200, mimetype='application/json')
+
+
+@app.route("/items", methods=["GET"])
+def get_items():
+    """All items with pagination without averages
+    ---
+    parameters:
+      - name: limit
+        in: query
+        type: integer
+        required: false
+      - name: offset
+        in: query
+        type: integer
+        required: false
+    definitions:
+      Items:
+        type: array
+        items:
+            properties:
+              _id:
+                type: integer
+              name:
+                type: string
+              marks:
+                type: array
+                items:
+                    type: integer
+    responses:
+      200:
+        description: List of items
+        schema:
+          $ref: '#/definitions/Items'
+    """
+    request_args = request.args
+    limit = int(request_args.get('limit')) if 'limit' in request_args else 10
+    offset = int(request_args.get('offset')) if 'offset' in request_args else 0
+    item_list = baesian.find().limit(limit).skip(offset)
+    if None == baesian:
+        return Response(json.dumps([]), status=200, mimetype='application/json')
+    extracted = [
+        {'_id': d['_id'],
+         'name': d['name'],
+         'marks': d['marks'] if 'marks' in d else []
+         } for d in item_list]
+    return Response(json.dumps(extracted), status=200, mimetype='application/json')
+
+
+@app.route("/item/<int:itemid>", methods=["DELETE"])
+def delete_item(itemid):
+    """Delete operation for a item
+    ---
+    parameters:
+      - name: itemid
+        in: path
+        type: string
+        required: true
+    responses:
+      200:
+        description: Item deleted
+    """
+    baesian.delete_one({'_id': itemid})
+    return Response('', status=200, mimetype='application/json')
 
 
 if __name__ == "__main__":

@@ -60,11 +60,11 @@ def get_near(lat, lng):
         required: true
       - name: max_distance
         in: query
-        type: int
+        type: integer
         required: false
       - name: limit
         in: query
-        type: int
+        type: integer
         required: false
     definitions:
       Place:

@@ -93,7 +93,7 @@ def get_user(userid):
         type: object
         properties:
           _id:
-            type: int
+            type: integer
           email:
             type: string
           name:
@@ -126,20 +126,21 @@ def get_users():
         type: integer
         required: false
     definitions:
-      User:
-        type: object
-        properties:
-          _id:
-            type: int
-          email:
-            type: string
-          name:
-            type: string
+      Users:
+        type: array
+        items:
+            properties:
+              _id:
+                type: integer
+              email:
+                type: string
+              name:
+                type: string
     responses:
       200:
         description: List of user models
         schema:
-          $ref: '#/definitions/User'
+          $ref: '#/definitions/Users'
     """
     request_args = request.args
     limit = int(request_args.get('limit')) if 'limit' in request_args else 10

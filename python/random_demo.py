@@ -22,16 +22,16 @@ def random_insert():
     parameters:
       - name: lower
         in: formData
-        type: int
+        type: integer
         required: false
       - name: upper
         in: formData
-        type: int
+        type: integer
         required: false
     responses:
       200:
         description: Random number added successfully
-        type: int
+        type: integer
     """
     request_params = request.form
     number = str(random.randint(int(request_params['lower']), int(request_params['upper'])))
@@ -55,16 +55,16 @@ def random_generator():
     parameters:
       - name: lower
         in: query
-        type: int
+        type: integer
         required: false
       - name: upper
         in: query
-        type: int
+        type: integer
         required: false
     responses:
       200:
         description: Random number generated
-        type: int
+        type: integer
     """
     request_args = request.args
     lower = int(request_args.get('lower')) if 'lower' in request_args else 10

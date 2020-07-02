@@ -117,12 +117,12 @@ def get_photos_like_this():
       - name: similarity
         description: How similar the file should be, minimum 0 maximum 40
         in: query
-        type: int
+        type: integer
         required: false
         maximum: 40
     definitions:
       Number:
-        type: int
+        type: integer
     responses:
       200:
         description: Found
