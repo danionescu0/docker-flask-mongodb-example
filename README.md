@@ -84,6 +84,14 @@ docker-compose up
 ````
 Note: The build step is necessary only when modifying the source code (git pull or manually edit sources)
 
+## Populate with mock data
+
+Run the import.sh script, it will populate data for users and fulltext search usecases
+````
+chmod +x import.sh
+./import.sh
+````
+
 ## Testing the architecture
 
 **Manual testing:**
