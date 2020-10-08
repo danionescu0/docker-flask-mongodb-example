@@ -7,7 +7,7 @@
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
 
-The applications will run using docker-compose:
+The applications will run using docker-compose, below are the services descriptions, for more info click on the title:
 
 **1** [Random service](#random-service) generates random numbers and lists them (port 800)
 
@@ -33,6 +33,7 @@ The users must have "profiles" created using the User CRUD service. This api use
 **9** [Grafana and InfluxDb](#Grafana-and-InfluxDb) Grafana with InfluxDb storage. For showing graphs on sensors. 
 It is connected with the MQTT service. Every datapoint that passes through the MQTT service will be saved in InfluxDb and displayed in Grafana.
 (port 3000)
+Default credentials are: admin / admin
 
 
 ![Diagram](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -615,7 +616,9 @@ curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json"
 
 Grafana with InfluxDb integration for displaying sensor data. the MQTT service sends datapoints to InfluxDb and Grafana displays the metrics.
 
-The Grafana web interface is abailable at: http://localhost:3000 
+Default credentials are: admin / admin
+
+The Grafana web interface is available at: http://localhost:3000 
 
 The grafana API methods are available here: https://grafana.com/docs/grafana/latest/http_api/
 
