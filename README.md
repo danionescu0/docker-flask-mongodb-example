@@ -88,6 +88,10 @@ Note: The build step is necessary only when modifying the source code (git pull 
 ## Populate with mock data
 
 Run the import.sh script, it will populate data for users and fulltext search usecases
+
+1. start all services with docker compose
+
+2. run the import script
 ````
 chmod +x import.sh
 ./import.sh
