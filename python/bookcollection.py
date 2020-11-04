@@ -6,9 +6,9 @@ from flask import Flask, request, Response
 from flask_restplus import Api, Resource, fields, reqparse
 from pymongo import MongoClient, errors
 
+users_host = 'http://localhost:81'
+mongo_client = MongoClient('localhost', 27017)
 
-users_host = 'http://web-users:5000'
-mongo_client = MongoClient('mongo', 27017)
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
 
@@ -114,28 +114,38 @@ class Borrow(Resource):
     @borrow_api.doc(responses={200: 'Ok'})
     @borrow_api.expect(borrow_model)
     def put(self, id):
-        borrow = borrowcollection.find_one({'id': id})
-        if None is not borrow:
-            return Response(json.dumps({'error': 'Borrow already used'}), status=404, mimetype='application/json')
-        borrow_api.payload['id'] = id
-        user = get_user(borrow_api.payload['userid'])
-        if not user.exists:
-            return Response(json.dumps({'error': 'User not found'}), status=404, mimetype='application/json')
-        book = bookcollection.find_one({'isbn': borrow_api.payload['isbn']})
-        if book is None:
-            return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
-        if book['nr_available'] < 1:
-            return Response(json.dumps({'error': 'Book is not available yet'}), status=404, mimetype='application/json')
-        borrow_api.payload['borrow_date'] = dateutil.parser.parse(borrow_api.payload['borrow_date'])
-        borrow_api.payload['max_return_date'] = dateutil.parser.parse(borrow_api.payload['max_return_date'])
-        borrow_api.payload.pop('return_date', None)
-        borrowcollection.insert_one(borrow_api.payload)
-        bookcollection.update_one(
-            {'isbn': borrow_api.payload['isbn']},
-            {'$inc': {'nr_available': -1}}
-        )
-        del borrow_api.payload['_id']
-        db_entry = borrowcollection.find_one({'id': id})
+        session = mongo_client.start_session()
+        session.start_transaction()
+        try:
+            borrow = borrowcollection.find_one({'id': id}, session=session)
+            if None is not borrow:
+                return Response(json.dumps({'error': 'Borrow already used'}), status=404, mimetype='application/json')
+            borrow_api.payload['id'] = id
+            user = get_user(borrow_api.payload['userid'])
+            if not user.exists:
+                return Response(json.dumps({'error': 'User not found'}), status=404, mimetype='application/json')
+            book = bookcollection.find_one({'isbn': borrow_api.payload['isbn']}, session=session)
+            if book is None:
+                return Response(json.dumps({'error': 'Book not found'}), status=404, mimetype='application/json')
+            if book['nr_available'] < 1:
+                return Response(json.dumps({'error': 'Book is not available yet'}), status=404, mimetype='application/json')
+            borrow_api.payload['borrow_date'] = dateutil.parser.parse(borrow_api.payload['borrow_date'])
+            borrow_api.payload['max_return_date'] = dateutil.parser.parse(borrow_api.payload['max_return_date'])
+            borrow_api.payload.pop('return_date', None)
+            borrowcollection.insert_one(borrow_api.payload, session=session)
+            bookcollection.update_one(
+                {'isbn': borrow_api.payload['isbn']},
+                {'$inc': {'nr_available': -1}},
+                session=session
+            )
+            del borrow_api.payload['_id']
+            db_entry = borrowcollection.find_one({'id': id}, session=session)
+            session.commit_transaction()
+        except Exception as e:
+            session.end_session()
+            return Response(json.dumps({'error': str(e)}, default=str), status=500, mimetype='application/json')
+
+        session.end_session()
         return Response(json.dumps(db_entry, default=str), status=200, mimetype='application/json')
 
 
@@ -201,4 +211,8 @@ class BookList(Resource):
 
 if __name__ == "__main__":
     bookcollection.create_index('isbn', unique=True)
+    try:
+        mongo_client.admin.command('replSetInitiate')
+    except errors.OperationFailure as e:
+        print (str(e))
     app.run(debug=True, host='0.0.0.0', port=5000)

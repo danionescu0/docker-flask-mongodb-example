@@ -152,6 +152,11 @@ services:
         deploy:
             restart_policy:
                 condition: always
+        command:
+        - --storageEngine
+        - wiredTiger
+        - --replSet
+        - myrepl
         ports:
             - "27017:27017"
 
