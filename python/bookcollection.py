@@ -6,8 +6,9 @@ from flask import Flask, request, Response
 from flask_restplus import Api, Resource, fields, reqparse
 from pymongo import MongoClient, errors
 
-users_host = 'http://localhost:81'
-mongo_client = MongoClient('localhost', 27017)
+
+users_host = 'http://web-users:5000'
+mongo_client = MongoClient('mongo', 27017)
 
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
