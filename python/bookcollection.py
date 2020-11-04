@@ -211,9 +211,9 @@ class BookList(Resource):
 
 
 if __name__ == "__main__":
-    bookcollection.create_index('isbn', unique=True)
     try:
         mongo_client.admin.command('replSetInitiate')
     except errors.OperationFailure as e:
         print (str(e))
+    bookcollection.create_index('isbn', unique=True)
     app.run(debug=True, host='0.0.0.0', port=5000)
