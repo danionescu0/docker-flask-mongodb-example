@@ -3,13 +3,13 @@ version: '3.3'
 services:
     web-random:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-random-image
         ports:
             - "800:5000"
-        entrypoint: python ./flask-mongodb-example/random_demo.py
+        entrypoint: python /root/flask-mongodb-example/python/random_demo.py
         deploy:
           restart_policy:
             condition: on-failure
@@ -18,13 +18,13 @@ services:
 
     web-users:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-users-image
         ports:
             - "81:5000"
-        entrypoint: python ./flask-mongodb-example/users.py
+        entrypoint: python /root/flask-mongodb-example/python/users.py
         deploy:
           restart_policy:
             condition: on-failure
@@ -33,11 +33,11 @@ services:
 
     web-mqtt:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements-mqtt.txt
+                requirements: /root/flask-mongodb-example/python/requirements-mqtt.txt
         image: web-mqtt-image
-        entrypoint: python ./flask-mongodb-example/mqtt.py
+        entrypoint: python /root/flask-mongodb-example/python/mqtt.py
         deploy:
           restart_policy:
             condition: on-failure
@@ -51,13 +51,13 @@ services:
 
     web-fulltext-search:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-fulltext-image
         ports:
             - "82:5000"
-        entrypoint: python ./flask-mongodb-example/fulltext_search.py
+        entrypoint: python /root/flask-mongodb-example/python/fulltext_search.py
         deploy:
           restart_policy:
             condition: on-failure
@@ -66,13 +66,13 @@ services:
 
     web-geolocation-search:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-geolocation-image
         ports:
             - "83:5000"
-        entrypoint: python ./flask-mongodb-example/geolocation_search.py
+        entrypoint: python /root/flask-mongodb-example/python/geolocation_search.py
         deploy:
             restart_policy:
                 condition: on-failure
@@ -81,13 +81,13 @@ services:
 
     web-baesian:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-baesian-image
         ports:
             - "84:5000"
-        entrypoint: python ./flask-mongodb-example/baesian.py
+        entrypoint: python /root/flask-mongodb-example/python/baesian.py
         deploy:
             restart_policy:
                 condition: on-failure
@@ -96,13 +96,13 @@ services:
 
     web-photo-process:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements-photo.txt
+                requirements: /root/flask-mongodb-example/python/requirements-photo.txt
         image: web-photo-image
         ports:
             - "85:5000"
-        entrypoint: python ./flask-mongodb-example/photo_process.py
+        entrypoint: python /root/flask-mongodb-example/python/photo_process.py
         volumes:
             - ./container-storage:/root/storage
         deploy:
@@ -113,15 +113,15 @@ services:
 
     web-book-collection:
         build:
-            context: .
+            context: ./docker-python
             args:
-                requirements: ./flask-mongodb-example/requirements-restplus.txt
+                requirements: /root/flask-mongodb-example/python/requirements-restplus.txt
         image: web-bookcollection-image
         environment:
              - PYTHONUNBUFFERED=1
         ports:
             - "86:5000"
-        entrypoint: python ./flask-mongodb-example/bookcollection.py
+        entrypoint: python /root/flask-mongodb-example/python/bookcollection.py
         deploy:
             restart_policy:
                 condition: on-failure

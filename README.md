@@ -35,6 +35,8 @@ It is connected with the MQTT service. Every datapoint that passes through the M
 (port 3000)
 Default credentials are: admin / admin
 
+**10** [User CRUD fastapi] (#User-CRUD-fastapi) Create, read, update and detele operations made available with fastapi framework, work in progress
+
 
 ![Diagram](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 ![Grafana](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/grafana.png)
@@ -670,3 +672,10 @@ Now lunch the influx shell inside the container replacing 035124f1b665 with your
 docker exec -it 035124f1b665 influx
 ````
 And you're inside the influx shell, and you can issue commands, some examples here: https://docs.influxdata.com/influxdb/v1.7/introduction/getting-started/ 
+
+
+#User CRUD fastapi
+
+Work in progress
+
+Will be using https://fastapi.tiangolo.com/ framework

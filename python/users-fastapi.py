@@ -29,7 +29,6 @@ def add_user(userid: int, user: User):
         })
     except errors.DuplicateKeyError as e:
         raise HTTPException(status_code=500, detail="Duplicate user id!")
-    print(users.find_one({'_id': userid}))
     return format_user(users.find_one({'_id': userid}))
 
 
@@ -60,9 +59,7 @@ def get_users(limit: Optional[int] = 10, offset: Optional[int] = 0):
     if None == users:
         return []
 
-    extracted = [
-        format_user(data) for data in user_list]
-    print(extracted)
+    extracted = [format_user(data) for data in user_list]
     return extracted
 
 
