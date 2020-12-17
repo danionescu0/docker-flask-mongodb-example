@@ -54,7 +54,9 @@ How to install docker compose: https://docs.docker.com/compose/install/
 
 * [MongoDb](https://www.mongodb.com/) General purpose NoSQL database system
 
-* [flask microframework](http://flask.pocoo.org/) Python web framework 
+* [flask microframework](http://flask.pocoo.org/) Python flask web framework 
+
+* [fastapi framework](https://fastapi.tiangolo.com/) Python fastapi web framework
 
 * [Mosquitto MQTT](https://mosquitto.org/) MQTT server
 
@@ -71,13 +73,21 @@ How to install docker compose: https://docs.docker.com/compose/install/
 * [Kubernetes](https://kubernetes.io/) Container orchestration tool
   [Deployment using Kubernetes](#Deployment-using-Kubernetes) below
 
+
 ## Run the microservice
 Before running check that the ports are available and free on your machine!
 
-On linux run the following command and check the output, if the ports 80 to 85, 1883 and 27017 are not available please change the ports accordingly in docker-compose.yaml 
+On linux run the following command and check if the following ports are free:
 ````
 netstat -nltp
 ````
+- 80 to 86, 88 for the containers
+- 1883 for MQTT
+- 27017 for MongoDb
+- 8080 for Krakend
+- 3000 for Grafana
+- 8080 for InfluxDB 
+
 
 Start the microservice architecture:
 ````
@@ -85,9 +95,9 @@ cd git_clonned_project_folder
 docker-compose build
 docker-compose up
 ````
-Note: The build step is necessary only when modifying the source code (git pull or manually edit sources)
 
-## Populate with mock data
+
+## Populate with mock data [optional]
 
 Run the import.sh script, it will populate data for users and fulltext search usecases
 
@@ -99,7 +109,7 @@ chmod +x import.sh
 ./import.sh
 ````
 
-## Testing the architecture
+## Testing the architecture [optional]
 
 **Manual testing:**
 
@@ -189,7 +199,7 @@ curl -i "http://localhost:8080/users?limit=5&offset=0"
 
 All requests can be configured through this gateway using the json file or the web configurator.
 
-# Deployment using Kubernetes
+# Deployment using Kubernetes (an alternative to docker-compose)
 
 Works for full text search and random demo.
 
@@ -218,6 +228,8 @@ random-demo-service       LoadBalancer   10.108.246.115   10.108.246.115   800:3
 ```
 Now visit the app in your browser ex: http://external_ip_for_random_demo_service:800/apidocs
 
+
+# Services explained:
 
 # Random service
 
@@ -675,7 +687,7 @@ And you're inside the influx shell, and you can issue commands, some examples he
 
 
 #User CRUD fastapi
+Same as User CRUD, just written with fastapi framework (https://fastapi.tiangolo.com/):
 
-Work in progress
+Swagger url: http://localhost:88/docs
 
-Will be using https://fastapi.tiangolo.com/ framework

@@ -6,8 +6,10 @@ RUN apt install git -y
 
 WORKDIR /root
 
-#uncomment the following lines for development (will copy files from local instead from github
-#run in shell: mkdir project; rsync -av --progress ../ ./project/ --exclude docker-python
+#development onlu
+#1. uncomment the following 2 lines (will copy files from local instead from github
+#2 comment the line with git clone
+#2. run in shell from Dockerfile location: mkdir project; rsync -av --progress ../ ./project/ --exclude docker-python
 #RUN mkdir flask-mongodb-example
 #COPY ./project ./flask-mongodb-example/
 

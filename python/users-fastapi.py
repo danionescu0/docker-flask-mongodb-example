@@ -58,7 +58,6 @@ def get_users(limit: Optional[int] = 10, offset: Optional[int] = 0):
     user_list = users.find().limit(limit).skip(offset)
     if None == users:
         return []
-
     extracted = [format_user(data) for data in user_list]
     return extracted
 
