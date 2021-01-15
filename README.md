@@ -683,10 +683,21 @@ Now lunch the influx shell inside the container replacing 035124f1b665 with your
 ````
 docker exec -it 035124f1b665 influx
 ````
-And you're inside the influx shell, and you can issue commands, some examples here: https://docs.influxdata.com/influxdb/v1.7/introduction/getting-started/ 
+And you're inside the influx shell, and you can issue commands like:
+````
+SHOW DATABASES
+-- will print all databases
+USE influx
+-- selects "influx" database
+SHOW MEASUREMENTS
+-- shows currents measuremets: like temperature humidity etc
+SELECT * from "humidity"
+-- shows all records from humidity
+````
+More examples in the documentation: https://docs.influxdata.com/influxdb/v1.7/introduction/getting-started/ 
 
 
-#User CRUD fastapi
+# User CRUD fastapi
 Same as User CRUD, written with fastapi framework (https://fastapi.tiangolo.com/):
 
 Swagger url: http://localhost:88/docs
