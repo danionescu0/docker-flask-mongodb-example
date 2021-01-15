@@ -35,7 +35,7 @@ It is connected with the MQTT service. Every datapoint that passes through the M
 (port 3000)
 Default credentials are: admin / admin
 
-**10** [User CRUD fastapi] (#User-CRUD-fastapi) Create, read, update and detele operations made available with fastapi framework, work in progress
+**10** [User CRUD fastapi](#User-CRUD-fastapi) Create, read, update and detele operations made available with fastapi framework
 
 
 ![Diagram](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -687,7 +687,7 @@ And you're inside the influx shell, and you can issue commands, some examples he
 
 
 #User CRUD fastapi
-Same as User CRUD, just written with fastapi framework (https://fastapi.tiangolo.com/):
+Same as User CRUD, written with fastapi framework (https://fastapi.tiangolo.com/):
 
 Swagger url: http://localhost:88/docs
 
