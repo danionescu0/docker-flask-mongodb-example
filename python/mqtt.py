@@ -61,6 +61,6 @@ client.on_message = on_message
 client.connect('mqtt', 1883, 60)
 client.loop_start()
 
+logger.debug("MQTT App started")
 while True:
-    logger.debug("MQTT App started")
     time.sleep(0.05)

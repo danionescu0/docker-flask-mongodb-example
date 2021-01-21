@@ -669,18 +669,21 @@ docker ps
 You should get something like: 
 ````
 CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS              PORTS                                        NAMES
-2dbf0b749e17        web-mqtt-image                          "python ./flask-mong…"   26 hours ago        Up 26 hours         5000/tcp                                     docker-flask-mongodb-example_web-mqtt_1
-1fa1be6ab050        web-baesian-image                       "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:84->5000/tcp                         docker-flask-mongodb-example_web-baesian_1
-d40f5ef73695        web-random-image                        "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:800->5000/tcp                        docker-flask-mongodb-example_web-random_1
-2d368aedf1da        web-photo-image                         "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:85->5000/tcp                         docker-flask-mongodb-example_web-photo-process_1
-841ed17fbf6a        web-users-image                         "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:81->5000/tcp                         docker-flask-mongodb-example_web-users_1
-469e0c6388a5        web-fulltext-image                      "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:82->5000/tcp                         docker-flask-mongodb-example_web-fulltext-search_1
-2b81e8eda0a4        web-geolocation-image                   "python ./flask-mong…"   26 hours ago        Up 26 hours         0.0.0.0:83->5000/tcp                         docker-flask-mongodb-example_web-geolocation-search_1
-764b415b2988        docker-flask-mongodb-example_grafana    "/app/entrypoint.sh"     26 hours ago        Up 26 hours         0.0.0.0:3000->3000/tcp                       docker-flask-mongodb-example_grafana_1
-d585a73657c6        mongo:4.2-bionic                        "docker-entrypoint.s…"   26 hours ago        Up 26 hours         0.0.0.0:27017->27017/tcp                     docker-flask-mongodb-example_mongo_1
-33d4dec53354        devopsfaith/krakend                     "/usr/bin/krakend ru…"   26 hours ago        Up 26 hours         8000/tcp, 8090/tcp, 0.0.0.0:8080->8080/tcp   docker-flask-mongodb-example_krakend_1
-035124f1b665        docker-flask-mongodb-example_influxdb   "/app/entrypoint.sh"     26 hours ago        Up 26 hours         0.0.0.0:8086->8086/tcp                       docker-flask-mongodb-example_influxdb_1
-7240b808bfb1        docker-flask-mongodb-example_mqtt       "/docker-entrypoint.…"   26 hours ago        Up 26 hours         0.0.0.0:1883->1883/tcp                       docker-flask-mongodb-example_mqtt_1
+cd104befff5d   web-bookcollection-image                "python /root/flask-…"   53 seconds ago       Up 4 seconds    0.0.0.0:86->5000/tcp                         docker-flask-mongodb-example_web-book-collection_1
+6e8c7b582850   docker-flask-mongodb-example_grafana    "/app/entrypoint.sh"     59 seconds ago       Up 16 seconds   0.0.0.0:3000->3000/tcp                       docker-flask-mongodb-example_grafana_1
+df0c529c1657   backgorund-mqtt-image                   "python /root/flask-…"   59 seconds ago       Up 8 seconds    5000/tcp                                     docker-flask-mongodb-example_web-mqtt_1
+ccc7c7c7c5d6   web-baesian-image                       "python /root/flask-…"   About a minute ago   Up 7 seconds    0.0.0.0:84->5000/tcp                         docker-flask-mongodb-example_web-baesian_1
+acfcb02b3fe5   web-users-fastapi-image                 "uvicorn users-fasta…"   About a minute ago   Up 6 seconds    0.0.0.0:88->5000/tcp                         docker-flask-mongodb-example_web-users-fast-api_1
+0ca1efe6b2e6   web-photo-image                         "python /root/flask-…"   About a minute ago   Up 11 seconds   0.0.0.0:85->5000/tcp                         docker-flask-mongodb-example_web-photo-process_1
+360be6063a1d   web-fulltext-image                      "python /root/flask-…"   About a minute ago   Up 10 seconds   0.0.0.0:82->5000/tcp                         docker-flask-mongodb-example_web-fulltext-search_1
+97c471ffb744   web-random-image                        "python /root/flask-…"   About a minute ago   Up 11 seconds   0.0.0.0:800->5000/tcp                        docker-flask-mongodb-example_web-random_1
+a484cef82b33   web-users-image                         "python /root/flask-…"   About a minute ago   Up 5 seconds    0.0.0.0:81->5000/tcp                         docker-flask-mongodb-example_web-users_1
+6677d398779a   web-geolocation-image                   "python /root/flask-…"   About a minute ago   Up 9 seconds    0.0.0.0:83->5000/tcp                         docker-flask-mongodb-example_web-geolocation-search_1
+2f66b89a591f   mongo:4.2-bionic                        "docker-entrypoint.s…"   About a minute ago   Up 13 seconds   0.0.0.0:27017->27017/tcp                     docker-flask-mongodb-example_mongo_1
+5acb0a3b87e3   docker-flask-mongodb-example_mqtt       "/docker-entrypoint.…"   About a minute ago   Up 15 seconds   0.0.0.0:1883->1883/tcp                       docker-flask-mongodb-example_mqtt_1
+29a53a79d7b1   docker-flask-mongodb-example_influxdb   "/app/entrypoint.sh"     About a minute ago   Up 17 seconds   0.0.0.0:8086->8086/tcp                       docker-flask-mongodb-example_influxdb_1
+ff0b8b523691   devopsfaith/krakend                     "/usr/bin/krakend ru…"   About a minute ago   Up 14 seconds   8000/tcp, 8090/tcp, 0.0.0.0:8080->8080/tcp   docker-flask-mongodb-example_krakend_1
+
 ````
 Now lunch the influx shell inside the container replacing 035124f1b665 with your own container id like so:
 

@@ -31,12 +31,12 @@ services:
         depends_on:
             - mongo
 
-    web-mqtt:
+    background-mqtt:
         build:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements-mqtt.txt
-        image: web-mqtt-image
+        image: backgorund-mqtt-image
         entrypoint: python /root/flask-mongodb-example/python/mqtt.py
         deploy:
           restart_policy:
