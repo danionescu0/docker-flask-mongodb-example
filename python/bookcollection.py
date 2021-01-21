@@ -1,3 +1,4 @@
+import sys
 import json
 import requests
 import dateutil.parser
@@ -9,8 +10,12 @@ from pymongo import MongoClient, errors
 from utils import get_logger
 
 
-users_host = 'http://web-users:5000'
-mongo_client = MongoClient('mongo', 27017)
+if len(sys.argv) == 3:
+    _, users_host, mongo_host = sys.argv
+    mongo_client = MongoClient(mongo_host, 27017)
+else:
+    users_host = 'http://web-users:5000'
+    mongo_client = MongoClient('mongo', 27017)
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
 logger = get_logger()
@@ -217,6 +222,11 @@ if __name__ == "__main__":
     try:
         mongo_client.admin.command('replSetInitiate')
     except errors.OperationFailure as e:
-        logger.error('Erro setting mongodb replSetInitiate error: {0}'.format(str(e)))
+        logger.error('Error setting mongodb replSetInitiate error: {0}'.format(str(e)))
+    bookcollection.insert_one({'isbn': 0})
+    bookcollection.delete_one({'isbn': 0})
+    borrowcollection.insert_one({'id': 0})
+    borrowcollection.delete_one({'id': 0})
+
     bookcollection.create_index('isbn', unique=True)
     app.run(debug=True, host='0.0.0.0', port=5000)

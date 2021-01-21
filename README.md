@@ -580,11 +580,6 @@ curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 
 # Book-collection
 
-Still some refinements should be made to the api, and the documentation below enhanced:
-
-- use transactions when borrow and return a book (this requires a MongoDb cluster, it will be added in the future)
-
-
 A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
 Books can be borrowed and an accounting mechanism for this is in place.
 
