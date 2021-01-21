@@ -6,12 +6,15 @@ from flask import Flask, request, Response
 from flask_restplus import Api, Resource, fields, reqparse
 from pymongo import MongoClient, errors
 
+from utils import get_logger
+
 
 users_host = 'http://web-users:5000'
 mongo_client = MongoClient('mongo', 27017)
-
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
+logger = get_logger()
+
 
 app = Flask(__name__)
 api = Api(
@@ -61,7 +64,7 @@ def get_user(id: int) -> User:
     try:
         response = requests.get(url='{0}/users/{1}'.format(users_host, str(id)))
     except Exception as e:
-        print(str(e))
+        logger.error('Error getting user data error: {0}'.format(str(e)))
         return User(False, id, None, None)
     if response.status_code != 200:
         return User(False, id, None, None)
@@ -214,6 +217,6 @@ if __name__ == "__main__":
     try:
         mongo_client.admin.command('replSetInitiate')
     except errors.OperationFailure as e:
-        print (str(e))
+        logger.error('Erro setting mongodb replSetInitiate error: {0}'.format(str(e)))
     bookcollection.create_index('isbn', unique=True)
     app.run(debug=True, host='0.0.0.0', port=5000)

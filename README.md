@@ -46,6 +46,10 @@ Default credentials are: admin / admin
 
 How to install docker on Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
 
+How to install docker on Centos: https://docs.docker.com/engine/install/centos/
+
+How to install docker on Windows: https://docs.docker.com/docker-for-windows/install-windows-home/
+
 * [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
 
 How to install docker compose: https://docs.docker.com/compose/install/

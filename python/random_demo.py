@@ -6,6 +6,8 @@ from flasgger import Swagger
 from pymongo import MongoClient
 from bson import json_util
 
+from utils import get_logger
+
 
 app = Flask(__name__)
 swagger = Swagger(app)
@@ -13,6 +15,7 @@ mongo_host = 'mongo'
 if len(sys.argv) == 2:
     mongo_host = sys.argv[1]
 random_numbers = MongoClient(mongo_host, 27017).demo.random_numbers
+logger = get_logger()
 
 
 @app.route("/random", methods=["PUT"])
@@ -98,4 +101,5 @@ def last_number_list():
 
 
 if __name__ == "__main__":
+    logger.debug("Random demo app started")
     app.run(debug=True, host='0.0.0.0', port=5000)
