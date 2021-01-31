@@ -8,7 +8,7 @@ from bson import json_util
 
 app = Flask(__name__)
 swagger = Swagger(app)
-places = MongoClient('mongo', 27017).demo.places
+places = MongoClient('mongodb', 27017).demo.places
 
 
 @app.route("/location", methods=["POST"])
@@ -101,5 +101,9 @@ def get_near(lat, lng):
 
 
 if __name__ == "__main__":
+    #cretes a GEOSHPHERE (2dsphere in MongoDb: https://docs.mongodb.com/manual/core/2dsphere/) index
+    #named "location_index" on "location" field, it's used to search by distance
     places.create_index([('location', GEOSPHERE)], name='location_index')
+
+    # starts the app in debug mode, bind on all ip's and on port 5000
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -15,7 +15,7 @@ if len(sys.argv) == 3:
     mongo_client = MongoClient(mongo_host, 27017)
 else:
     users_host = 'http://web-users:5000'
-    mongo_client = MongoClient('mongo', 27017)
+    mongo_client = MongoClient('mongodb', 27017)
 bookcollection = mongo_client.demo.bookcollection
 borrowcollection = mongo_client.demo.borrowcollection
 logger = get_logger()
@@ -229,4 +229,5 @@ if __name__ == "__main__":
     borrowcollection.delete_one({'id': 0})
 
     bookcollection.create_index('isbn', unique=True)
+    # starts the app in debug mode, bind on all ip's and on port 5000
     app.run(debug=True, host='0.0.0.0', port=5000)

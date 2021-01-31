@@ -1,18 +1,23 @@
-import json
-import time, datetime
-import statistics
-import requests
+import json,time, datetime, statistics, requests
 
 import paho.mqtt.client as mqtt
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 
-from utils import get_logger
+from utils import get_logger, read_docker_secret
 
 
 influxdb_url = 'http://influxdb:8086/write?db=influx'
-sensors = MongoClient('mongo', 27017).demo.sensors
+mongo_host = 'mongodb'
+mqtt_host = 'mqtt'
+
+mqtt_user = read_docker_secret('MQTT_USER')
+mqtt_password = read_docker_secret('MQTT_PASSWORD')
+print(mqtt_user, mqtt_password)
+
+mongo_client = MongoClient(mongo_host, 27017)
+sensors = mongo_client.demo.sensors
 client = mqtt.Client()
-client.username_pw_set('some_user', 'some_pass')
+client.username_pw_set(mqtt_user, mqtt_password)
 logger = get_logger()
 
 
@@ -58,9 +63,14 @@ def on_message(client, userdata, msg):
 client.on_connect = on_connect
 client.on_message = on_message
 
-client.connect('mqtt', 1883, 60)
+client.connect(mqtt_host, 1883, 60)
 client.loop_start()
 
 logger.debug("MQTT App started")
+try:
+    mongo_client.admin.command('replSetInitiate')
+except errors.OperationFailure as e:
+    logger.error('Error setting mongodb replSetInitiate error: {0}'.format(str(e)))
+
 while True:
     time.sleep(0.05)

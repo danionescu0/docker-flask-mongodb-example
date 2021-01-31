@@ -7,7 +7,7 @@ from flasgger import Swagger
 
 app = Flask(__name__)
 swagger = Swagger(app)
-baesian = MongoClient('mongo', 27017).demo.baesian
+baesian = MongoClient('mongodb', 27017).demo.baesian
 
 
 @app.route("/item/<int:itemid>", methods=["POST"])
@@ -202,4 +202,5 @@ def delete_item(itemid):
 
 
 if __name__ == "__main__":
+    # starts the app in debug mode, bind on all ip's and on port 5000
     app.run(debug=True, host='0.0.0.0', port=5000)

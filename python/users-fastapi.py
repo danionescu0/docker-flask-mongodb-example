@@ -1,6 +1,4 @@
-import json
 from typing import Optional, List
-from bson import json_util
 
 
 from pymongo import MongoClient, errors
@@ -8,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 app = FastAPI()
-users = MongoClient('mongo', 27017).demo.users
+users = MongoClient('mongodb', 27017).demo.users
 
 
 class User(BaseModel):

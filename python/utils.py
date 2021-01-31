@@ -1,4 +1,4 @@
-import logging
+import logging, os
 
 
 def get_logger():
@@ -18,3 +18,8 @@ def get_logger():
     logger.addHandler(fh)
     logger.addHandler(ch)
     return logger
+
+
+def read_docker_secret(name: str) -> str:
+    with open(os.environ.get(name), 'r') as file:
+        return file.read()

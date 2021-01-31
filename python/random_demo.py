@@ -1,5 +1,4 @@
-import random, json, datetime
-import sys
+import random, json, datetime, sys
 
 from flask import Flask, Response, request
 from flasgger import Swagger
@@ -11,7 +10,7 @@ from utils import get_logger
 
 app = Flask(__name__)
 swagger = Swagger(app)
-mongo_host = 'mongo'
+mongo_host = 'mongodb'
 if len(sys.argv) == 2:
     mongo_host = sys.argv[1]
 random_numbers = MongoClient(mongo_host, 27017).demo.random_numbers
@@ -102,4 +101,5 @@ def last_number_list():
 
 if __name__ == "__main__":
     logger.debug("Random demo app started")
+    # starts the app in debug mode, bind on all ip's and on port 5000
     app.run(debug=True, host='0.0.0.0', port=5000)

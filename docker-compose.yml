@@ -14,7 +14,7 @@ services:
           restart_policy:
             condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     web-users:
         build:
@@ -29,7 +29,7 @@ services:
           restart_policy:
             condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     background-mqtt:
         build:
@@ -42,9 +42,14 @@ services:
           restart_policy:
             condition: on-failure
         environment:
-             - PYTHONUNBUFFERED=1
+            - MQTT_USER=/run/secrets/mqtt_user
+            - MQTT_PASSWORD=/run/secrets/mqtt_password
+            - PYTHONUNBUFFERED=1
+        secrets:
+            - mqtt_user
+            - mqtt_password
         depends_on:
-            - mongo
+            - mongodb
             - mqtt
             - influxdb
         tty: true
@@ -62,7 +67,7 @@ services:
           restart_policy:
             condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     web-geolocation-search:
         build:
@@ -77,7 +82,7 @@ services:
             restart_policy:
                 condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     web-baesian:
         build:
@@ -92,7 +97,7 @@ services:
             restart_policy:
                 condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     web-photo-process:
         build:
@@ -109,7 +114,7 @@ services:
             restart_policy:
                 condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     web-book-collection:
         build:
@@ -126,7 +131,7 @@ services:
             restart_policy:
                 condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
             - web-users
 
     web-users-fast-api:
@@ -142,7 +147,7 @@ services:
             restart_policy:
                 condition: on-failure
         depends_on:
-            - mongo
+            - mongodb
 
     influxdb:
         build: docker-influxdb
@@ -162,7 +167,7 @@ services:
         volumes:
           - grafana_data:/var/lib/grafana
 
-    mongo:
+    mongodb:
         image: mongo:4.2-bionic
         deploy:
             restart_policy:
@@ -200,3 +205,9 @@ volumes:
 configs:
   krakend_config:
     file: ./krakend.json
+
+secrets:
+    mqtt_user:
+        file: ./secrets/mqtt_user.txt
+    mqtt_password:
+        file: ./secrets/mqtt_pass.txt

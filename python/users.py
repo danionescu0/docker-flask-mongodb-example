@@ -8,7 +8,7 @@ from flasgger import Swagger
 
 app = Flask(__name__)
 swagger = Swagger(app)
-users = MongoClient('mongo', 27017).demo.users
+users = MongoClient('mongodb', 27017).demo.users
 
 
 @app.route("/users/<int:userid>", methods=["PUT"])
