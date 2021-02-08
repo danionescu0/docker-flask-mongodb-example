@@ -6,7 +6,7 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-random-image
+        image: web-standard
         ports:
             - "800:5000"
         entrypoint: python /root/flask-mongodb-example/python/random_demo.py
@@ -21,7 +21,7 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-users-image
+        image: web-standard
         ports:
             - "81:5000"
         entrypoint: python /root/flask-mongodb-example/python/users.py
@@ -59,7 +59,7 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-fulltext-image
+        image: web-standard
         ports:
             - "82:5000"
         entrypoint: python /root/flask-mongodb-example/python/fulltext_search.py
@@ -89,7 +89,7 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-baesian-image
+        image: web-standard
         ports:
             - "84:5000"
         entrypoint: python /root/flask-mongodb-example/python/baesian.py

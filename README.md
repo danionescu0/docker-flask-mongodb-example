@@ -54,13 +54,13 @@ How to install docker on Windows: https://docs.docker.com/docker-for-windows/ins
 
 How to install docker compose: https://docs.docker.com/compose/install/
 
-* [python](https://www.python.org/doc/essays/blurb/) Programming language
+* [Python](https://www.python.org/doc/essays/blurb/) Programming language
 
 * [MongoDb](https://www.mongodb.com/) General purpose NoSQL database system
 
-* [flask microframework](http://flask.pocoo.org/) Python flask web framework 
+* [Flask microframework](http://flask.pocoo.org/) Python flask web framework 
 
-* [fastapi framework](https://fastapi.tiangolo.com/) Python fastapi web framework
+* [Fastapi framework](https://fastapi.tiangolo.com/) Python fastapi web framework
 
 * [Mosquitto MQTT](https://mosquitto.org/) MQTT server
 
@@ -77,6 +77,7 @@ How to install docker compose: https://docs.docker.com/compose/install/
 * [Kubernetes](https://kubernetes.io/) Container orchestration tool
   [Deployment using Kubernetes](#Deployment-using-Kubernetes) below
 
+* [Krakend](#API-gateway-using-Krakend) An open source API gateway
 
 ## Run the microservice
 Before running check that the ports are available and free on your machine!
