@@ -18,7 +18,7 @@ services:
             - "800:5000"
         entrypoint: python /root/flask-mongodb-example/python/random_demo.py
         depends_on:
-            - mongodb
+            - mongo
             - web-base-image
 
     web-users:
@@ -31,7 +31,7 @@ services:
             - "81:5000"
         entrypoint: python /root/flask-mongodb-example/python/users.py
         depends_on:
-            - mongodb
+            - mongo
             - web-base-image
 
     background-mqtt:
@@ -49,7 +49,7 @@ services:
             - mqtt_user
             - mqtt_password
         depends_on:
-            - mongodb
+            - mongo
             - mqtt
             - influxdb
         tty: true
@@ -64,7 +64,7 @@ services:
             - "82:5000"
         entrypoint: python /root/flask-mongodb-example/python/fulltext_search.py
         depends_on:
-            - mongodb
+            - mongo
 
     web-geolocation-search:
         build:
@@ -76,7 +76,7 @@ services:
             - "83:5000"
         entrypoint: python /root/flask-mongodb-example/python/geolocation_search.py
         depends_on:
-            - mongodb
+            - mongo
 
     web-baesian:
         build:
@@ -88,7 +88,7 @@ services:
             - "84:5000"
         entrypoint: python /root/flask-mongodb-example/python/baesian.py
         depends_on:
-            - mongodb
+            - mongo
 
     web-photo-process:
         build:
@@ -102,7 +102,7 @@ services:
         volumes:
             - ./container-storage:/root/storage
         depends_on:
-            - mongodb
+            - mongo
 
     web-book-collection:
         build:
@@ -116,7 +116,7 @@ services:
             - "86:5000"
         entrypoint: python /root/flask-mongodb-example/python/bookcollection.py
         depends_on:
-            - mongodb
+            - mongo
             - web-users
 
     web-users-fast-api:
@@ -129,7 +129,7 @@ services:
             - "88:5000" # port 87 is restricted in browsers
         entrypoint: uvicorn users-fastapi:app --reload --host 0.0.0.0 --port 5000
         depends_on:
-            - mongodb
+            - mongo
 
     influxdb:
         build: docker-influxdb
@@ -149,15 +149,18 @@ services:
         volumes:
           - grafana_data:/var/lib/grafana
 
-    mongodb:
-        image: mongo:4.2-bionic
-        command:
-        - --storageEngine
-        - wiredTiger
-        - --replSet
-        - myrepl
+    mongo:
+        image: mongo:latest
+        hostname: mongodb
         ports:
-            - "27017:27017"
+            - '27017:27017'
+        environment:
+            - MONGO_REPLICA_SET_NAME=dan
+        command:
+            - --storageEngine
+            - wiredTiger
+            - --replSet
+            - myrepl
 
     mqtt:
         build:
