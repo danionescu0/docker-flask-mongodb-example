@@ -93,21 +93,28 @@ Default credentials are: admin / admin
 ## Run the microservice
 Before running check that the ports are available and free on your machine!
 
-On linux run the following command and check if the following ports are free:
+On linux run the following command and check if the ports are free:
 ````
-netstat -nltp
+cd docker-flask-mongodb-example
+./check_ports.sh 
+port 80 is free
+port 81 is free
+port 82 is free
+port 83 is free
+port 84 is free
+port 85 is free
+port 86 is free
+port 88 is free
+port 1883 is free
+port 27017 is free
+port 8080 is free
+port 3000 is free
 ````
-- 80 to 86, 88 for the containers
-- 1883 for MQTT
-- 27017 for MongoDb
-- 8080 for Krakend
-- 3000 for Grafana
-- 8080 for InfluxDB 
 
 
 Start the microservice architecture:
 ````
-cd git_clonned_project_folder
+cd docker-flask-mongodb-example
 docker-compose build
 docker-compose up
 ````
