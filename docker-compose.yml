@@ -1,6 +1,13 @@
-version: '3.3'
+version: '3.8'
 
 services:
+    web-base-image:
+        build:
+            context: ./docker-python/base
+            args:
+                requirements: /root/flask-mongodb-example/python/requirements.txt
+        image: web-base
+
     web-random:
         build:
             context: ./docker-python
@@ -10,11 +17,9 @@ services:
         ports:
             - "800:5000"
         entrypoint: python /root/flask-mongodb-example/python/random_demo.py
-        deploy:
-          restart_policy:
-            condition: on-failure
         depends_on:
             - mongodb
+            - web-base-image
 
     web-users:
         build:
@@ -25,11 +30,9 @@ services:
         ports:
             - "81:5000"
         entrypoint: python /root/flask-mongodb-example/python/users.py
-        deploy:
-          restart_policy:
-            condition: on-failure
         depends_on:
             - mongodb
+            - web-base-image
 
     background-mqtt:
         build:
@@ -38,9 +41,6 @@ services:
                 requirements: /root/flask-mongodb-example/python/requirements-mqtt.txt
         image: backgorund-mqtt-image
         entrypoint: python /root/flask-mongodb-example/python/mqtt.py
-        deploy:
-          restart_policy:
-            condition: on-failure
         environment:
             - MQTT_USER=/run/secrets/mqtt_user
             - MQTT_PASSWORD=/run/secrets/mqtt_password
@@ -63,9 +63,6 @@ services:
         ports:
             - "82:5000"
         entrypoint: python /root/flask-mongodb-example/python/fulltext_search.py
-        deploy:
-          restart_policy:
-            condition: on-failure
         depends_on:
             - mongodb
 
@@ -78,9 +75,6 @@ services:
         ports:
             - "83:5000"
         entrypoint: python /root/flask-mongodb-example/python/geolocation_search.py
-        deploy:
-            restart_policy:
-                condition: on-failure
         depends_on:
             - mongodb
 
@@ -93,9 +87,6 @@ services:
         ports:
             - "84:5000"
         entrypoint: python /root/flask-mongodb-example/python/baesian.py
-        deploy:
-            restart_policy:
-                condition: on-failure
         depends_on:
             - mongodb
 
@@ -110,9 +101,6 @@ services:
         entrypoint: python /root/flask-mongodb-example/python/photo_process.py
         volumes:
             - ./container-storage:/root/storage
-        deploy:
-            restart_policy:
-                condition: on-failure
         depends_on:
             - mongodb
 
@@ -127,9 +115,6 @@ services:
         ports:
             - "86:5000"
         entrypoint: python /root/flask-mongodb-example/python/bookcollection.py
-        deploy:
-            restart_policy:
-                condition: on-failure
         depends_on:
             - mongodb
             - web-users
@@ -143,9 +128,6 @@ services:
         ports:
             - "88:5000" # port 87 is restricted in browsers
         entrypoint: uvicorn users-fastapi:app --reload --host 0.0.0.0 --port 5000
-        deploy:
-            restart_policy:
-                condition: on-failure
         depends_on:
             - mongodb
 
@@ -169,9 +151,6 @@ services:
 
     mongodb:
         image: mongo:4.2-bionic
-        deploy:
-            restart_policy:
-                condition: always
         command:
         - --storageEngine
         - wiredTiger
@@ -183,9 +162,6 @@ services:
     mqtt:
         build:
           context: ./docker-mosquitto
-        deploy:
-            restart_policy:
-                condition: always
         ports:
             - "1883:1883"
 

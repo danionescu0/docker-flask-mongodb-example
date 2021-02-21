@@ -6,6 +6,25 @@
 
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
+##Prerequisites
+
+### Docker:
+
+How to install docker on Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+How to install docker on Centos: https://docs.docker.com/engine/install/centos/
+
+How to install docker on Windows: https://docs.docker.com/docker-for-windows/install-windows-home/
+
+tested with version: 20.10.2
+
+### Docker compose 
+
+How to install docker compose: https://docs.docker.com/compose/install/
+
+tested with version: 1.28.4 
+
+## Applications:
 
 The applications will run using docker-compose, below are the services descriptions, for more info click on the title:
 
@@ -44,15 +63,7 @@ Default credentials are: admin / admin
 ## Technollogies involved
 * [Docker](https://opensource.com/resources/what-docker) A container system
 
-How to install docker on Ubuntu: https://docs.docker.com/install/linux/docker-ce/ubuntu/
-
-How to install docker on Centos: https://docs.docker.com/engine/install/centos/
-
-How to install docker on Windows: https://docs.docker.com/docker-for-windows/install-windows-home/
-
-* [docker-compose](https://docs.docker.com/compose/) Docker containers orchestraion system
-
-How to install docker compose: https://docs.docker.com/compose/install/
+* [docker-compose](https://docs.docker.com/compose/) Docker containers orchestration system
 
 * [Python](https://www.python.org/doc/essays/blurb/) Programming language
 
@@ -686,6 +697,7 @@ Now lunch the influx shell inside the container replacing 035124f1b665 with your
 ````
 docker exec -it 035124f1b665 influx
 ````
+
 And you're inside the influx shell, and you can issue commands like:
 ````
 SHOW DATABASES
