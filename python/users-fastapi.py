@@ -15,7 +15,7 @@ class User(BaseModel):
     name: str
 
 
-@app.put("/users/{item_id}")
+@app.put("/users/{userid}")
 def add_user(userid: int, user: User):
     if user.email is None and user.name is None:
         raise HTTPException(status_code=500, detail="Email or name not present in user!")
@@ -30,7 +30,7 @@ def add_user(userid: int, user: User):
     return format_user(users.find_one({'_id': userid}))
 
 
-@app.post("/users/{item_id}")
+@app.post("/users/{userid}")
 def update_user(userid: int, user: User):
     if user.email is None and user.name is None:
         raise HTTPException(status_code=500, detail="Email or name must be present in parameters!")
@@ -43,7 +43,7 @@ def update_user(userid: int, user: User):
     return format_user(users.find_one({'_id': userid}))
 
 
-@app.get("/users/{item_id}", response_model=User)
+@app.get("/users/{userid}", response_model=User)
 def get_user(userid: int):
     user = users.find_one({'_id': userid})
     if None == user:
@@ -60,7 +60,7 @@ def get_users(limit: Optional[int] = 10, offset: Optional[int] = 0):
     return extracted
 
 
-@app.delete("/users/{item_id}", response_model=User)
+@app.delete("/users/{userid}", response_model=User)
 def delete_user(userid: int):
     user = users.find_one({'_id': userid})
     users.delete_one({'_id': userid})
