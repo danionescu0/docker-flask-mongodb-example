@@ -172,18 +172,12 @@ services:
         image: devopsfaith/krakend
         volumes:
             - ./:/etc/krakend/
-        configs:
-          - krakend_config
         ports:
             - "8080:8080"
 
 volumes:
     grafana_data: {}
     influxdb_data: {}
-
-configs:
-  krakend_config:
-    file: ./krakend.json
 
 secrets:
     mqtt_user:
