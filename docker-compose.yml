@@ -171,9 +171,12 @@ services:
     krakend:
         image: devopsfaith/krakend
         volumes:
-            - ./kraken.json:/etc/krakend
+            - ${PWD}/krakend.json:/etc/krakend/krakend.json
         ports:
             - "8080:8080"
+        depends_on:
+            - web-random
+            - web-users
 
 volumes:
     grafana_data: {}
