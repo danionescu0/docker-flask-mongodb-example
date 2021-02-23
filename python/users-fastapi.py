@@ -3,16 +3,16 @@ from typing import Optional, List
 
 from pymongo import MongoClient, errors
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, EmailStr
 
 app = FastAPI()
 users = MongoClient('mongodb', 27017).demo.users
 
 
 class User(BaseModel):
-    userid: str
-    email: str
-    name: str
+    userid: int 
+    email: EmailStr 
+    name: str = Field(..., title="Name of the user", max_length=50)
 
 
 @app.put("/users/{userid}")
