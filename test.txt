@@ -1,0 +1,169 @@
+# ---for testing random---
+curl -X GET -i http://localhost:800/random-list
+curl --get -X GET -i http://localhost:800/random -d lower=50 -d upper=100
+curl -X PUT -i http://localhost:800/random -d upper=100 -d lower=10
+
+#---user crud test---
+# adding users
+curl -X PUT -i http://localhost:81/users/1 -d email=john@doe.com -d name=John
+curl -X PUT -i http://localhost:81/users/2 -d email=steve@rogers.com -d name=Steve
+curl -X PUT -i http://localhost:81/users/3 -d email=change@user.com -d name=Change
+
+# change email of user 3
+curl -X POST -i http://localhost:81/users/3 -d email=newuser@user.com
+
+# check the change
+curl -X GET -i http://localhost:81/users/3
+
+# delete user 3
+curl -X DELETE -i http://localhost:81/users/3
+
+# check if delete works
+curl -X GET -i http://localhost:81/users
+
+
+#---fulltext search---
+curl -X PUT -i http://localhost:82/fulltext -d expression="Who has many apples"
+curl -X PUT -i http://localhost:82/fulltext -d expression="The apple tree grew in the park"
+curl -X PUT -i http://localhost:82/fulltext -d expression="Some apples are green and some are yellow"
+curl -X PUT -i http://localhost:82/fulltext -d expression="How many trees are there in this forest"
+
+curl -X GET -i http://localhost:82/search/apples
+
+#---geo location search---
+curl -X POST -i http://localhost:83/location \
+    -d name=Bucharest \
+    -d lat="26.1496616" \
+    -d lng="44.4205455"
+
+curl -X GET -i http://localhost:83/location/26.1/44.4
+
+curl -X GET -i http://localhost:83/location/26.1/44.4 -d max_distance==50000
+
+#---Bayesian average---
+curl -X POST -i http://localhost:84/item/1 -d name=Hamlet
+curl -X POST -i http://localhost:84/item/2 -d name=Cicero
+curl -X POST -i http://localhost:84/item/3 -d name=Alfred
+
+curl -X PUT -i http://localhost:84/item/vote/1 -d mark=9 -d userid=1
+curl -X PUT -i http://localhost:84/item/vote/2 -d mark=9 -d userid=4
+curl -X PUT -i http://localhost:84/item/vote/3 -d mark=7 -d userid=6
+
+curl -X DELETE -i http://localhost:84/item/3
+
+curl -X GET -i http://localhost:84/item/1
+curl -X GET -i http://localhost:84/items
+
+#---photo process---
+curl -X PUT -F file=@image1.jpeg -i http://localhost:85/photo/1
+curl -X PUT -F file=@image2.jpeg -i http://localhost:85/photo/2 
+
+curl -X GET http://localhost:85/photo/1 -d resize==100 > image1resize.jpeg
+
+curl -X PUT -F file=@image1resize.jpeg -i http://localhost:85/photo/similar 
+
+curl -X DELETE -i http://localhost:85/photo/2
+
+
+#---book collection---
+curl -X PUT -i http://localhost:86/book/978-1607965503 \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{ 
+            "isbn": "978-1607965503", 
+            "name": "Lincoln the Unknown", 
+            "author": "Dale Carnegie", 
+            "publisher": "snowballpublishing", 
+            "nr_available": 5
+        }'
+
+curl -X PUT -i http://localhost:86/book/9780262529624 \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "name": "Intro to Computation and Programming using Python",
+            "isbn": "9780262529624",
+            "author": "John Guttag",
+            "publisher": "MIT Press", 
+            "nr_available": 3
+        }'
+
+
+curl -X GET -i http://localhost:86/book/9780262529624
+
+curl -X GET -i http://localhost:86/book/9780262529624
+
+curl -X GET http://localhost:86/book -d limit=5 -d offset=0
+
+# borrow book
+# will have to create user for this to work
+curl -X PUT -i http://localhost:86/borrow/978-1607965503 \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "id": 1, 
+            "userid": 1, 
+            "isbn": "978-1607965503", 
+            "borrow_date": "2019-12-12T09:32:51.715Z", 
+            "return_date": "2020-02-12T09:32:51.715Z", 
+            "max_return_date": "2020-03-12T09:32:51.715Z"
+        }'
+
+# list a borrowed book
+curl -X GET -i http://localhost:86/borrow/978-1607965503 
+
+curl -X PUT -i http://localhost:86/borrow/return/978-1607965503 \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "id": "978-1607965503",
+            "return_date":"2020-02-12T09:32:51.715Z"
+        }'
+
+curl -X GET -i http://localhost:86/borrow -d limit=5 -d offset=0
+
+
+#---fastapi user CRUD---
+curl -X PUT -i http://localhost:88/users/1 \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "userid": 1,
+            "email": "john@doe.com" 
+            "name": "John"
+        }'
+
+curl -X PUT -i http://localhost:88/users/3  \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "userid": 3,
+            "email": "change@user.com",
+            "name": "Change"
+        }'
+
+curl -X GET -i http://localhost:88/users/2
+
+curl -X POST -i http://localhost:88/users/3 \
+    -H "accept: application/json" \
+    -H "Content-Type: application/json" \
+    -d '{
+            "userid": 3, 
+            "email": "user@user.com",
+            "name": "Change"
+        }'
+
+curl -X DELETE -i http://localhost:88/users/1
+curl -X GET -i http://localhost:88/users
+
+
+curl -i -XPOST 'http://localhost:8086/write?db=influx' --data-binary 'humidity value=61'
+
+
+# mqtt service
+# new terminal
+mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{\"sensor_id\": \"temperature\", \"sensor_value\": 15.2}"
+
+# new terminal for sub
+mosquitto_sub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors
+
