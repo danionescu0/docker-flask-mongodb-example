@@ -429,7 +429,7 @@ curl -X PUT -d expression="ana has many more apples"  http://localhost:82/fullte
 
 * To get all indexed expressions containing word "who"
 ````
-curl -i "http://localhost:82/search/who"
+curl -i "http://localhost:82/search/apples"
 ````
 
 # Geospacial search service
@@ -461,12 +461,12 @@ Api methods using Curl:
 
 * To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
 ````
-curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" http://localhost:84/location
+curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" http://localhost:83/location
 ````
 
 * To get all locations near 26.1 latitude and 44.4 longitude in a range of 5000 meeters (5 km)
 ````
-curl -i "http://localhost:84/location/26.1/44.4?max_distance=50000"
+curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
 ````
 
 # Baesian average

@@ -133,7 +133,7 @@ services:
 
     influxdb:
         build: docker-influxdb
-        env_file: configuration.env
+        env_file: ./docker-influxdb/configuration.env
         ports:
           - '8086:8086'
         volumes:
@@ -141,7 +141,7 @@ services:
 
     grafana:
         build: docker-grafana
-        env_file: configuration.env
+        env_file: ./docker-grafana/configuration.env
         links:
           - influxdb
         ports:
