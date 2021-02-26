@@ -6,7 +6,7 @@
 
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
-##Prerequisites
+## Prerequisites
 
 ### Docker:
 
@@ -97,7 +97,7 @@ On linux run the following command and check if the ports are free:
 ````
 cd docker-flask-mongodb-example
 ./check_ports.sh 
-port 80 is free
+port 800 is free
 port 81 is free
 port 82 is free
 port 83 is free
@@ -163,7 +163,7 @@ mongorestore -d demo ./resources/demo-data/
 Using locust.io
 
 1. Installation: https://docs.locust.io/en/stable/installation.html
- 
+
  * This tests work work version 1.0.2, please ensure you're using this version
  * Quickstart(optional): https://docs.locust.io/en/stable/quickstart.html
 
@@ -258,7 +258,7 @@ Now visit the app in your browser ex: http://external_ip_for_random_demo_service
 
 This service generates random numbers and store them in a capped array (last 5 of them). Also it can generate
 and return a random number.
- 
+
 The random number collection has only one documents with '_id' lasts and an "items" key that will be a capped array.
 
 MongoDb capped array: https://www.mongodb.com/blog/post/push-to-sorted-array
@@ -464,7 +464,7 @@ Api methods using Curl:
 curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" http://localhost:83/location
 ````
 
-* To get all locations near 26.1 latitude and 44.4 longitude in a range of 5000 meeters (5 km)
+* To get all locations near 26.1 latitude and 44.4 longitude in a range of 50000 meters (50 km)
 ````
 curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
 ````
@@ -490,23 +490,25 @@ Items:
 
 How to calculate Baesian average for item 2:
 
-avg_num_votes = 2.333   //The average number of votes for all items (1+3+4) / 3
+```
+avg_num_votes = 2.333   // The average number of votes for all items (1+3+4) / 3
 
-avg_rating = 8.5 //The average rating for all items (10+9+10+9+10+4+8+8) / 8
+avg_rating = 8.5 		// The average rating for all items (10+9+10+9+10+4+8+8) / 8
 
-item_num_votes = 3  //The number of votes for current item (Item 2) 
+item_num_votes = 3  	// The number of votes for current item (Item 2) 
 
-item_rating = 9.33     //The average rating for current item (Item 2): (9+10+9)/3
- 
+item_rating = 9.33      // The average rating for current item (Item 2): (9+10+9)/3
+
 bayesian_average = 8.941 // ((avg_num_votes * avg_rating) + (item_num_votes * item_rating)) / (avg_num_votes + item_num_votes)
                     
 Averages:
                     
 Element 1: 8.909        
-
 Element 2: 8.941
-
 Element 3: 7.9
+```
+
+
 
 You can see although Hamlet has an 10, and Cicero has two 9's and one 10 the baesian average of Cicero is the highest
 
@@ -607,7 +609,7 @@ Uses Flask Restplus: https://flask-restplus.readthedocs.io
 The Swagger is http://localhost:86
 
 Api methods using Curl:
- 
+
 Add a book:
 ````
 curl -X PUT "http://localhost:86/book/978-1607965503" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"isbn\": \"978-1607965503\", \"name\": \"Lincoln the Unknown\", \"author\": \"Dale Carnegie\", \"publisher\": \"snowballpublishing\", \"nr_available\": 5}"
@@ -723,4 +725,3 @@ More examples in the documentation: https://docs.influxdata.com/influxdb/v1.7/in
 Same as User CRUD, written with fastapi framework (https://fastapi.tiangolo.com/):
 
 Swagger url: http://localhost:88/docs
-
