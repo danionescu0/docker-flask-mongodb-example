@@ -28,7 +28,8 @@ tested with version: 1.28.4
 
 The applications will run using docker-compose, below are the services descriptions, for more info click on the title:
 
-**1** [Random service](#random-service) generates random numbers and lists them (port 800)
+**1** [Random service](#random-service) generates random numbers and lists them (port 800) a second cotainer with same app
+is opened on port 801 using pypy which is faster, check Random service description to see details about the test
 
 **2** [User CRUD service](#User-CRUD-service) Create, read, update and detele operations over a user collection (port 81)
 
@@ -98,6 +99,7 @@ On linux run the following command and check if the ports are free:
 cd docker-flask-mongodb-example
 ./check_ports.sh 
 port 800 is free
+port 801 is free
 port 81 is free
 port 82 is free
 port 83 is free
@@ -293,6 +295,39 @@ curl -X PUT -i "http://localhost:800/random" -d lower=10 -d upper=20
 ````
 curl -i "http://localhost:800/random-list"
 ````
+
+A second cotainer with same appis opened on port 801 using pypy which is faster. 
+
+The test system is a i7-4720HQ 2.60GHz wih 12 GB RAM and a SSD drive on which i've run the docker-compose arhitecture.
+
+The load testing is done using apachebench (https://httpd.apache.org/docs/2.4/programs/ab.html) 3000 requests with 20 concurent requests, the results measured are average requests per second.
+
+Results without pypy:
+````
+ab -n 3000 -c 20 'http://localhost:800/random?lower=10&upper=10000'
+...
+Requests per second:    692.83 [#/sec] (mean)
+Time per request:       28.867 [ms] (mean)
+Time per request:       1.443 [ms] (mean, across all concurrent requests)
+...
+````
+
+
+Results with pypy:
+````
+ab -n 3000 -c 20 'http://localhost:801/random?lower=10&upper=10000'
+...
+Requests per second:    1224.29 [#/sec] (mean)
+Time per request:       16.336 [ms] (mean)
+Time per request:       0.817 [ms] (mean, across all concurrent requests)
+
+...
+````
+
+The results with pypy are far better, all mose 100% percent increase,
+BUT i've noticed that need a warm up (i've run the benchmark on this service multiple times before) until they get to this performance, i'll investigate this further.
+
+These tests are made possible thanks to neelabalan(https://github.com/neelabalan).
 
 # User CRUD service
 

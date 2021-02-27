@@ -28,7 +28,7 @@ services:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard-pypy
         ports:
-            - "800:5000"
+            - "801:5000"
         entrypoint: pypy /root/flask-mongodb-example/python/random_demo.py
         depends_on:
             - mongo
