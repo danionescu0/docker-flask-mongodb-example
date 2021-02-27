@@ -10,16 +10,15 @@ services:
 
     web-random:
         build:
-            context: ./docker-python
+            context: ./docker-python-pypy
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard
+        image: web-standard-pypy
         ports:
             - "800:5000"
-        entrypoint: python /root/flask-mongodb-example/python/random_demo.py
+        entrypoint: pypy /root/flask-mongodb-example/python/random_demo.py
         depends_on:
             - mongo
-            - web-base-image
 
     web-users:
         build:
