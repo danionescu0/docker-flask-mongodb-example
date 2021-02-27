@@ -21,6 +21,18 @@ services:
             - mongo
             - web-base-image
 
+    web-random-pypy:
+        build:
+            context: ./docker-python-pypy
+            args:
+                requirements: /root/flask-mongodb-example/python/requirements.txt
+        image: web-standard-pypy
+        ports:
+            - "800:5000"
+        entrypoint: pypy /root/flask-mongodb-example/python/random_demo.py
+        depends_on:
+            - mongo
+
     web-users:
         build:
             context: ./docker-python
