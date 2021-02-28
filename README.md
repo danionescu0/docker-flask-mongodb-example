@@ -297,13 +297,16 @@ curl -X PUT -i "http://localhost:800/random" -d lower=10 -d upper=20
 curl -i "http://localhost:800/random-list"
 ````
 
-A second cotainer with same appis opened on port 801 using pypy which is faster. 
+**Using PyPy for speed**
 
-The test system is a i7-4720HQ 2.60GHz wih 12 GB RAM and a SSD drive on which i've run the docker-compose arhitecture.
+A second container with the same api opened on port 801 using pypy which should be faster in theory. 
 
-The load testing is done using apachebench (https://httpd.apache.org/docs/2.4/programs/ab.html) 3000 requests with 20 concurent requests, the results measured are average requests per second.
+The test system is a i7-4720HQ 2.60GHz wih 12 GB RAM and a SSD drive on which i've run the docker-compose architecture.
 
-Results without pypy:
+The load testing is done using apache bench (https://httpd.apache.org/docs/2.4/programs/ab.html) 3000 requests with 20 concurent requests, 
+the results measured are average requests per second.
+
+Results without PyPy:
 ````
 ab -n 3000 -c 20 'http://localhost:800/random?lower=10&upper=10000'
 ...
@@ -314,18 +317,17 @@ Time per request:       1.443 [ms] (mean, across all concurrent requests)
 ````
 
 
-Results with pypy:
+Results with PyPy:
 ````
 ab -n 3000 -c 20 'http://localhost:801/random?lower=10&upper=10000'
 ...
 Requests per second:    1224.29 [#/sec] (mean)
 Time per request:       16.336 [ms] (mean)
 Time per request:       0.817 [ms] (mean, across all concurrent requests)
-
 ...
 ````
 
-The results with pypy are far better, all mose 100% percent increase,
+The results with pypy are far better, approximatively 90% percent increase,
 BUT i've noticed that need a warm up (i've run the benchmark on this service multiple times before) until they get to this performance, i'll investigate this further.
 
 These tests are made possible thanks to neelabalan(https://github.com/neelabalan).

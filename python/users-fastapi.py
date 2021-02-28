@@ -1,9 +1,9 @@
 from typing import Optional, List
 
-
 from pymongo import MongoClient, errors
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field, EmailStr
+
 
 app = FastAPI()
 users = MongoClient('mongodb', 27017).demo.users
@@ -65,6 +65,7 @@ def delete_user(userid: int):
     user = users.find_one({'_id': userid})
     users.delete_one({'_id': userid})
     return format_user(user)
+
 
 def format_user(user):
     if user is None:
