@@ -190,6 +190,25 @@ services:
             - web-random
             - web-users
 
+    web-test:
+        image: alpine 
+        depends_on:
+            - web-base-image
+            - web-random
+            - web-random-pypy
+            - web-users
+            - background-mqtt
+            - web-fulltext-search 
+            - web-geolocation-search
+            - web-baesian
+            - web-photo-process
+            - web-book-collection
+            - web-users-fast-api
+            - influxdb
+            - grafana
+            - mongo
+            - mqtt
+            - krakend
 volumes:
     grafana_data: {}
     influxdb_data: {}
