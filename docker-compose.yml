@@ -131,6 +131,7 @@ services:
             - mongo
             - web-users
 
+    # runs with gunicorn on two processor cores [-w 2]
     web-users-fast-api:
         build:
             context: ./docker-python
@@ -139,7 +140,7 @@ services:
         image: web-users-fastapi-image
         ports:
             - "88:5000" # port 87 is restricted in browsers
-        entrypoint: uvicorn users-fastapi:app --reload --host 0.0.0.0 --port 5000
+        entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornH11Worker --bind 0.0.0.0:5000 --log-level debug users-fastapi:app
         depends_on:
             - mongo
 

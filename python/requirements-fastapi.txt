@@ -2,4 +2,5 @@ pymongo==3.11.3
 python-dateutil==2.8.1
 fastapi==0.63.0
 uvicorn==0.13.4
+gunicorn==20.0.4
 email-validator==1.1.2
