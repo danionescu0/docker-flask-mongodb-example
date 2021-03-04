@@ -59,6 +59,7 @@ Default credentials are: admin / admin
 **10** [User CRUD fastapi](#User-CRUD-fastapi) Create, read, update and detele operations made available with fastapi framework (port 88)
 
 
+
 ![Diagram](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
 ![Grafana](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/grafana.png)
 
@@ -136,6 +137,16 @@ chmod +x import.sh
 ````
 
 ## Testing the architecture [optional]
+
+**Automatic testing using pytest**
+
+Work in progress..
+
+````
+docker-compose up
+pip install -r tests/requirements.txt
+pytest -q tests/test_users.py  -s
+````
 
 **Manual testing:**
 

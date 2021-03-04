@@ -18,7 +18,7 @@ class RegistredUser(HttpUser):
 
         @task(2)
         def search(self):
-            self.client.get('/search/' +  self.__generate_random_expression(2))
+            self.client.get('/search/' + self.__generate_random_expression(2))
 
         def __generate_random_expression(self, nr_words=10):
             possible_words = ['some', 'ana', 'it', 'the', 'has', 'who', 'one', 'three', 'table', 'wow', 'super']
