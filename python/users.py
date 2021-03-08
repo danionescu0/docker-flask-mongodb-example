@@ -8,7 +8,7 @@ from flasgger import Swagger
 
 app = Flask(__name__)
 swagger = Swagger(app)
-users = MongoClient('mongodb', 27017).demo.users
+users = MongoClient("mongodb", 27017).demo.users
 
 
 @app.route("/users/<int:userid>", methods=["PUT"])
@@ -33,17 +33,27 @@ def add_user(userid):
         description: Creation succeded
     """
     request_params = request.form
-    if 'email' not in request_params or 'name' not in request_params:
-        return Response('Email and name not present in parameters!', status=404, mimetype='application/json')
+    if "email" not in request_params or "name" not in request_params:
+        return Response(
+            "Email and name not present in parameters!",
+            status=404,
+            mimetype="application/json",
+        )
     try:
-        users.insert_one({
-            '_id': userid,
-            'email': request_params['email'],
-            'name': request_params['name']
-        })
+        users.insert_one(
+            {
+                "_id": userid,
+                "email": request_params["email"],
+                "name": request_params["name"],
+            }
+        )
     except errors.DuplicateKeyError as e:
-        return Response('Duplicate user id!', status=404, mimetype='application/json')
-    return Response(json.dumps(users.find_one({'_id': userid})), status=200, mimetype='application/json')
+        return Response("Duplicate user id!", status=404, mimetype="application/json")
+    return Response(
+        json.dumps(users.find_one({"_id": userid})),
+        status=200,
+        mimetype="application/json",
+    )
 
 
 @app.route("/users/<int:userid>", methods=["POST"])
@@ -68,15 +78,23 @@ def update_user(userid):
         description: Update succeded
     """
     request_params = request.form
-    if 'email' not in request_params and 'name' not in request_params:
-        return Response('Email or name must be present in parameters!', status=404, mimetype='application/json')
+    if "email" not in request_params and "name" not in request_params:
+        return Response(
+            "Email or name must be present in parameters!",
+            status=404,
+            mimetype="application/json",
+        )
     set = {}
-    if 'email' in request_params:
-        set['email'] = request_params['email']
-    if 'name' in request_params:
-        set['name'] = request_params['name']
-    users.update_one({'_id': userid}, {'$set': set})
-    return Response(json.dumps(users.find_one({'_id': userid})), status=200, mimetype='application/json')
+    if "email" in request_params:
+        set["email"] = request_params["email"]
+    if "name" in request_params:
+        set["name"] = request_params["name"]
+    users.update_one({"_id": userid}, {"$set": set})
+    return Response(
+        json.dumps(users.find_one({"_id": userid})),
+        status=200,
+        mimetype="application/json",
+    )
 
 
 @app.route("/users/<int:userid>", methods=["GET"])
@@ -106,10 +124,10 @@ def get_user(userid):
       404:
         description: User not found
     """
-    user = users.find_one({'_id': userid})
+    user = users.find_one({"_id": userid})
     if None == user:
-        return Response("", status=404, mimetype='application/json')
-    return Response(json.dumps(user), status=200, mimetype='application/json')
+        return Response("", status=404, mimetype="application/json")
+    return Response(json.dumps(user), status=200, mimetype="application/json")
 
 
 @app.route("/users", methods=["GET"])
@@ -143,18 +161,20 @@ def get_users():
           $ref: '#/definitions/Users'
     """
     request_args = request.args
-    limit = int(request_args.get('limit')) if 'limit' in request_args else 10
-    offset = int(request_args.get('offset')) if 'offset' in request_args else 0
+    limit = int(request_args.get("limit")) if "limit" in request_args else 10
+    offset = int(request_args.get("offset")) if "offset" in request_args else 0
     user_list = users.find().limit(limit).skip(offset)
     if None == users:
-        return Response(json.dumps([]), status=200, mimetype='application/json')
+        return Response(json.dumps([]), status=200, mimetype="application/json")
 
     extracted = [
-        {'userid': d['_id'],
-         'name': d['name'],
-         'email': d['email']
-         } for d in user_list]
-    return Response(json.dumps(extracted, default=json_util.default), status=200, mimetype='application/json')
+        {"userid": d["_id"], "name": d["name"], "email": d["email"]} for d in user_list
+    ]
+    return Response(
+        json.dumps(extracted, default=json_util.default),
+        status=200,
+        mimetype="application/json",
+    )
 
 
 @app.route("/users/<int:userid>", methods=["DELETE"])
@@ -170,9 +190,9 @@ def delete_user(userid):
       200:
         description: User deleted
     """
-    users.delete_one({'_id': userid})
-    return Response('', status=200, mimetype='application/json')
+    users.delete_one({"_id": userid})
+    return Response("", status=200, mimetype="application/json")
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5000)
