@@ -1,5 +1,5 @@
 ## Purpose
-[![test-build](https://github.com/neelabalan/docker-flask-mongodb-example/actions/workflows/test_build.yml/badge.svg?branch=master)](https://github.com/neelabalan/docker-flask-mongodb-example/actions/workflows/test_build.yml)
+[![test-build](https://github.com/danionescu0/docker-flask-mongodb-example/actions/workflows/test_build.yml/badge.svg?branch=master)](https://github.com/danionescu0/docker-flask-mongodb-example/actions/workflows/test_build.yml)
 
 **A working demo usage of multiple technologies like: Docker, Docker-compose, MongoDb, Python3, Mosquitto, Swagger, Locusts, Grafana, InfluxDB**
 
