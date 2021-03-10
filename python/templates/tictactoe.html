@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Tic Tac Toe</title>
+        <link rel="stylesheet" 
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <style>
+            table {
+                border-collapse: collapse;
+                margin: 20px;
+            }
+            td {
+                border: 1px solid black;
+                width: 150px;
+                height: 150px;
+                font-size: 30px;
+                text-align: center;
+            }
+            td > a {
+                font-size: 18px;
+            }
+        </style>
+    </head>
+
+    <body>
+         <div>
+            <a href="{{url_for('reset')}}" class="btn btn-default">Reset Game</a>
+         </div>
+         {% if draw %}
+            <div>
+                <h1> Game Drawn</h1>
+            </div>
+         {% endif %}
+         {% if winnerFound %}
+            <div>
+                <h1> WINNER is {{winner}}</h1>
+            </div>
+         {% endif %}
+        <table>
+            {% for i in range(0, 3) %}
+                <tr>
+                    {% for j in range(0, 3) %}
+                        <td>
+                            {% if game[j*3+i] %}
+                                {{ game[j*3+i] }}
+                            {% else %}
+                                <a href="{{ url_for('play', row=i, col=j) }}">Play {{turn}} here.</a>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>
