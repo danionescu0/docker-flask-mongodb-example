@@ -1,3 +1,3 @@
 \.idea
-\docker-python/project
+\docker-python/project/base
 *.pyc
