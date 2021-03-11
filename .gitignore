@@ -1,3 +1,4 @@
 \.idea
 \docker-python/project/base
+python_app.log
 *.pyc
