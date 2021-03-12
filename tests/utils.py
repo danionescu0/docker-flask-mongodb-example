@@ -25,5 +25,8 @@ class MongoDb:
     def delete(self, key):
         self.__connection[self.__collection].delete_one({"_id": key})
 
+    def delete_many(self, index, key):
+        self.__connection[self.__collection].delete_many({index: key})
+
     def drop(self):
         self.__connection[self.__collection].drop()
