@@ -1,16 +1,16 @@
 import json
 import requests
 import pytest
-import datetime
 import time
-import sys, os
+import os
 from typing import Generator, Any
 
-from utils import MongoDb
 import paho.mqtt.client as mqtt
 
-influx_query_url = "http://localhost:8086/query?db=influx&"
+from utils import MongoDb
 
+
+influx_query_url = "http://localhost:8086/query?db=influx&"
 # status for mqtt
 SUCCESS = 0
 
@@ -43,25 +43,10 @@ def mqtt_client() -> Generator[mqtt.Client, None, None]:
     mqtt_client.disconnect()
 
 
-def publish_message(mqtt_client, topic: str, data: str) -> int:
-    mqtt_response = mqtt_client.publish(topic, data)
-    time.sleep(0.5)
-    return mqtt_response[0]
-
-
-def cleanup_influx(measurement: str) -> int:
-    resp = requests.post(
-        'http://localhost:8086/query?db=influx&q=DELETE FROM "{}"'.format(measurement)
-    )
-    return resp.status_code
-
-
 def test_db_insert(mqtt_client, collection):
     # publish message
     measurement = "temperature"
     cleanup_influx(measurement)
-
-    data = {"sensor_id": measurement, "sensor_value": 10}
     mqtt_response = publish_message(
         mqtt_client,
         "sensors",
@@ -95,9 +80,8 @@ def test_db_insert(mqtt_client, collection):
 def test_mqtt_publish(mqtt_client, collection):
     measurement = "temperature"
     cleanup_influx(measurement)
-    data = {"sensor_id": measurement, "sensor_value": 10}
 
-    mqtt_response = publish_message(
+    publish_message(
         mqtt_client,
         "sensors",
         json.dumps({"sensor_id": measurement, "sensor_value": 10}),
@@ -107,10 +91,23 @@ def test_mqtt_publish(mqtt_client, collection):
     mqtt_client.on_message = check_message
     mqtt_client.loop_start()
     cleanup_influx(measurement)
+    collection.delete(measurement)
+
+
+def publish_message(mqtt_client, topic: str, data: str) -> int:
+    mqtt_response = mqtt_client.publish(topic, data)
+    time.sleep(0.5)
+    return mqtt_response[0]
+
+
+def cleanup_influx(measurement: str) -> int:
+    resp = requests.post(
+        'http://localhost:8086/query?db=influx&q=DELETE FROM "{}"'.format(measurement)
+    )
+    return resp.status_code
 
 
 def check_message(client: mqtt.Client, userdata: Any, msg: mqtt.MQTTMessage):
     message = msg.payload.decode("utf-8")
     decoded_data = json.loads(message)
-    assert decoded_data["sensor_id"] == measurement
     assert decoded_data["sensor_value"] == 10

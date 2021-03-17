@@ -3,6 +3,7 @@ import datetime
 
 from utils import MongoDb
 
+
 random_host = "http://localhost:800"
 
 

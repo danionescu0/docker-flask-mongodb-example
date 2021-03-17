@@ -1,10 +1,11 @@
 import pytest
-from pytest import FixtureRequest
 import requests
-import datetime
 from typing import Generator
+from pytest import FixtureRequest
 from bson.objectid import ObjectId
+
 from utils import MongoDb
+
 
 geolocation_host = "http://localhost:83"
 new_york = {"name": "NewYork", "lat": 40.730610, "lng": -73.935242}

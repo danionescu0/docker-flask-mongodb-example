@@ -6,6 +6,7 @@ from typing import Generator
 from bson.objectid import ObjectId
 from utils import MongoDb
 
+
 fulltext_search_host = "http://localhost:82"
 
 expression_one = "ana has many more apples"

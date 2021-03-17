@@ -7,6 +7,8 @@
 
 **If you consider this demo usefull give it a star so others will find it quicker :)**
 
+**[Contributing](#Contributing)** 
+
 ## Prerequisites
 
 ### Docker:
@@ -774,3 +776,29 @@ More examples in the documentation: https://docs.influxdata.com/influxdb/v1.7/in
 Same as User CRUD, written with fastapi framework (https://fastapi.tiangolo.com/):
 
 Swagger url: http://localhost:88/docs
+
+# Contributing
+
+## Check open issues (https://github.com/danionescu0/docker-flask-mongodb-example/issues) consider taking on an issue, or adding a new one.
+
+## Working on a issue 
+
+* To start developing locally you can use conda to create a new environment with python 3.8 and install the requirements there corresponding to the section you want to work in.
+Please check docker-compose.yaml file to see which to install.
+
+````
+cd docker--mongodb-example
+conda create --name dockerflaskmongodbexample python=3.8.0
+conda activate dockerflaskmongodbexample
+pip install -r python/requirements.txt
+````
+
+* Work on branch, modify what you need
+* Run black () to format the code properly (if not the build will fail on push)
+````
+cd docker--mongodb-example
+pip install black
+black --exclude stresstest-locusts/ .
+````
+
+* Push and create a pull request

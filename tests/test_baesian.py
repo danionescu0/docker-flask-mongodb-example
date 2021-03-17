@@ -1,12 +1,11 @@
 import pytest
 import requests
-import datetime
 from typing import Generator
 
 from utils import MongoDb
 
-baesian_host = "http://localhost:84"
 
+baesian_host = "http://localhost:84"
 name = "Cicero"
 item_id = 1
 userid_seven = 7
