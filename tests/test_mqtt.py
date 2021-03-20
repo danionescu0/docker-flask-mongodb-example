@@ -7,7 +7,7 @@ from typing import Generator, Any
 
 import paho.mqtt.client as mqtt
 
-from utils import MongoDb
+from utils import Collection
 
 
 influx_query_url = "http://localhost:8086/query?db=influx&"
@@ -16,12 +16,10 @@ SUCCESS = 0
 
 
 @pytest.fixture
-def collection() -> Generator[MongoDb, None, None]:
-    con = MongoDb(host="localhost")
-    con.create_connection()
-    con.set_collection("sensors")
-    yield con
-    con.drop()
+def sensors(demo_db) -> Generator[Collection, None, None]:
+    collection = Collection(demo_db, "sensors")
+    yield collection
+    collection.drop()
 
 
 @pytest.fixture
@@ -43,7 +41,7 @@ def mqtt_client() -> Generator[mqtt.Client, None, None]:
     mqtt_client.disconnect()
 
 
-def test_db_insert(mqtt_client, collection):
+def test_db_insert(mqtt_client, sensors):
     # publish message
     measurement = "temperature"
     cleanup_influx(measurement)
@@ -68,7 +66,7 @@ def test_db_insert(mqtt_client, collection):
     mqtt_client.disconnect()
 
     # mongo
-    response = collection.get({})
+    response = sensors.get({})
     items = response[0]["items"]
     assert len(items) == 1
     assert items[0]["value"] == 10
@@ -77,7 +75,7 @@ def test_db_insert(mqtt_client, collection):
     cleanup_influx(measurement)
 
 
-def test_mqtt_publish(mqtt_client, collection):
+def test_mqtt_publish(mqtt_client, sensors):
     measurement = "temperature"
     cleanup_influx(measurement)
 
@@ -91,7 +89,7 @@ def test_mqtt_publish(mqtt_client, collection):
     mqtt_client.on_message = check_message
     mqtt_client.loop_start()
     cleanup_influx(measurement)
-    collection.delete(measurement)
+    sensors.delete(measurement)
 
 
 def publish_message(mqtt_client, topic: str, data: str) -> int:
