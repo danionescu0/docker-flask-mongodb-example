@@ -1,28 +1,25 @@
 import pytest, requests
 import datetime
-
-from utils import MongoDb
-
+from utils import Collection
+from typing import Generator
 
 random_host = "http://localhost:800"
 
 
 @pytest.fixture
-def collection():
-    con = MongoDb(host="localhost")
-    con.create_connection()
-    con.set_collection("random_numbers")
-    yield con
-    con.drop()
+def random_numbers(demo_db) -> Generator[Collection, None, None]:
+    collection = Collection(demo_db, "random_numbers")
+    yield collection
+    collection.drop()
 
 
-def test_random_insert(collection):
+def test_random_insert(random_numbers):
     requests.put(
         url="{0}/random".format(random_host),
         data={"upper": 100, "lower": 10},
     ).json()
 
-    response = collection.get(dict())
+    response = random_numbers.get(dict())
     assert len(response) == 1
     assert response[0]["_id"] == "lasts"
 
@@ -41,8 +38,8 @@ def test_random_generator():
     assert 10 < int(response) < 100
 
 
-def test_last_number_list(collection):
-    collection.upsert(
+def test_last_number_list(random_numbers):
+    random_numbers.upsert(
         "lasts",
         {
             "items": [

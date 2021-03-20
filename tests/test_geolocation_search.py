@@ -4,7 +4,7 @@ from typing import Generator
 from pytest import FixtureRequest
 from bson.objectid import ObjectId
 
-from utils import MongoDb
+from utils import Collection
 
 
 geolocation_host = "http://localhost:83"
@@ -13,30 +13,28 @@ jersey_city = {"name": "JerseyCity", "lat": 40.719074, "lng": -74.050552}
 
 
 @pytest.fixture
-def collection(request: FixtureRequest) -> Generator[MongoDb, None, None]:
-    con = MongoDb(host="localhost")
-    con.create_connection()
-    con.set_collection("places")
+def places(demo_db, request) -> Generator[Collection, None, None]:
+    collection = Collection(demo_db, "places")
     param = getattr(request, "param", None)
-    yield con
+    yield collection
     if param:
         for key in param:
-            con.delete_many("name", param["name"])
+            collection.delete_many("name", param["name"])
 
 
-@pytest.mark.parametrize("collection", [new_york], indirect=True)
-def test_new_location(collection):
+@pytest.mark.parametrize("places", [new_york], indirect=True)
+def test_new_location(places):
     requests.post("{0}/location".format(geolocation_host), data=new_york)
-    response = collection.get({})
+    response = places.get({})
     assert response[0]["name"] == new_york["name"]
 
     coordinates = response[0]["location"]["coordinates"]
     assert coordinates == [new_york["lng"], new_york["lat"]]
 
 
-@pytest.mark.parametrize("collection", [new_york, jersey_city], indirect=True)
-def test_get_near(collection):
-    collection.upsert(
+@pytest.mark.parametrize("places", [new_york, jersey_city], indirect=True)
+def test_get_near(places):
+    places.upsert(
         ObjectId(b"foo-bar-baaz"),
         {
             "name": new_york["name"],
@@ -46,7 +44,7 @@ def test_get_near(collection):
             },
         },
     )
-    collection.upsert(
+    places.upsert(
         ObjectId(b"foo-bar-quux"),
         {
             "name": jersey_city["name"],

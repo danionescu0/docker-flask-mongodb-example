@@ -2,7 +2,7 @@ import pytest
 import requests
 from typing import Generator
 
-from utils import MongoDb
+from utils import Collection
 
 
 baesian_host = "http://localhost:84"
@@ -20,22 +20,20 @@ upsert_data = {
 
 
 @pytest.fixture
-def collection() -> Generator[MongoDb, None, None]:
-    con = MongoDb(host="localhost")
-    con.create_connection()
-    con.set_collection("baesian")
-    yield con
-    con.drop()
+def baesian(demo_db) -> Generator[Collection, None, None]:
+    collection = Collection(demo_db, "baesian")
+    yield collection
+    collection.drop()
 
 
-def test_upsert_item(collection):
+def test_upsert_item(baesian):
     requests.post(url="{0}/item/{1}".format(baesian_host, item_id), data={"name": name})
-    response = collection.get({})
+    response = baesian.get({})
     assert response[0]["name"] == name
     assert response[0]["nr_votes"] == 0
 
 
-def test_add_vote(collection):
+def test_add_vote(baesian):
     requests.post(url="{0}/item/{1}".format(baesian_host, item_id), data={"name": name})
     requests.put(
         url="{0}/item/vote/{1}".format(baesian_host, item_id),
@@ -46,14 +44,14 @@ def test_add_vote(collection):
         data={"userid": userid_seven, "mark": 9},
     )
 
-    response = collection.get({})
+    response = baesian.get({})
     assert len(response[0]["marks"]) == response[0]["nr_votes"]
     assert response[0]["name"] == name
     assert response[0]["sum_votes"] == 18
 
 
-def test_get_item(collection):
-    collection.upsert(key=item_id, data=upsert_data)
+def test_get_item(baesian):
+    baesian.upsert(key=item_id, data=upsert_data)
 
     response = requests.get(
         url="{0}/item/{1}".format(baesian_host, item_id),
@@ -62,8 +60,8 @@ def test_get_item(collection):
     assert response["sum_votes"] == 18
 
 
-def test_get_items(collection):
-    collection.upsert(key=item_id, data=upsert_data)
+def test_get_items(baesian):
+    baesian.upsert(key=item_id, data=upsert_data)
     response = requests.get(
         url="{0}/items".format(baesian_host),
     ).json()
@@ -72,13 +70,13 @@ def test_get_items(collection):
     assert len(response[0]["marks"]) > 0
 
 
-def delete_item(collection):
-    collection.upsert(key=item_id, data=upsert_data)
+def delete_item(baesian):
+    baesian.upsert(key=item_id, data=upsert_data)
     response = requests.delete(
         url="{0}/item/{1}".format(baesian_host, item_id),
     ).json()
 
     assert response.status_code == 200
 
-    db_response = collection.get({})
+    db_response = baesian.get({})
     assert db_response == []

@@ -4,7 +4,7 @@ import requests
 import datetime
 from typing import Generator
 from bson.objectid import ObjectId
-from utils import MongoDb
+from utils import Collection
 
 
 fulltext_search_host = "http://localhost:82"
@@ -14,33 +14,35 @@ expression_two = "john has many more apples"
 
 
 @pytest.fixture
-def collection(request: FixtureRequest) -> Generator[MongoDb, None, None]:
-    con = MongoDb(host="localhost")
-    con.create_connection()
-    con.set_collection("fulltext_search")
+def fulltext_search(
+    demo_db, request: FixtureRequest
+) -> Generator[Collection, None, None]:
+    collection = Collection(demo_db, "fulltext_search")
+    yield collection
     param = getattr(request, "param", None)
-    yield con
     for key in param:
-        con.delete_many("app_text", key)
+        collection.delete_many("app_text", key)
 
 
-@pytest.mark.parametrize("collection", [expression_one], indirect=True)
-def test_add_expression(collection):
+@pytest.mark.parametrize("fulltext_search", [expression_one], indirect=True)
+def test_add_expression(fulltext_search):
     requests.put(
         url="{0}/fulltext".format(fulltext_search_host),
         data={"expression": expression_one},
     )
-    response = collection.get({"app_text": expression_one})
+    response = fulltext_search.get({"app_text": expression_one})
     assert response[0]["app_text"] == expression_one
 
 
-@pytest.mark.parametrize("collection", [expression_one, expression_two], indirect=True)
-def test_search(collection):
-    collection.upsert(
+@pytest.mark.parametrize(
+    "fulltext_search", [expression_one, expression_two], indirect=True
+)
+def test_search(fulltext_search):
+    fulltext_search.upsert(
         ObjectId(b"foo-bar-quux"),
         {"app_text": expression_one, "indexed_date": datetime.datetime.utcnow()},
     )
-    collection.upsert(
+    fulltext_search.upsert(
         ObjectId(b"foo-bar-baaz"),
         {"app_text": expression_two, "indexed_date": datetime.datetime.utcnow()},
     )
