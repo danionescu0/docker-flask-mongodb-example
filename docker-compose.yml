@@ -144,6 +144,16 @@ services:
         depends_on:
             - mongo
 
+    web-tictactoe:
+        build:
+            context: ./docker-python
+            args:
+                requirements: /root/flask-mongodb-example/python/requirements.txt
+        image: web-standard
+        ports:
+            - "89:5000"
+        entrypoint: python /root/flask-mongodb-example/python/tictactoe.py
+
     influxdb:
         build: docker-influxdb
         env_file: ./docker-influxdb/configuration.env
@@ -210,6 +220,9 @@ services:
             - mongo
             - mqtt
             - krakend
+            - web-tictactoe
+
+
 volumes:
     grafana_data: {}
     influxdb_data: {}

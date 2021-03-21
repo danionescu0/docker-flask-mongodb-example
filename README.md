@@ -60,6 +60,7 @@ Default credentials are: admin / admin
 
 **10** [User CRUD fastapi](#User-CRUD-fastapi) Create, read, update and detele operations made available with fastapi framework (port 88)
 
+**11** [Tic-tac-toe](#Tic-tac-toe) A tic tac toe game written in flask using flask_session. It has a simple UI(port 89)
 
 
 ![Diagram](https://github.com/danionescu0/docker-flask-mongodb-example/blob/master/resources/diagram.jpg)
@@ -111,6 +112,7 @@ port 84 is free
 port 85 is free
 port 86 is free
 port 88 is free
+port 89 is free
 port 1883 is free
 port 27017 is free
 port 8080 is free
@@ -314,7 +316,7 @@ curl -i "http://localhost:800/random-list"
 
 A second container with the same api opened on port 801 using pypy which should be faster in theory. 
 
-The test system is a i7-4720HQ 2.60GHz wih 12 GB RAM and a SSD drive on which i've run the docker-compose architecture.
+The test system is a I7-4720HQ 2.60GHz wih 12 GB RAM and a SSD drive on which i've run the docker-compose architecture.
 
 The load testing is done using apache bench (https://httpd.apache.org/docs/2.4/programs/ab.html) 3000 requests with 20 concurent requests, 
 the results measured are average requests per second.
@@ -700,6 +702,15 @@ Return a book:
 ````
 curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"id\": \"16\", \"return_date\": \"2019-12-13T08:48:47.899Z\"}"
 ````
+
+# Tic tac toe
+
+A tic tac toe game written in flask using flask_session. It has a simple UI and no REST API this time.
+
+About tic tac toe (https://en.wikipedia.org/wiki/Tic-tac-toe)
+
+This service renders a html template located in /python/templates/tictactoe.html
+
 
 # Grafana and InfluxDb
 
