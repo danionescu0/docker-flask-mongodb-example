@@ -1,4 +1,10 @@
+import uuid
 from pymongo import MongoClient, database
+from bson.objectid import ObjectId
+
+
+def get_random_objectid():
+    return ObjectId(str(uuid.uuid4())[:12].encode("utf-8"))
 
 
 class MongoDb:
@@ -26,8 +32,11 @@ class Collection:
     def delete(self, key):
         self.__db[self.__collection].delete_one({"_id": key})
 
-    def delete_many(self, index, key):
-        self.__db[self.__collection].delete_many({index: key})
+    def delete_many(self, index=None, key=None):
+        if index and key:
+            self.__db[self.__collection].delete_many({index: key})
+        else:
+            self.__db[self.__collection].delete_many({})
 
     def drop(self):
         self.__db[self.__collection].drop()
