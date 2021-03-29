@@ -124,7 +124,7 @@ curl -X GET -i http://localhost:86/borrow -d limit=5 -d offset=0
 
 
 #---fastapi user CRUD---
-curl -X PUT -i http://localhost:88/users/1 \
+curl -X POST -i http://localhost:88/users/1 \
     -H "accept: application/json" \
     -H "Content-Type: application/json" \
     -d '{
@@ -133,7 +133,7 @@ curl -X PUT -i http://localhost:88/users/1 \
             "name": "John"
         }'
 
-curl -X PUT -i http://localhost:88/users/3  \
+curl -X POST -i http://localhost:88/users/3  \
     -H "accept: application/json" \
     -H "Content-Type: application/json" \
     -d '{
@@ -144,7 +144,7 @@ curl -X PUT -i http://localhost:88/users/3  \
 
 curl -X GET -i http://localhost:88/users/2
 
-curl -X POST -i http://localhost:88/users/3 \
+curl -X PUT -i http://localhost:88/users/3 \
     -H "accept: application/json" \
     -H "Content-Type: application/json" \
     -d '{

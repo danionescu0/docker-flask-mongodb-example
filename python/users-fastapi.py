@@ -15,7 +15,7 @@ class User(BaseModel):
     name: str = Field(..., title="Name of the user", max_length=50)
 
 
-@app.put("/users/{userid}")
+@app.post("/users/{userid}")
 def add_user(userid: int, user: User):
     if user.email is None and user.name is None:
         raise HTTPException(
@@ -28,18 +28,18 @@ def add_user(userid: int, user: User):
     return format_user(users.find_one({"_id": userid}))
 
 
-@app.post("/users/{userid}")
+@app.put("/users/{userid}")
 def update_user(userid: int, user: User):
     if user.email is None and user.name is None:
         raise HTTPException(
             status_code=500, detail="Email or name must be present in parameters!"
         )
-    set = {}
+    updated_user = {}
     if user.email is not None:
-        set["email"] = user.email
+        updated_user["email"] = user.email
     if user.name is not None:
-        set["name"] = user.name
-    users.update_one({"_id": userid}, {"$set": set})
+        updated_user["name"] = user.name
+    users.update_one({"_id": userid}, {"$set": updated_user})
     return format_user(users.find_one({"_id": userid}))
 
 
