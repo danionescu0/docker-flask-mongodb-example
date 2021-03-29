@@ -366,19 +366,19 @@ Swagger url: http://localhost:81/apidocs
 
 Api methods using Curl:
 
-* PUT request, this request will add a user with a userid, name and email:
+* POST request, this request will add a user with a userid, name and email:
 
 example: add a new user with name dan email test@yahoo.com and userid 189
 ````
-curl -X PUT -d email=test@yahoo.com -d name=dan http://localhost:81/users/189
+curl -X POST -d email=test@yahoo.com -d name=dan http://localhost:81/users/189
 ````
 
-* POST request, this request will modify a user name or email or both:
+* PUT request, this request will modify a user name or email or both:
 
 example, modify the email of the user with id 10
 
 ````
-curl -X POST -d email=test22@yahoo.com  http://localhost:81/users/10
+curl -X PUT -d email=test22@yahoo.com  http://localhost:81/users/10
 
 ````
 
