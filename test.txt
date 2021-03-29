@@ -5,12 +5,12 @@ curl -X PUT -i http://localhost:800/random -d upper=100 -d lower=10
 
 #---user crud test---
 # adding users
-curl -X PUT -i http://localhost:81/users/1 -d email=john@doe.com -d name=John
-curl -X PUT -i http://localhost:81/users/2 -d email=steve@rogers.com -d name=Steve
-curl -X PUT -i http://localhost:81/users/3 -d email=change@user.com -d name=Change
+curl -X POST -i http://localhost:81/users/1 -d email=john@doe.com -d name=John
+curl -X POST -i http://localhost:81/users/2 -d email=steve@rogers.com -d name=Steve
+curl -X POST -i http://localhost:81/users/3 -d email=change@user.com -d name=Change
 
 # change email of user 3
-curl -X POST -i http://localhost:81/users/3 -d email=newuser@user.com
+curl -X PUT -i http://localhost:81/users/3 -d email=newuser@user.com
 
 # check the change
 curl -X GET -i http://localhost:81/users/3

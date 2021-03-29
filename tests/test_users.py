@@ -22,10 +22,11 @@ def test_get_user(users):
 
 
 def test_create_user(users):
-    requests.put(
+    response = requests.post(
         url="{0}/users/101".format(users_host),
         data={"name": "John Doe", "email": "johny@email.eu"},
-    ).json()
+    )
+    assert response.status_code == 200
 
     response = users.get({"_id": 101})
     assert len(response) == 1
@@ -36,7 +37,7 @@ def test_create_user(users):
 
 def test_update_user(users):
     users.upsert(100, {"name": "John", "email": "test@email.eu"})
-    requests.post(
+    requests.put(
         url="{0}/users/100".format(users_host),
         data={"name": "John", "email": "john@email.com"},
     ).json()

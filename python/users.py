@@ -11,7 +11,7 @@ swagger = Swagger(app)
 users = MongoClient("mongodb", 27017).demo.users
 
 
-@app.route("/users/<int:userid>", methods=["PUT"])
+@app.route("/users/<int:userid>", methods=["POST"])
 def add_user(userid):
     """Create user
     ---
@@ -56,7 +56,7 @@ def add_user(userid):
     )
 
 
-@app.route("/users/<int:userid>", methods=["POST"])
+@app.route("/users/<int:userid>", methods=["PUT"])
 def update_user(userid):
     """Update user information
     ---
