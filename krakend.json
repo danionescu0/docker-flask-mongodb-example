@@ -61,6 +61,29 @@
           "disable_host_sanitize": false
         }
       ]
+    },
+    {
+      "endpoint": "/random",
+      "method": "PUT",
+      "output_encoding": "string",
+      "extra_config": {},
+      "querystring_params": [
+        "lower",
+        "upper"
+      ],
+      "backend": [
+        {
+          "url_pattern": "/random",
+          "encoding": "string",
+          "sd": "static",
+          "method": "PUT",
+          "extra_config": {},
+          "host": [
+            "http://web-random:5000"
+          ],
+          "disable_host_sanitize": false
+        }
+      ]
     }
   ],
   "disable_rest": false
