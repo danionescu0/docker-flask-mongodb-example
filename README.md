@@ -49,8 +49,8 @@ for each sensor and publish it to a separate topic
 **7** [Photo process](#Photo-process) This is a demo of disk manipulation using docker volumes. 
 Photos will be stored on disk retrived and resized / rotated. Also a search by image API will be available (port 85)
 
-**8** [Book collection](#Book-collection) A virtual book library, has api methods for managing books, and borrowing book mechanisms.
-The users must have "profiles" created using the User CRUD service. This api used flask rest plus (https://flask-restplus.readthedocs.io/en/stable/) 
+**8** [Book collection](#Book-collection) A virtual book library, has API methods for managing books, and borrowing book mechanisms.
+The users must have "profiles" created using the User CRUD service. This API used flask rest plus (https://flask-restplus.readthedocs.io/en/stable/) 
 (port 86)
 
 **9** [Grafana and InfluxDb](#Grafana-and-InfluxDb) Grafana with InfluxDb storage. For showing graphs on sensors. 
@@ -155,7 +155,7 @@ pytest -q tests/test_users.py  -s
 **Manual testing:**
 
 For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.html]. In most UNIX systems curl is already installed.
-If you're using Debian/Ubuntu and you don't have curl try using:
+If you're using Debian/Ubuntu and you don't have curl install it using:
 
 ````
 sudo apt-get install curl
@@ -292,9 +292,9 @@ Sample data in "random_numbers" collection document:
 
 MongoDb official documentation (array operations): https://docs.mongodb.com/manual/reference/operator/update/slice/
 
-Swagger url: http://localhost:800/apidocs  
+Swagger URL: http://localhost:800/apidocs  
 
-Api methods using Curl:
+API methods using Curl:
 
 * Generate a random number between 10 and 100 and returns it:
 ````
@@ -314,7 +314,7 @@ curl -i "http://localhost:800/random-list"
 
 **Using PyPy for speed**
 
-A second container with the same api opened on port 801 using pypy which should be faster in theory. 
+A second container with the same API opened on port 801 using pypy which should be faster in theory. 
 
 The test system is a I7-4720HQ 2.60GHz wih 12 GB RAM and a SSD drive on which i've run the docker-compose architecture.
 
@@ -362,9 +362,9 @@ Sample data in user collection document:
 ...
 ````
 
-Swagger url: http://localhost:81/apidocs
+Swagger URL: http://localhost:81/apidocs
 
-Api methods using Curl:
+API methods using Curl:
 
 * POST request, this request will add a user with a userid, name and email:
 
@@ -399,7 +399,7 @@ curl -X DELETE -i "http://localhost:81/users/1"
 # MQTT service
 
 This usecase uses MQTT protocol instead of HTTP to communicate. It involves storing last 5 numerical values of a sensor,
-running a moving average on them and publishing the average each time on a different topic.
+running a moving average on them and publishing the average each time on "/averages/{sensor_id}" topic
 
 MQTT official link: http://mqtt.org/
 
@@ -471,9 +471,9 @@ Sample data in fulltext_search collection document:
 ...
 ````
 
-Swagger url: http://localhost:82/apidocs
+Swagger URL: http://localhost:82/apidocs
 
-Api methods using Curl:
+API methods using Curl:
 
 * To index a new expression like "ana has many more apples":
 ````
@@ -508,9 +508,9 @@ Sample data in places collection document:
 ..
 ````
 
-Swagger url: http://localhost:83/apidocs
+Swagger URL: http://localhost:83/apidocs
 
-Api methods using Curl:
+API methods using Curl:
 
 * To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
 ````
@@ -589,7 +589,7 @@ Sample data in baesian collection document:
 }
 ````
 
-Swagger url: http://localhost:84/apidocs
+Swagger URL: http://localhost:84/apidocs
 
 Using Curl:
 
@@ -614,23 +614,25 @@ curl -i "http://localhost:84/item"
 
 # Photo process
 
-In this usecase we'll use docker volumes to map the local folder called "container-storage" inside the Docker image.
+This usecase provides a demo for working with images. Image upload, delete, resize, rotate, brightness adjust and
+search similar images by uploaded image.
 
+We'll use docker volumes to map the local folder called "container-storage" inside the Docker image. 
 The python webserver will write / delete images in this folder.
 
-One interesting feature of this api is to search similar images. For example you cand take one photo from the 
+One interesting feature of this API is to search similar images. For example you cand take one photo from the 
 container-storage folder, rename it, and modify the brightness or slightly crop it and then try to find it using the API.
 
-To achive this the script will load all images from disk, hash them using a hasing function and compare the hash differences.
+To achieve this the script will load all images from disk, hash them using a hasing function and compare the hash differences.
 It's only a naive implementation for demo purposes, it's main drawbacks are memory limit (all hashes should fit in memory)
 and linear search times, the complexity of the search it's linear with the number of photo hashed and saved.
 
 
 The API will expose methods for adding and deleting images along with resizing and rotating and search by similar image
 
-Swagger url: http://localhost:85/apidocs
+Swagger URL: http://localhost:85/apidocs
 
-Api methods using Curl:
+API methods using Curl:
 
 To get image with id 1, and rezise it by height 100
 ````
@@ -654,14 +656,17 @@ curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 
 # Book-collection
 
-A book library. Users must be defined using the Users CRUD service. Book profiles can be created through the API. 
+A book library. Users are created previously using [User CRUD service](#User-CRUD-service). 
+
+Book profiles are created be created through the API. 
+
 Books can be borrowed and an accounting mechanism for this is in place.
 
 Uses Flask Restplus: https://flask-restplus.readthedocs.io
 
-The Swagger is http://localhost:86
+Swagger URL: http://localhost:86
 
-Api methods using Curl:
+API methods using Curl:
 
 Add a book:
 ````
@@ -705,11 +710,13 @@ curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json"
 
 # Tic tac toe
 
-A tic tac toe game written in flask using flask_session. It has a simple UI and no REST API this time.
+A tic tac toe game written in flask using flask_session. It has a simple UI.
 
 About tic tac toe (https://en.wikipedia.org/wiki/Tic-tac-toe)
 
 This service renders a html template located in /python/templates/tictactoe.html
+
+Swagger URL: does not have an API
 
 
 # Grafana and InfluxDb
@@ -720,9 +727,9 @@ Default credentials are: admin / admin
 
 The Grafana web interface is available at: http://localhost:3000 
 
-The grafana API methods are available here: https://grafana.com/docs/grafana/latest/http_api/
+The Grafana API methods are available here: https://grafana.com/docs/grafana/latest/http_api/
 
-The grafana docker image creates a dashboard called "SensorMetrics", so in the interface go to home and select it.
+The Grafana docker image creates a dashboard called "SensorMetrics", so in the interface go to home and select it.
 Tips, in the "sensortype" selector write humidity / temperature or whatever you inserted and then press enter on it. 
 I sometimes saw a bug, if you don't press enter it didn't select the corect sensortype as a default
 
@@ -786,7 +793,8 @@ More examples in the documentation: https://docs.influxdata.com/influxdb/v1.7/in
 # User CRUD fastapi
 Same as User CRUD, written with fastapi framework (https://fastapi.tiangolo.com/):
 
-Swagger url: http://localhost:88/docs
+Swagger URL: http://localhost:88/docs
+
 
 # Contributing
 
