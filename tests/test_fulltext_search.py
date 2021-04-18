@@ -30,7 +30,7 @@ def test_add_expression(fulltext_search):
     requests.put(
         url="{0}/fulltext".format(fulltext_search_host),
         data={"expression": expression_one},
-        auth=HTTPBasicAuth('admin', 'changeme'),
+        auth=HTTPBasicAuth("admin", "changeme"),
     )
     response = fulltext_search.get({"app_text": expression_one})
     assert response[0]["app_text"] == expression_one
@@ -50,7 +50,7 @@ def test_search(fulltext_search):
     )
     response = requests.get(
         url="{0}/search/apples".format(fulltext_search_host),
-        auth=HTTPBasicAuth('admin', 'changeme'),
+        auth=HTTPBasicAuth("admin", "changeme"),
     ).json()
 
     assert response[0]["text"].find("apples") > -1
