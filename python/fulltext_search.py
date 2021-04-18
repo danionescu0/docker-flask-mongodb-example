@@ -1,54 +1,38 @@
-import json, datetime
 import sys
+import json, datetime
 
 from flask import Flask, request, Response
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import generate_password_hash, check_password_hash
 from flasgger import Swagger
 from pymongo import MongoClient, TEXT
 from bson import json_util
 
 
 app = Flask(__name__)
-swagger = Swagger(app)
+auth = HTTPBasicAuth()
+swagger_template = {"securityDefinitions": {"basicAuth": {"type": "basic"}}}
+users = {
+    "admin": generate_password_hash("changeme"),
+}
+
+
+@auth.verify_password
+def verify_password(username, password):
+    if username in users and check_password_hash(users.get(username), password):
+        return username
+
+
+swagger = Swagger(app, template=swagger_template)
 mongo_host = "mongodb"
 if len(sys.argv) == 2:
     mongo_host = sys.argv[1]
 fulltext_search = MongoClient(mongo_host, 27017).demo.fulltext_search
 
 
-@app.route("/fulltext", methods=["PUT"])
-def add_expression():
-    """Add an expression to fulltext index
-    ---
-    parameters:
-      - name: expression
-        in: formData
-        type: string
-        required: true
-    responses:
-      200:
-        description: Creation succeded
-    """
-    request_params = request.form
-    if "expression" not in request_params:
-        return Response(
-            '"Expression" must be present as a POST parameter!',
-            status=404,
-            mimetype="application/json",
-        )
-    document = {
-        "app_text": request_params["expression"],
-        "indexed_date": datetime.datetime.utcnow(),
-    }
-    fulltext_search.save(document)
-    return Response(
-        json.dumps(document, default=json_util.default),
-        status=200,
-        mimetype="application/json",
-    )
-
-
 @app.route("/search/<string:searched_expression>")
-def search(searched_expression):
+@auth.login_required
+def search(searched_expression: str):
     """Search by an expression
     ---
     parameters:
@@ -84,6 +68,39 @@ def search(searched_expression):
     ]
     return Response(
         json.dumps(list(results), default=json_util.default),
+        status=200,
+        mimetype="application/json",
+    )
+
+
+@app.route("/fulltext", methods=["PUT"])
+@auth.login_required
+def add_expression():
+    """Add an expression to fulltext index
+    ---
+    parameters:
+      - name: expression
+        in: formData
+        type: string
+        required: true
+    responses:
+      200:
+        description: Creation succeded
+    """
+    request_params = request.form
+    if "expression" not in request_params:
+        return Response(
+            '"Expression" must be present as a POST parameter!',
+            status=404,
+            mimetype="application/json",
+        )
+    document = {
+        "app_text": request_params["expression"],
+        "indexed_date": datetime.datetime.utcnow(),
+    }
+    fulltext_search.save(document)
+    return Response(
+        json.dumps(document, default=json_util.default),
         status=200,
         mimetype="application/json",
     )
