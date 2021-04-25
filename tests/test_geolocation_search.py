@@ -1,7 +1,6 @@
 import pytest
 import requests
 from typing import Generator
-from pytest import FixtureRequest
 from bson.objectid import ObjectId
 
 from utils import Collection

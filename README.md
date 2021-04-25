@@ -180,7 +180,7 @@ Using locust.io
 
 Testing random demo microservice:
 ````
-locust -f stresstest-locusts/random-demo.py --host=http://localhost:800 --web-host localhost
+locust -f stresstest-locusts/random_demo.py --host=http://localhost:800 --web-host localhost
 ````
 Testing users microservice:
 ````
