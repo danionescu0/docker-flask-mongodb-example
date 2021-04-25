@@ -185,6 +185,11 @@ services:
             - --replSet
             - myrepl
 
+    redis:
+        image: redis:6
+        ports:
+            - '6379:6379'
+
     mqtt:
         build:
           context: ./docker-mosquitto
