@@ -1,14 +1,17 @@
 import json
 
+import redis
 from flask import Flask, request, Response
 from pymongo import MongoClient, errors
 from bson import json_util
 from flasgger import Swagger
+from utils import cache, cache_invalidate
 
 
 app = Flask(__name__)
 swagger = Swagger(app)
 users = MongoClient("mongodb", 27017).demo.users
+redis_cache = redis.Redis(host="redis", port=6379, db=0)
 
 
 @app.route("/users/<int:userid>", methods=["POST"])
@@ -57,6 +60,7 @@ def add_user(userid):
 
 
 @app.route("/users/<int:userid>", methods=["PUT"])
+@cache_invalidate(redis=redis_cache, key="userid")
 def update_user(userid):
     """Update user information
     ---
@@ -98,6 +102,7 @@ def update_user(userid):
 
 
 @app.route("/users/<int:userid>", methods=["GET"])
+@cache(redis=redis_cache, key="userid")
 def get_user(userid):
     """Details about a user
     ---
@@ -178,6 +183,7 @@ def get_users():
 
 
 @app.route("/users/<int:userid>", methods=["DELETE"])
+@cache_invalidate(redis=redis_cache, key="userid")
 def delete_user(userid):
     """Delete operation for a user
     ---

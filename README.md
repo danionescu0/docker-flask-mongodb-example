@@ -811,13 +811,9 @@ pip install -r python/requirements.txt
 I have created a diagram using this tool: https://diagrams.mingrammer.com 
 
 
-To generate a new one install diagrams package inside your conda env:
+To generate a new one install diagrams and graphviz packages inside your conda env:
 ````
-pip install diagrams
-````
-Then install graphviz inside conda:
-````
-conda install graphviz
+pip install diagrams graphviz
 ````
 Now you're ready to modify "diagrams_generator.py" inside python folder then run the generator
 ````

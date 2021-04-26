@@ -45,6 +45,7 @@ services:
         depends_on:
             - mongo
             - web-base-image
+            - redis
 
     background-mqtt:
         build:
@@ -226,6 +227,7 @@ services:
             - mqtt
             - krakend
             - web-tictactoe
+            - redis
 
 
 volumes:

@@ -5,6 +5,7 @@ from diagrams.aws.iot import IotMqtt
 from diagrams.onprem.database import MongoDB
 from diagrams.onprem.database import InfluxDB
 from diagrams.onprem.network import HAProxy
+from diagrams.onprem.inmemory import Redis
 
 
 with Diagram(
@@ -37,8 +38,10 @@ with Diagram(
     mosquitto = IotMqtt("Mosquitto")
     grafana = Grafana("Grafana")
     influxdb = InfluxDB("InfluxDB")
+    redis = Redis("Redis")
 
     webservers >> Edge(color="brown") >> mongo
+    users >> Edge(color="brows") >> redis
     book_collection >> Edge(color="black") >> users
     mqtt_service >> Edge(color="brown") >> mosquitto
     mqtt_service >> Edge(color="brown") >> mongo
