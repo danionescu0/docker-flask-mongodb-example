@@ -1,6 +1,6 @@
-from random import randrange, uniform
-
 from locust import HttpUser, TaskSet, task
+from faker import Faker
+
 
 class RegistredUser(HttpUser):
     min_wait = 5000
@@ -8,21 +8,20 @@ class RegistredUser(HttpUser):
 
     @task
     class GeolocationStresstest(TaskSet):
+        def __init__(self, parent):
+            super().__init__(parent)
+            self.__faker = Faker("en_US")
+
         @task(1)
         def add_location(self):
-            coordonates = self.__get_coordonates()
+            coordonates = self.__faker.location_on_land()
             data = {
                 'lat': coordonates[0],
                 'lng': coordonates[1],
-                'name': 'Some name ' + str(randrange(0, 1000))
+                'name': coordonates[2]
             }
-            print(data)
             self.client.post('/location', data)
 
         @task(2)
         def search(self):
-            coordonates = self.__get_coordonates()
-            self.client.get('/location/{0}/{1}'.format(coordonates[0], coordonates[1]))
-
-        def __get_coordonates(self):
-            return round(uniform(-90, 90), 5), round(uniform(-180, 180), 5),
+            self.client.get('/location/{0}/{1}'.format(self.__faker.latitude(), self.__faker.longitude()))

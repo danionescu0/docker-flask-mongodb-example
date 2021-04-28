@@ -1,0 +1,4 @@
+black==20.8b1
+diagrams==0.19.1
+graphviz==0.16
+Faker==8.1.1

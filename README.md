@@ -1,7 +1,8 @@
 ## Purpose
 [![test-build](https://github.com/danionescu0/docker-flask-mongodb-example/actions/workflows/test_build.yml/badge.svg?branch=master)](https://github.com/danionescu0/docker-flask-mongodb-example/actions/workflows/test_build.yml)
 
-**A working demo usage of multiple technologies like: Docker, Docker-compose, MongoDb, Python3, Flask framework, Fastapi framework, Mosquitto, Swagger, Locusts, Grafana, InfluxDB, KrakenD, Kubernetes**
+**A working demo usage of multiple technologies like: Docker, Docker-compose, MongoDb, Python3, Flask framework, 
+Fastapi framework, Mosquitto, Swagger, Locusts, Grafana, InfluxDB, KrakenD, Kubernetes**
 
 **Please consider adding issues and enhancements**
 
@@ -167,10 +168,17 @@ sudo apt-get install mosquitto-clients
 
 Using locust.io
 
-1. Installation: https://docs.locust.io/en/stable/installation.html
+1. Installation: 
+conda install -c conda-forge locust
 
- * This tests work work version 1.0.2, please ensure you're using this version
- * Quickstart(optional): https://docs.locust.io/en/stable/quickstart.html
+then 
+````bash
+conda activate your_env
+conda install -c conda-forge locust
+pip install -r python/requirements-dev.txt
+````
+
+Quickstart(optional): https://docs.locust.io/en/stable/quickstart.html
 
 2. Ensure port 8089 is free
 
@@ -813,7 +821,7 @@ I have created a diagram using this tool: https://diagrams.mingrammer.com
 
 To generate a new one install diagrams and graphviz packages inside your conda env:
 ````
-pip install diagrams graphviz
+pip install -r python/requirements-dev.txt
 ````
 Now you're ready to modify "diagrams_generator.py" inside python folder then run the generator
 ````
@@ -838,7 +846,7 @@ pytest -q tests/test_users.py  -s
 * Run black () to format the code properly (if not the build will fail on push)
 ````
 cd docker--mongodb-example
-pip install black
+pip install -r python/requirements-dev.txt
 black --exclude stresstest-locusts/ .
 ````
 
