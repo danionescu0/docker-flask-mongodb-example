@@ -90,20 +90,13 @@ def get_photo(id):
         float(request.args.get("brightness")) if "brightness" in request_args else 0
     )
     if brightness > 20:
-        return Response(
-            "Maximum value for brightness is 20",
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "Maximum value for brightness is 20"}, 500)
 
     try:
         img = Image.open(get_photo_path(id))
     except IOError:
-        return Response(
-            json.dumps({"error": "Error loading image"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "Error loading image"}, 500)
+
     if resize > 0:
         img = get_resized_by_height(img, resize)
     if rotate > 0:
@@ -146,18 +139,11 @@ def get_photos_like_this():
         description: Erros occured
     """
     if "file" not in request.files:
-        return Response(
-            json.dumps({"error": "File parameter not present!"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "File parameter not present!"}, 500)
     file = request.files["file"]
     if file.mimetype != "image/jpeg":
-        return Response(
-            json.dumps({"error": "File mimetype must pe jpeg!"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "File mimetype must pe jpeg!"}, 500)
+
     request_args = request.args
     similarity = (
         int(request.args.get("similarity")) if "similarity" in request_args else 10
@@ -189,30 +175,19 @@ def set_photo(id):
         description: Error saving photo
     """
     if "file" not in request.files:
-        return Response(
-            json.dumps({"error": "File parameter not present!"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "File parameter not present!"}, 500)
+
     file = request.files["file"]
     if file.mimetype != "image/jpeg":
-        return Response(
-            json.dumps({"error": "File mimetype must pe jpeg!"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "File mimetype must pe jpeg!"}, 500)
+
     try:
         file.save(get_photo_path(id))
     except Exception as e:
-        return Response(
-            json.dumps({"error": "Could not save file to disk!"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "Could not save file to disk!"}, 500)
+
     file_hash_search.add(file, id)
-    return Response(
-        json.dumps({"status": "success"}), status=200, mimetype="application/json"
-    )
+    return get_response({"status": "success"}, 200)
 
 
 @app.route("/photo/<int:id>", methods=["DELETE"])
@@ -234,13 +209,16 @@ def delete_photo(id):
         os.remove(get_photo_path(id))
         file_hash_search.delete(id)
     except OSError as e:
-        return Response(
-            json.dumps({"error": "File does not exists!"}),
-            status=404,
-            mimetype="application/json",
-        )
+        return get_response({"error": "File does not exists!"}, 500)
+
+    return get_response({"status": "success"}, 200)
+
+
+def get_response(data: dict, status: int) -> Response:
     return Response(
-        json.dumps({"status": "success"}), status=200, mimetype="application/json"
+        json.dumps(data),
+        status=status,
+        mimetype="application/json",
     )
 
 

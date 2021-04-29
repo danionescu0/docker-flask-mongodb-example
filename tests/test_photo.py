@@ -4,10 +4,9 @@ import os
 from pathlib import Path
 from PIL import Image
 
+
 photo_process_host = "http://localhost:85"
-
 parent_path = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 image_path = os.path.join(str(parent_path) + "/tests/resources/test.jpg")
 storage_path = os.path.join(str(parent_path) + "/container-storage")
 image_id = "101"
