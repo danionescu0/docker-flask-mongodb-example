@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+    # base image for building our python apps, used for speeding up the build process
     web-base-image:
         build:
             context: ./docker-python/base
@@ -8,6 +9,7 @@ services:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-base
 
+    # generates random numbers and lists them
     web-random:
         build:
             context: ./docker-python
@@ -21,6 +23,7 @@ services:
             - mongo
             - web-base-image
 
+    # generates random numbers and lists them, it's faster thatn web-random because it's using pypy accelerator
     web-random-pypy:
         build:
             context: ./docker-python-pypy
@@ -33,6 +36,7 @@ services:
         depends_on:
             - mongo
 
+    # Create, read, update and detele operations over a user collection
     web-users:
         build:
             context: ./docker-python
@@ -47,6 +51,7 @@ services:
             - web-base-image
             - redis
 
+    # Uses an MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
     background-mqtt:
         build:
             context: ./docker-python
@@ -67,6 +72,7 @@ services:
             - influxdb
         tty: true
 
+    # Fulltext search engine backed by fulltext MongoDb index
     web-fulltext-search:
         build:
             context: ./docker-python
@@ -79,6 +85,7 @@ services:
         depends_on:
             - mongo
 
+    # Geospacial search service that supports adding places, and quering the placing by coordonates and distance
     web-geolocation-search:
         build:
             context: ./docker-python
@@ -91,6 +98,7 @@ services:
         depends_on:
             - mongo
 
+    # Baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average)
     web-baesian:
         build:
             context: ./docker-python
@@ -103,6 +111,7 @@ services:
         depends_on:
             - mongo
 
+    # A demo of working with file photo uploads, hash searching and using docker volumes
     web-photo-process:
         build:
             context: ./docker-python
@@ -117,6 +126,7 @@ services:
         depends_on:
             - mongo
 
+    # A virtual book library
     web-book-collection:
         build:
             context: ./docker-python
@@ -132,6 +142,7 @@ services:
             - mongo
             - web-users
 
+    # Wame functionality as web-users but build with fastapi
     # runs with gunicorn on two processor cores [-w 2]
     web-users-fast-api:
         build:
@@ -145,6 +156,7 @@ services:
         depends_on:
             - mongo
 
+    # A tic tac toe game written in flask using flask_session. It has a simple UI
     web-tictactoe:
         build:
             context: ./docker-python
@@ -155,6 +167,7 @@ services:
             - "89:5000"
         entrypoint: python /root/flask-mongodb-example/python/tictactoe.py
 
+    # Database for grafana
     influxdb:
         build: docker-influxdb
         env_file: ./docker-influxdb/configuration.env
@@ -163,6 +176,7 @@ services:
         volumes:
           - influxdb_data:/var/lib/influxdb
 
+    # For showing graphs on sensors
     grafana:
         build: docker-grafana
         env_file: ./docker-grafana/configuration.env
@@ -173,6 +187,7 @@ services:
         volumes:
           - grafana_data:/var/lib/grafana
 
+    # Genaral purpose database
     mongo:
         image: mongo:latest
         hostname: mongodb
@@ -186,17 +201,20 @@ services:
             - --replSet
             - myrepl
 
+    # Redis server, used here for caching
     redis:
         image: redis:6
         ports:
             - '6379:6379'
 
+    # Mosquitto MQTT broker
     mqtt:
         build:
           context: ./docker-mosquitto
         ports:
             - "1883:1883"
 
+    # An api gateway
     krakend:
         image: devopsfaith/krakend
         volumes:
@@ -207,6 +225,7 @@ services:
             - web-random
             - web-users
 
+    # Used to test services
     web-test:
         image: alpine 
         depends_on:

@@ -40,13 +40,13 @@ is opened on port 801 using pypy which is faster, check Random service descripti
 **3** [MQTT service](#MQTT-service) will use a MQTT server (Mosquitto) to allow to publish sensor updates over MQTT (port 1883)
 The updates will be saved in mongodb (/demo/sensors). It will also compute a running average for each sensor and publish it to a separate topic
 
-**4** [Fulltext service](#Fulltext-service) fulltext search engine backed by fulltext mongoDb index (port 82)
+**4** [Fulltext service](#Fulltext-service) fulltext search engine backed by fulltext MongoDb index (port 82)
 
 **5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
 **6** [Baesian_average](#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average) (port 84)
 
-**7** [Photo process](#Photo-process) This is a demo of disk manipulation using docker volumes. 
+**7** [Photo process](#Photo-process) A demo of working with file photo uploads, hash searching and using docker volumes. 
 Photos will be stored on disk retrived and resized / rotated. Also a search by image API will be available (port 85)
 
 **8** [Book collection](#Book-collection) A virtual book library, has API methods for managing books, and borrowing book mechanisms.
@@ -147,7 +147,7 @@ chmod +x import.sh
 ./import.sh
 ````
 
-**Manual testing:**
+## Manual testing:
 
 For all HTTP requests we'll be using [curl][https://curl.haxx.se/docs/manpage.html]. In most UNIX systems curl is already installed.
 If you're using Debian/Ubuntu and you don't have curl install it using:
@@ -164,7 +164,7 @@ For the MQTT application we'll use mosquitto cli: To install mosquitto cli in De
 sudo apt-get install mosquitto-clients
 ````
 
-**Stress testing using locusts.io**
+## Stress testing using locusts.io
 
 Using locust.io
 
@@ -216,7 +216,7 @@ After starting any service open http://localhost:8089 to acces the testing UI
 
 # Services explained:
 
-# Random service
+## Random service
 
 This service generates random numbers and store them in a capped array (last 5 of them). Also it can generate
 and return a random number.
@@ -291,7 +291,7 @@ BUT i've noticed that need a warm up (i've run the benchmark on this service mul
 
 These tests are made possible thanks to neelabalan(https://github.com/neelabalan).
 
-# User CRUD service
+## User CRUD service
 
 CRUD stands for Create, Read, Update and Delete operations. I've written a demo for these operations on a collections
 of users. A user has a userid, name and email fields.
@@ -340,7 +340,7 @@ example for with id 1:
 curl -X DELETE -i "http://localhost:81/users/1"
 ````
 
-# MQTT service
+## MQTT service
 
 This usecase uses MQTT protocol instead of HTTP to communicate. It involves storing last 5 numerical values of a sensor,
 running a moving average on them and publishing the average each time on "/averages/{sensor_id}" topic
@@ -399,7 +399,7 @@ for the sensor "temperature". Each time someone publishes a new value for a sens
 python script will calculate the average values of last 5 values and publishes it
 
 
-# Fulltext service
+## Fulltext service
 
 This service exposes a REST API for inserting a text into the full text database, and retriving last 10 matches
 
@@ -429,7 +429,7 @@ curl -u admin:changeme -X PUT -d expression="ana has many more apples"  http://l
 curl -u admin:changeme -i "http://localhost:82/search/apples"
 ````
 
-# Geospacial search service
+## Geospacial search service
 
 The service will allow to insert locations with coordonats (latitude and longitude), and will expose an REST API
 to all locations near a point.
@@ -466,7 +466,7 @@ curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" http://lo
 curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
 ````
 
-# Baesian average
+## Baesian average
 
 This is a naive implementation of the baesian average (https://en.wikipedia.org/wiki/Bayesian_average).
 
@@ -504,7 +504,6 @@ Element 1: 8.909
 Element 2: 8.941
 Element 3: 7.9
 ```
-
 
 
 You can see although Hamlet has an 10, and Cicero has two 9's and one 10 the baesian average of Cicero is the highest
@@ -556,7 +555,7 @@ To get an item, along with it's average:
 curl -i "http://localhost:84/item" 
 ````
 
-# Photo process
+## Photo process
 
 This usecase provides a demo for working with images. Image upload, delete, resize, rotate, brightness adjust and
 search similar images by uploaded image.
@@ -598,7 +597,7 @@ To search images similar with a given one:
 curl -X PUT -F "file=@image.jpg" http://localhost:85/photo/similar
 ````
 
-# Book-collection
+## Book-collection
 
 A book library. Users are created previously using [User CRUD service](#User-CRUD-service). 
 
@@ -652,7 +651,7 @@ Return a book:
 curl -X PUT "http://localhost:86/borrow/return/16" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"id\": \"16\", \"return_date\": \"2019-12-13T08:48:47.899Z\"}"
 ````
 
-# Tic tac toe
+## Tic tac toe
 
 A tic tac toe game written in flask using flask_session. It has a simple UI.
 
@@ -663,7 +662,7 @@ This service renders a html template located in /python/templates/tictactoe.html
 Swagger URL: does not have an API
 
 
-# Grafana and InfluxDb
+## Grafana and InfluxDb
 
 Grafana with InfluxDb integration for displaying sensor data. the MQTT service sends datapoints to InfluxDb and Grafana displays the metrics.
 
@@ -734,14 +733,14 @@ SELECT * from "humidity"
 More examples in the documentation: https://docs.influxdata.com/influxdb/v1.7/introduction/getting-started/ 
 
 
-# User CRUD fastapi
+## User CRUD fastapi
 Same as User CRUD, written with fastapi framework (https://fastapi.tiangolo.com/):
 
 Swagger URL: http://localhost:88/docs
 
 
 
-**API gateway using Krakend**
+# API gateway using Krakend
 Website: https://www.krakend.io
 
 Web configurator: https://designer.krakend.io/
@@ -801,19 +800,25 @@ Now visit the app in your browser ex: http://external_ip_for_random_demo_service
 
 # Contributing
 
-## Check open issues (https://github.com/danionescu0/docker-flask-mongodb-example/issues) consider taking on an issue, or adding a new one.
+### Check open issues 
 
-## Working on a issue 
+https://github.com/danionescu0/docker-flask-mongodb-example/issues consider taking on an issue, or adding a new one.
 
-* To start developing locally you can use conda to create a new environment with python 3.8 and install the requirements there corresponding to the section you want to work in.
-Please check docker-compose.yaml file to see which to install.
+### Working on a issue 
 
-````
+* To start developing locally using anaconda:
+````bash
 cd docker--mongodb-example
 conda create --name dockerflaskmongodbexample python=3.8.0
 conda activate dockerflaskmongodbexample
 pip install -r python/requirements.txt
+pip install -r python/requirements-fastapi.txt
+pip install -r python/requirements-mqtt.txt
+pip install -r python/requirements-photo.txt
+pip install -r python/requirements-restplus.txt
+pip install -r python/requirements-dev.txt
 ````
+
 
 * If you created a new service or modified some connexions between services, you may **generate a new diagram**.
 I have created a diagram using this tool: https://diagrams.mingrammer.com 
