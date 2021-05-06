@@ -5,13 +5,15 @@ from flask import Flask, request, Response
 from pymongo import MongoClient, errors
 from bson import json_util
 from flasgger import Swagger
-from utils import cache, cache_invalidate
+from utils import cache, cache_invalidate, read_docker_secret
 
 
 app = Flask(__name__)
 swagger = Swagger(app)
 users = MongoClient("mongodb", 27017).demo.users
-redis_cache = redis.Redis(host="redis", port=6379, db=0)
+redis_cache = redis.Redis(
+    host="redis", port=6379, db=0, password=read_docker_secret("REDIS_PASSWORD")
+)
 
 
 @app.route("/users/<int:userid>", methods=["POST"])
@@ -130,6 +132,8 @@ def get_user(userid):
         description: User not found
     """
     user = users.find_one({"_id": userid})
+    print("getting user")
+
     if None == user:
         return Response("", status=404, mimetype="application/json")
     return Response(json.dumps(user), status=200, mimetype="application/json")

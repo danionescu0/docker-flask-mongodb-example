@@ -46,6 +46,11 @@ services:
         ports:
             - "81:5000"
         entrypoint: python /root/flask-mongodb-example/python/users.py
+        environment:
+            - REDIS_PASSWORD=/run/secrets/redis_password
+            - PYTHONUNBUFFERED=1
+        secrets:
+            - redis_password
         depends_on:
             - mongo
             - web-base-image
@@ -203,7 +208,8 @@ services:
 
     # Redis server, used here for caching
     redis:
-        image: redis:6
+        build:
+            context: ./docker-redis
         ports:
             - '6379:6379'
 
@@ -258,3 +264,5 @@ secrets:
         file: ./secrets/mqtt_user.txt
     mqtt_password:
         file: ./secrets/mqtt_pass.txt
+    redis_password:
+        file: ./secrets/redis_pass.txt

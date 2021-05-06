@@ -1,4 +1,5 @@
 import logging, os
+from functools import wraps
 import pickle
 
 import redis
@@ -50,6 +51,7 @@ def cache(redis: redis.Redis, key: str):
     """
 
     def decorator(fn):  # define a decorator for a function "fn"
+        @wraps(fn)
         def wrapped(
             *args, **kwargs
         ):  # define a wrapper that will finally call "fn" with all arguments
@@ -78,6 +80,7 @@ def cache_invalidate(redis: redis.Redis, key: str):
     """
 
     def decorator(fn):  # define a decorator for a function "fn"
+        @wraps(fn)
         def wrapped_f(
             *args, **kwargs
         ):  # define a wrapper that will finally call "fn" with all arguments
