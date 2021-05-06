@@ -3,15 +3,13 @@ import requests
 import json
 import datetime
 import dateutil.parser
-from copy import deepcopy
 from typing import Generator
 from pytest import FixtureRequest
 from utils import Collection, get_random_objectid
 
+
 headers = {"accept": "application/json", "Content-Type": "application/json"}
-
 book_collection_host = "http://localhost:86"
-
 books = [
     {
         "isbn": "978-1607965503",
@@ -53,6 +51,7 @@ def test_book_add(book_collection):
             headers=headers,
             data=json.dumps(books[counter]),
         )
+        assert response.status_code == 200
         responses.append(response)
 
     assert all([response.status_code == 200 for response in responses])
@@ -81,7 +80,9 @@ def test_list_all_books(load_books):
         url="{0}/book?limit={limit}&offset={offset}".format(
             book_collection_host, limit=limit, offset=offset
         ),
-    ).json()
+    )
+    assert response.status_code == 200
+    response = response.json()
     assert len(response) == 1
     assert response[0] == books[0]
 
@@ -91,7 +92,9 @@ def test_list_all_books(load_books):
         url="{0}/book?limit={limit}&offset={offset}".format(
             book_collection_host, limit=limit, offset=offset
         ),
-    ).json()
+    )
+    assert response.status_code == 200
+    response = response.json()
     assert len(response) == 2
     assert response == books
 
@@ -102,6 +105,7 @@ def test_delete_book(load_books, book_collection):
         url="{0}/book/{1}".format(book_collection_host, books[0]["isbn"]),
         headers=headers,
     )
+    assert response.status_code == 200
     # after delete
     assert len(book_collection.get({})) == len(books) - 1
 
@@ -190,6 +194,7 @@ def test_borrow_book(load_users, load_books, borrow_collection, book_collection)
         headers=headers,
         data=json.dumps(data),
     )
+    assert response.status_code == 200
     db_response = borrow_collection.get({})[0]
     db_response["isbn"] = data["isbn"]
     db_response["userid"] = data["userid"]
@@ -218,7 +223,9 @@ def test_book_borrows(load_book_borrows, load_books):
         url="{0}/borrow?limit={limit}&offset={offset}".format(
             book_collection_host, limit=limit, offset=offset
         ),
-    ).json()
+    )
+    assert response.status_code == 200
+    response = response.json()
     assert len(response) == 1
     assert response[0]["isbn"] in [book["isbn"] for book in books]
     assert isinstance(
@@ -230,8 +237,9 @@ def test_book_borrows(load_book_borrows, load_books):
         url="{0}/borrow?limit={limit}&offset={offset}".format(
             book_collection_host, limit=limit, offset=offset
         ),
-    ).json()
-
+    )
+    assert response.status_code == 200
+    response = response.json()
     assert len(response) == 2
 
 
@@ -243,8 +251,8 @@ def test_return_book(load_book_borrows, load_books, book_collection, borrow_coll
         headers=headers,
         data=json.dumps({"id": "3", "return_date": return_date}),
     )
-    response.status_code == 200
     response_json = response.json()
+    assert response.status_code == 200
     assert response_json["id"] == "3"
     assert response_json["return_date"] == return_date
     assert book_collection.get({})[1]["nr_available"] == books[1]["nr_available"] + 1

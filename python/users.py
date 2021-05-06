@@ -5,7 +5,8 @@ from flask import Flask, request, Response
 from pymongo import MongoClient, errors
 from bson import json_util
 from flasgger import Swagger
-from utils import cache, cache_invalidate, read_docker_secret
+from utils import read_docker_secret
+from caching import cache, cache_invalidate
 
 
 app = Flask(__name__)

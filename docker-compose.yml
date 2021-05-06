@@ -36,7 +36,7 @@ services:
         depends_on:
             - mongo
 
-    # Create, read, update and detele operations over a user collection
+    # Create, read, update and delete operations over a user collection
     web-users:
         build:
             context: ./docker-python
@@ -194,7 +194,7 @@ services:
 
     # Genaral purpose database
     mongo:
-        image: mongo:latest
+        image: mongo:4.4.5-bionic
         hostname: mongodb
         ports:
             - '27017:27017'
@@ -205,6 +205,10 @@ services:
             - wiredTiger
             - --replSet
             - myrepl
+        healthcheck:
+                    test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo  --quiet) -eq 1
+                    interval: 10s
+                    start_period: 30s
 
     # Redis server, used here for caching
     redis:
@@ -233,14 +237,14 @@ services:
 
     # Used to test services
     web-test:
-        image: alpine 
+        image: alpine
         depends_on:
             - web-base-image
             - web-random
             - web-random-pypy
             - web-users
             - background-mqtt
-            - web-fulltext-search 
+            - web-fulltext-search
             - web-geolocation-search
             - web-baesian
             - web-photo-process
