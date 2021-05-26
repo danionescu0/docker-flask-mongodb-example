@@ -39,7 +39,7 @@ def random_insert():
     number = str(
         random.randint(int(request_params["lower"]), int(request_params["upper"]))
     )
-    random_numbers.update(
+    random_numbers.update_one(
         {"_id": "lasts"},
         {
             "$push": {
