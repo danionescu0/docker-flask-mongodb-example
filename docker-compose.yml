@@ -10,6 +10,7 @@ services:
         image: web-base
 
     # generates random numbers and lists them
+    # uses healthcheck by making a curl request to a GET endpoint
     web-random:
         build:
             context: ./docker-python
@@ -22,6 +23,10 @@ services:
         depends_on:
             - mongo
             - web-base-image
+        healthcheck:
+            test: curl --silent --show-error --fail "http://localhost:5000/random?lower=0&upper10"
+            interval: 10s
+            start_period: 30s
 
     # generates random numbers and lists them, it's faster thatn web-random because it's using pypy accelerator
     web-random-pypy:
@@ -193,6 +198,7 @@ services:
           - grafana_data:/var/lib/grafana
 
     # Genaral purpose database
+    # uses healthcheck for replicasset rs.status().ok
     mongo:
         image: mongo:4.4.5-bionic
         hostname: mongodb
@@ -206,16 +212,22 @@ services:
             - --replSet
             - myrepl
         healthcheck:
-                    test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo  --quiet) -eq 1
-                    interval: 10s
-                    start_period: 30s
+            test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo  --quiet) -eq 1
+            interval: 10s
+            start_period: 30s
 
     # Redis server, used here for caching
+    # uses healthcheck with redis-cli ping
     redis:
         build:
             context: ./docker-redis
         ports:
             - '6379:6379'
+        healthcheck:
+              test: ["CMD", "redis-cli", "ping"]
+              interval: 10s
+              timeout: 3s
+              start_period: 30s
 
     # Mosquitto MQTT broker
     mqtt:
