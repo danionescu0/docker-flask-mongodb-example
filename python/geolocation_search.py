@@ -14,15 +14,16 @@ if len(sys.argv) == 2:
     mongo_host = sys.argv[1]
 places = MongoClient(mongo_host, 27017).demo.places
 
-app.config['JWT_AUTH_URL_RULE'] = '/api/auth'
-app.config['SECRET_KEY'] = 'super-secret'
+app.config["JWT_AUTH_URL_RULE"] = "/api/auth"
+app.config["SECRET_KEY"] = "super-secret"
 app.config["SWAGGER"] = {
     "title": "Swagger JWT Authentiation App",
     "uiversion": 3,
 }
-app.config['JWT_AUTH_HEADER_PREFIX'] = 'Bearer'
+app.config["JWT_AUTH_HEADER_PREFIX"] = "Bearer"
 
-swag = Swagger(app,
+swag = Swagger(
+    app,
     template={
         "info": {
             "title": "Swagger Basic Auth App",
@@ -48,7 +49,7 @@ class User(object):
 
 
 users = [
-    User(1, 'admin', 'secret'),
+    User(1, "admin", "secret"),
 ]
 
 username_table = {u.username: u for u in users}
@@ -57,12 +58,12 @@ userid_table = {u.id: u for u in users}
 
 def authenticate(username: str, password: str):
     user = username_table.get(username, None)
-    if user and safe_str_cmp(user.password.encode('utf-8'), password.encode('utf-8')):
+    if user and safe_str_cmp(user.password.encode("utf-8"), password.encode("utf-8")):
         return user
 
 
 def identity(payload):
-    user_id = payload['identity']
+    user_id = payload["identity"]
     return userid_table.get(user_id, None)
 
 
@@ -93,7 +94,6 @@ def login():
     try:
         username = request.form.get("username")
         password = request.form.get("password")
-
         user = authenticate(username, password)
         if not user:
             raise Exception("User not found!")
@@ -102,7 +102,7 @@ def login():
         resp.status_code = 200
         access_token = jwt.jwt_encode_callback(user)
         # add token to response headers - so SwaggerUI can use it
-        resp.headers.extend({'jwt-token': access_token})
+        resp.headers.extend({"jwt-token": access_token})
     except Exception as e:
         resp = jsonify({"message": "Bad username and/or password"})
         resp.status_code = 401
@@ -158,7 +158,8 @@ def new_location():
 
 
 @app.route("/location/<string:lat>/<string:lng>")
-def get_near(lat, lng):
+@jwt_required()
+def get_near(lat: str, lng: str):
     """Get all points near a location given coordonates, and radius
     ---
     parameters:

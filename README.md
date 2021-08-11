@@ -456,14 +456,21 @@ Swagger URL: http://localhost:83/apidocs
 
 API methods using Curl:
 
+* To authenticate (admin / secret) and obtain JWT:
+
+````
+curl -X POST "http://localhost:83/login" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "username=admin&password=secret" 
+````
+To make authenticated requests use -H "Authorization: Bearer obtained_token" 
+
 * To add a location named "Bucharest" with latitude 26.1496616 and longitude 44.4205455
 ````
-curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" http://localhost:83/location
+curl -X POST -d name=Bucharest -d lat="26.1496616" -d lng="44.4205455" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Mjg2OTE5MDIsImlhdCI6MTYyODY5MTYwMiwibmJmIjoxNjI4NjkxNjAyLCJpZGVudGl0eSI6MX0.37Xgp1TQBqwPvBnh_D6QWPB4nn0foRtuDZOwEnuSCP4" http://localhost:83/location
 ````
 
 * To get all locations near 26.1 latitude and 44.4 longitude in a range of 50000 meters (50 km)
 ````
-curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000"
+curl -i "http://localhost:83/location/26.1/44.4?max_distance=50000" -H "accept: application/json" -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2Mjg2OTE5MDIsImlhdCI6MTYyODY5MTYwMiwibmJmIjoxNjI4NjkxNjAyLCJpZGVudGl0eSI6MX0.37Xgp1TQBqwPvBnh_D6QWPB4nn0foRtuDZOwEnuSCP4"
 ````
 
 ## Baesian average
