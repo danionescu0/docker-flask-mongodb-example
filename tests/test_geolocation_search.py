@@ -9,6 +9,10 @@ from utils import Collection
 geolocation_host = "http://localhost:83"
 new_york = {"name": "NewYork", "lat": 40.730610, "lng": -73.935242}
 jersey_city = {"name": "JerseyCity", "lat": 40.719074, "lng": -74.050552}
+token = requests.post(
+    geolocation_host + "/login", data={"username": "admin", "password": "secret"}
+).headers["jwt-token"]
+auth_header = {"Authorization": "Bearer " + token}
 
 
 @pytest.fixture
@@ -23,7 +27,10 @@ def places(demo_db, request) -> Generator[Collection, None, None]:
 
 @pytest.mark.parametrize("places", [new_york], indirect=True)
 def test_new_location(places):
-    requests.post("{0}/location".format(geolocation_host), data=new_york)
+    response = requests.post(
+        "{0}/location".format(geolocation_host), data=new_york, headers=auth_header
+    )
+    assert response.status_code == 200
     response = places.get({})
     assert response[0]["name"] == new_york["name"]
 
@@ -53,12 +60,15 @@ def test_get_near(places):
             },
         },
     )
-    response = requests.get(
+    request = requests.get(
         url="{0}/location/{1}/{2}".format(
             geolocation_host, new_york["lat"], new_york["lng"]
         ),
-        data={"max_distance": 50000},
-    ).json()
+        data={"max_distance": 5000},
+        headers=auth_header,
+    )
+    assert request.status_code == 200
+    response = request.json()
 
     assert response[0]["name"] == new_york["name"]
     assert response[1]["name"] == jersey_city["name"]
