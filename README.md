@@ -42,7 +42,7 @@ The updates will be saved in mongodb (/demo/sensors). It will also compute a run
 
 **4** [Fulltext service](#Fulltext-service) fulltext search engine backed by fulltext MongoDb index (port 82)
 
-**5** [Geospacial search service](#Geospacial-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
+**5** [Geolocation search service](#Geolocation-search-service) geospacial search service that supports adding places, and quering the placing by coordonates and distance (port 83)
 
 **6** [Baesian_average](#Baesian-average) baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average) (port 84)
 
@@ -349,7 +349,7 @@ MQTT official link: http://mqtt.org/
 
 MQTT explained: https://randomnerdtutorials.com/what-is-mqtt-and-how-it-works/
 
-MQTT info, tools stuff: https://github.com/hobbyquaker/awesome-mqtt#tools
+MQTT info, tools: https://github.com/hobbyquaker/awesome-mqtt#tools
 
 MongoDb capped array: https://www.mongodb.com/blog/post/push-to-sorted-array
 
@@ -429,12 +429,12 @@ curl -u admin:changeme -X PUT -d expression="ana has many more apples"  http://l
 curl -u admin:changeme -i "http://localhost:82/search/apples"
 ````
 
-## Geospacial search service
+## Geolocation search service
 
-The service will allow to insert locations with coordonats (latitude and longitude), and will expose an REST API
+The service will allow to insert locations with coordonates (latitude and longitude), and will expose an REST API
 to all locations near a point.
 
-MongoDb official documentation(geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
+MongoDb official documentation (geospacial index): https://docs.mongodb.com/manual/geospatial-queries/
 
 Sample data in places collection document:
 ````
@@ -456,7 +456,7 @@ Swagger URL: http://localhost:83/apidocs
 
 API methods using Curl:
 
-* To authenticate (admin / secret) and obtain JWT:
+* To authenticate with credentials(admin / secret) and obtain JWT:
 
 ````
 curl -X POST "http://localhost:83/login" -H "accept: application/json" -H "Content-Type: application/x-www-form-urlencoded" -d "username=admin&password=secret" 

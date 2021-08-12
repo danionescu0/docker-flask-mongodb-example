@@ -12,6 +12,14 @@ class RegistredUser(HttpUser):
             super().__init__(parent)
             self.__faker = Faker("en_US")
 
+        def on_start(self):
+            self.token = self.login()
+            self.client.headers = {'Authorization': 'Bearer ' + self.token}
+
+        def login(self):
+            response = self.client.post("/login", data={"username": "admin", "password": "secret"})
+            return response.headers['jwt-token']
+
         @task(1)
         def add_location(self):
             coordonates = self.__faker.location_on_land()
