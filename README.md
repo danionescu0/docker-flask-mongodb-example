@@ -694,7 +694,7 @@ mosquitto_pub -h localhost -u some_user -P some_pass -p 1883 -d -t sensors -m "{
 ````
 
 After you have inserted some datapoints, to view the graphs first select the "SensorMetrics", then from the top right corner
-select "Last 5 minutes" and from sensortype selectbox type the sensor name (the one you inserted datapoints for) like "humidity".
+select "Last 5 minutes" and from sensortype textbox type the sensor name (the one you inserted datapoints for) like "humidity", default is "temperature"
 
 
 To connect to your local InfluxDb instance use for debug or for fun:

@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+
+    # Database for grafana
+    influxdb:
+        build: docker-influxdb
+        env_file: ./docker-influxdb/configuration.env
+        ports:
+          - '8086:8086'
+        volumes:
+          - influxdb_data:/var/lib/influxdb
+
+    # For showing graphs on sensors
+    grafana:
+        build: docker-grafana
+        env_file: ./docker-grafana/configuration.env
+        links:
+          - influxdb
+        ports:
+          - '3000:3000'
+        volumes:
+          - grafana_data:/var/lib/grafana
+
+
+volumes:
+    grafana_data: {}
+    influxdb_data: {}
+
