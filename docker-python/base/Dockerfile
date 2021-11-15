@@ -1,4 +1,4 @@
-FROM python:3.8-buster as web-base
+FROM python:3.10-buster as web-base
 # this is the python base image that contains olny git and the downloaded project
 RUN apt-get update
 RUN apt install git -y

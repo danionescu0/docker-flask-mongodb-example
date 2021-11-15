@@ -89,7 +89,7 @@ Default credentials are: admin / admin
 
 * [Curl](https://curl.haxx.se/) Linux tool for performing HTTP requests
 
-* [Swagger](https://swagger.io/) A tool for documention HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
+* [Swagger](https://swagger.io/) A tool for documentation HTTP requests for using OpenAPI specification: https://github.com/OAI/OpenAPI-Specification
 
 * [Locust.io](https://locust.io/) A open source load testing tool. Here is used as a stress test tool
 

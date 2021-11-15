@@ -12,12 +12,15 @@ from caching import cache, cache_invalidate
 app = Flask(__name__)
 swagger = Swagger(app)
 users = MongoClient("mongodb", 27017).demo.users
+
+
 redis_cache = redis.Redis(
     host="redis", port=6379, db=0, password=read_docker_secret("REDIS_PASSWORD")
 )
 
 
 @app.route("/users/<int:userid>", methods=["POST"])
+@cache_invalidate(redis=redis_cache, key="userid")
 def add_user(userid):
     """Create user
     ---
@@ -133,7 +136,6 @@ def get_user(userid):
         description: User not found
     """
     user = users.find_one({"_id": userid})
-    print("getting user")
 
     if None == user:
         return Response("", status=404, mimetype="application/json")
