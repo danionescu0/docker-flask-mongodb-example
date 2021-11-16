@@ -1,4 +1,10 @@
 
+### Check open issues 
+
+https://github.com/danionescu0/docker-flask-mongodb-example/issues consider taking on an issue, or adding a new one.
+
+### Working on a issue 
+
 * To start developing locally using anaconda:
 ````bash
 cd docker--mongodb-example
@@ -49,3 +55,4 @@ black --exclude stresstest-locusts/ .
 ````
 
 * Push and create a pull request
+
