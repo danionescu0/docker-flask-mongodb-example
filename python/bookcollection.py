@@ -4,7 +4,7 @@ import requests
 import dateutil.parser
 
 from flask import Flask, request, Response
-from flask_restplus import Api, Resource, fields, reqparse
+from flask_restx import Api, Resource, fields, reqparse
 from pymongo import MongoClient, errors
 
 from utils import get_logger
