@@ -186,6 +186,14 @@ services:
         volumes:
           - influxdb_data:/var/lib/influxdb
 
+    # UI for influxdb
+    chronograf:
+        image: chronograf:1.9
+        command:
+            - --influxdb-url=http://influxdb:8086
+        ports:
+          - '8888:8888'
+
     # For showing graphs on sensors
     grafana:
         build: docker-grafana
@@ -263,6 +271,7 @@ services:
             - web-book-collection
             - web-users-fast-api
             - influxdb
+            - chronograf
             - grafana
             - mongo
             - mqtt
