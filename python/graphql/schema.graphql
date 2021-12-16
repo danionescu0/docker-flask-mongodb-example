@@ -12,7 +12,7 @@ type User {
 type UserResult {
     success: Boolean!
     errors: [String]
-    post: User
+    user: User
 }
 
 type UsersResult {
@@ -27,7 +27,6 @@ type Query {
 }
 
 type Mutation {
-    createUser(userid: ID!, email: String!, name: String!): UserResult!
-    updateUser(userid: ID!, email: String, name: String): UserResult!
+    upsertUser(userid: ID!, email: String!, name: String!): UserResult!
     deleteUser(userid: ID): UserResult!
 }
