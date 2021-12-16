@@ -1,15 +1,21 @@
+import sys
+
+from pydantic import BaseModel, Field
 from ariadne import load_schema_from_path, make_executable_schema, \
     graphql_sync, snake_case_fallback_resolvers, ObjectType
 from ariadne.constants import PLAYGROUND_HTML
+from pymongo import MongoClient
 from flask import request, jsonify
 from flask import Flask
 from flask_cors import CORS
 
-from pydantic import BaseModel, Field, validator
-
 
 app = Flask(__name__)
 CORS(app)
+mongo_host = "mongodb"
+if len(sys.argv) == 2:
+    mongo_host = sys.argv[1]
+users = MongoClient(mongo_host, 27017).demo.users
 
 
 class User(BaseModel):
@@ -19,24 +25,24 @@ class User(BaseModel):
 
 
 def list_users_resolver(obj, info) -> dict:
+    user_list = users.find()
+    user_list = user_list if None != user_list else []
+    formatted = [
+        {"userid": d["_id"], "name": d["name"], "email": d["email"]} for d in user_list
+    ]
     return {
             "success": True,
-            "users": [
-                {"userid": 1, "email": "dan.ionescu@gmail.com", "name": "Dan Ionescu"},
-                {"userid": 2, "email": "gigi@gmail.com", "name": "Gigi"},
-            ]
+            "users": formatted
         }
 
 
 def upsert_user_resolver(obj, info, userid: int, email: str, name: str) -> dict:
     try:
-        user = User(
-            userid=userid, email=email, name=name
-        )
         payload = {
             "success": True,
-            "user": user.dict()
+            "user": {'_id': userid, 'email': email, 'name': name}
         }
+        users.update_one({'_id': userid}, {'$set': {'email': email, 'name': name}}, upsert=True)
     except ValueError:  # date format errors
         payload = {
             "success": False,
@@ -45,11 +51,12 @@ def upsert_user_resolver(obj, info, userid: int, email: str, name: str) -> dict:
     return payload
 
 
-def get_user_resolver(obj, info, userid: int) -> dict:
+def get_user_resolver(obj, info, userid) -> dict:
     try:
+        user_data = users.find_one({"_id": userid})
         payload = {
             "success": True,
-            "user": {"userid": 1, "email": "dan.ionescu@gmail.com", "name": "Dan Ionescu"}
+            "user": user_data
         }
 
     except AttributeError:  # todo not found
@@ -62,9 +69,11 @@ def get_user_resolver(obj, info, userid: int) -> dict:
 
 def delete_user_resolver(obj, info, userid: int) -> dict:
     try:
+        user = users.find_one({"_id": userid})
+        users.delete_one({"_id": userid})
         payload = {
             "success": True,
-            "user": {"userid": 1, "email": "dan.ionescu@gmail.com", "name": "Dan Ionescu"}
+            "user": user
         }
     except AttributeError:
         payload = {

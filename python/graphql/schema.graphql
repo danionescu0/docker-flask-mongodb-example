@@ -4,7 +4,7 @@ schema {
 }
 
 type User {
-    userid: ID!
+    userid: Int
     email: String!
     name: String!
 }
@@ -23,10 +23,10 @@ type UsersResult {
 
 type Query {
     listUsers: UsersResult!
-    getUser(userid: ID!): UserResult!
+    getUser(userid: Int): UserResult!
 }
 
 type Mutation {
-    upsertUser(userid: ID!, email: String!, name: String!): UserResult!
-    deleteUser(userid: ID): UserResult!
+    upsertUser(userid: Int, email: String!, name: String!): UserResult!
+    deleteUser(userid: Int): UserResult!
 }

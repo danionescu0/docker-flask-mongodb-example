@@ -914,6 +914,9 @@ mutation DeleteUser {
 │ └── random-demo-service.yaml
 ├── LICENSE
 ├── python                                   -> Python source files, also contains requirements
+│ ├── graphql                                -> Graphql demo files
+│   ├── schema.graphql                       -> Graphql schema
+│   ├── users.py                             -> Users endpoint
 │ ├── baesian.py
 │ ├── bookcollection.py
 │ ├── caching.py

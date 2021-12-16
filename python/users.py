@@ -21,7 +21,7 @@ redis_cache = redis.Redis(
 
 @app.route("/users/<int:userid>", methods=["POST"])
 @cache_invalidate(redis=redis_cache, key="userid")
-def add_user(userid):
+def add_user(userid: int):
     """Create user
     ---
     parameters:
@@ -67,7 +67,7 @@ def add_user(userid):
 
 @app.route("/users/<int:userid>", methods=["PUT"])
 @cache_invalidate(redis=redis_cache, key="userid")
-def update_user(userid):
+def update_user(userid: int):
     """Update user information
     ---
     parameters:
@@ -109,7 +109,7 @@ def update_user(userid):
 
 @app.route("/users/<int:userid>", methods=["GET"])
 @cache(redis=redis_cache, key="userid")
-def get_user(userid):
+def get_user(userid: int):
     """Details about a user
     ---
     parameters:
@@ -191,7 +191,7 @@ def get_users():
 
 @app.route("/users/<int:userid>", methods=["DELETE"])
 @cache_invalidate(redis=redis_cache, key="userid")
-def delete_user(userid):
+def delete_user(userid: int):
     """Delete operation for a user
     ---
     parameters:
