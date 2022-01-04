@@ -808,6 +808,9 @@ Now visit the app in your browser ex: http://external_ip_for_random_demo_service
 
 
 # User CRUD service using GraphQl
+
+Url: http://192.168.3.120:90/graphql
+
 ````graphql
 # Get a list of all users
 query AllUsers {

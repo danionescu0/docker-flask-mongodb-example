@@ -1,0 +1,5 @@
+Flask==2.0.2
+Flask-Cors==3.0.10
+pymongo==4.0.1
+pydantic==1.9.0
+ariadne==0.14.0

@@ -177,6 +177,18 @@ services:
             - "89:5000"
         entrypoint: python /root/flask-mongodb-example/python/tictactoe.py
 
+
+    # GraphQl implementation of CRUD users
+    web-users-graphql:
+        build:
+            context: ./docker-python
+            args:
+                requirements: /root/flask-mongodb-example/python/requirements-graphql.txt
+        image: web-standard
+        ports:
+            - "90:5000"
+        entrypoint: python /root/flask-mongodb-example/python/graphql/users.py
+
     # Database for grafana
     influxdb:
         build: docker-influxdb
@@ -270,6 +282,7 @@ services:
             - web-photo-process
             - web-book-collection
             - web-users-fast-api
+            - web-users-graphql
             - influxdb
             - chronograf
             - grafana
