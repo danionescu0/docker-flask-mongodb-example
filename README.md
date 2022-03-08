@@ -66,7 +66,7 @@ Default credentials are: admin / admin
 
 **13** [Deployment using Kubernetes](#Deployment-using-Kubernetes) demo deployment for two services using Kubernetes
 
-**14** [User CRUD service using GraphQl](#User-CRUD-service-using-GraphQl) (work in progress)
+**14** [User CRUD service using GraphQl](#User-CRUD-service-using-GraphQl) 
 
 
 
@@ -809,7 +809,7 @@ Now visit the app in your browser ex: http://external_ip_for_random_demo_service
 
 # User CRUD service using GraphQl
 
-Url: http://192.168.3.120:90/graphql
+Url: http://localhost:90/graphql
 
 ````graphql
 # Get a list of all users
