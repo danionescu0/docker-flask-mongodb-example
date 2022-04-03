@@ -1,5 +1,6 @@
 # Note: the image search algorithm is a naive implementation and it's for demo purposes only
 import os
+import sys
 import io
 import json
 import imagehash
@@ -11,7 +12,7 @@ from flask import Flask, Response, request
 
 app = Flask(__name__)
 swagger = Swagger(app)
-storage_path = "/root/storage"
+storage_path = "/root/storage" if len(sys.argv) == 1 else sys.argv[1]
 
 
 class FileHashSearch:

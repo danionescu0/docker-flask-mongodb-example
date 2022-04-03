@@ -8,7 +8,7 @@ https://github.com/danionescu0/docker-flask-mongodb-example/issues consider taki
 * To start developing locally using anaconda:
 ````bash
 cd docker--mongodb-example
-conda create --name dockerflaskmongodbexample python=3.8.0
+conda create --name dockerflaskmongodbexample python=3.10.0
 conda activate dockerflaskmongodbexample
 pip install -r python/requirements.txt
 pip install -r python/requirements-fastapi.txt

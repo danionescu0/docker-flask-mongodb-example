@@ -1,5 +1,5 @@
-Flask==2.0.1
-pymongo==3.12.1
-flasgger==0.9.2
-Pillow==9.0.0
-ImageHash==4.0.0
+Flask==2.1.1
+pymongo==4.0.2
+flasgger==0.9.5
+Pillow==9.1.0
+ImageHash==4.2.1
