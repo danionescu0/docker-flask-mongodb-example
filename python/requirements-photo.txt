@@ -1,5 +1,6 @@
 Flask==2.1.1
 pymongo==4.0.2
-flasgger==0.9.5
+#flasgger 0.9.5 is not compatible with Flask 2.1.1
+flasgger==0.9.4
 Pillow==9.1.0
 ImageHash==4.2.1
