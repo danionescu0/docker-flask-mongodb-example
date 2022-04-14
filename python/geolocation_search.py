@@ -1,11 +1,13 @@
 import json, sys
 
 from flask import Flask, request, Response, jsonify
-from flask_jwt import JWT, jwt_required
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
 from flasgger import Swagger
 from pymongo import MongoClient, GEOSPHERE
 from bson import json_util
-from werkzeug.security import safe_str_cmp
+from flask_restful import Api
 
 
 app = Flask(__name__)
@@ -15,27 +17,36 @@ if len(sys.argv) == 2:
 places = MongoClient(mongo_host, 27017).demo.places
 
 app.config["JWT_AUTH_URL_RULE"] = "/api/auth"
-app.config["SECRET_KEY"] = "super-secret"
-app.config["SWAGGER"] = {
-    "title": "Swagger JWT Authentiation App",
-    "uiversion": 3,
-}
-app.config["JWT_AUTH_HEADER_PREFIX"] = "Bearer"
+app.config["JWT_SECRET_KEY"] = "super-secret"
 
-swag = Swagger(
-    app,
-    template={
-        "info": {
-            "title": "Swagger Basic Auth App",
-        },
-        "consumes": [
-            "application/x-www-form-urlencoded",
-        ],
-        "produces": [
-            "application/json",
-        ],
-    },
-)
+template = {
+  "swagger": "2.0",
+  "info": {
+    "title": "Geolocation search demo",
+    "description": "A demo of geolocation search using mongodb and flask",
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ],
+    }
+  ]
+}
+
+app.config['SWAGGER'] = {
+    'title': 'Geolocation search demo',
+    'uiversion': 3,
+    "specs_route": "/apidocs/"
+}
+swagger = Swagger(app, template=template)
+api = Api(app)
 
 
 class User(object):
@@ -52,22 +63,7 @@ users = [
     User(1, "admin", "secret"),
 ]
 
-username_table = {u.username: u for u in users}
-userid_table = {u.id: u for u in users}
-
-
-def authenticate(username: str, password: str):
-    user = username_table.get(username, None)
-    if user and safe_str_cmp(user.password.encode("utf-8"), password.encode("utf-8")):
-        return user
-
-
-def identity(payload):
-    user_id = payload["identity"]
-    return userid_table.get(user_id, None)
-
-
-jwt = JWT(app, authenticate, identity)
+jwt = JWTManager(app)
 
 
 @app.route("/login", methods=["POST"])
@@ -92,17 +88,14 @@ def login():
         description: User login failed.
     """
     try:
-        username = request.form.get("username")
-        password = request.form.get("password")
-        user = authenticate(username, password)
-        if not user:
-            raise Exception("User not found!")
+        username = request.form.get("username", None)
+        password = request.form.get("password", None)
+        authenticated_user = [user for user in users if username==user.username and password==user.password]
+        if not authenticated_user:
+            return jsonify({"msg": "Bad username or password"}), 401
 
-        resp = jsonify({"message": "User authenticated"})
-        resp.status_code = 200
-        access_token = jwt.jwt_encode_callback(user)
-        # add token to response headers - so SwaggerUI can use it
-        resp.headers.extend({"jwt-token": access_token})
+        access_token = create_access_token(identity=username)
+        resp = jsonify(access_token="Bearer {0}".format(access_token))
     except Exception as e:
         resp = jsonify({"message": "Bad username and/or password"})
         resp.status_code = 401

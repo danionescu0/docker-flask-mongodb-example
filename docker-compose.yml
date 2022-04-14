@@ -218,7 +218,6 @@ services:
           - grafana_data:/var/lib/grafana
 
     # Genaral purpose database
-    # uses healthcheck for replicasset rs.status().ok
     mongo:
         image: mongo:4.4.5-bionic
         hostname: mongodb
@@ -267,7 +266,7 @@ services:
             - web-random
             - web-users
 
-    # Used to test services
+    # Used to test build of services
     web-test:
         image: alpine
         depends_on:
@@ -292,6 +291,14 @@ services:
             - web-tictactoe
             - redis
 
+    # Used to run all python tests with pytest
+#    tests-all:
+#        build:
+#            context: ./docker-python
+#            args:
+#                requirements: /root/flask-mongodb-example/python/requirements.txt
+#        image: web-standard
+#        entrypoint: python /root/flask-mongodb-example/python/tictactoe.py
 
 volumes:
     grafana_data: {}
