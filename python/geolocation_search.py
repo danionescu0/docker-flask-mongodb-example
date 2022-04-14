@@ -20,30 +20,30 @@ app.config["JWT_AUTH_URL_RULE"] = "/api/auth"
 app.config["JWT_SECRET_KEY"] = "super-secret"
 
 template = {
-  "swagger": "2.0",
-  "info": {
-    "title": "Geolocation search demo",
-    "description": "A demo of geolocation search using mongodb and flask",
-  },
-  "securityDefinitions": {
-    "Bearer": {
-      "type": "apiKey",
-      "name": "Authorization",
-      "in": "header",
-      "description": "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\""
-    }
-  },
-  "security": [
-    {
-      "Bearer": [ ],
-    }
-  ]
+    "swagger": "2.0",
+    "info": {
+        "title": "Geolocation search demo",
+        "description": "A demo of geolocation search using mongodb and flask",
+    },
+    "securityDefinitions": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"',
+        }
+    },
+    "security": [
+        {
+            "Bearer": [],
+        }
+    ],
 }
 
-app.config['SWAGGER'] = {
-    'title': 'Geolocation search demo',
-    'uiversion': 3,
-    "specs_route": "/apidocs/"
+app.config["SWAGGER"] = {
+    "title": "Geolocation search demo",
+    "uiversion": 3,
+    "specs_route": "/apidocs/",
 }
 swagger = Swagger(app, template=template)
 api = Api(app)
@@ -90,7 +90,11 @@ def login():
     try:
         username = request.form.get("username", None)
         password = request.form.get("password", None)
-        authenticated_user = [user for user in users if username==user.username and password==user.password]
+        authenticated_user = [
+            user
+            for user in users
+            if username == user.username and password == user.password
+        ]
         if not authenticated_user:
             return jsonify({"msg": "Bad username or password"}), 401
 
