@@ -4,6 +4,7 @@ FROM web-base
 ARG requirements
 
 WORKDIR /root/flask-mongodb-example/python
+ENV PYTHONPATH "/root/flask-mongodb-example/python/common"
 RUN pip install -qr $requirements
 
 EXPOSE 5000

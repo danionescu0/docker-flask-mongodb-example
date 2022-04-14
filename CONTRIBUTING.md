@@ -18,9 +18,13 @@ pip install -r python/requirements-restplus.txt
 pip install -r python/requirements-dev.txt
 ````
 
+* Add common package in pythonpath (searching for a solution to that)
+````
+export PYTHONPATH=/your_project_path/python/common/
+````
 
 * If you created a new service or modified some connexions between services, you may **generate a new diagram**.
-I have created a diagram using this tool: https://diagrams.mingrammer.com 
+I have created a diagram using this tool: https://diagrams.mingrammer.com
 
 
 To generate a new one install diagrams and graphviz packages inside your conda env:

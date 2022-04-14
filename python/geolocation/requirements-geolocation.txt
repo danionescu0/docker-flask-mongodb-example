@@ -1,0 +1,7 @@
+Flask==2.0.1
+flask-httpauth==4.3.0
+flasgger==0.9.5
+pymongo==3.12.1
+Werkzeug==2.0.1
+Flask-JWT-Extended==4.3.1
+Flask-RESTful==0.3.9

@@ -9,7 +9,7 @@ def get_logger():
     logger = logging.getLogger("python_app")
     logger.setLevel(logging.DEBUG)
     # create file handler which logs even debug messages
-    fh = logging.FileHandler("python_app.log")
+    fh = logging.FileHandler("../python_app.log")
     fh.setLevel(logging.DEBUG)
     # create console handler with a higher log level
     ch = logging.StreamHandler()

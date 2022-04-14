@@ -15,11 +15,11 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/random/requirements.txt
         image: web-standard
         ports:
             - "800:5000"
-        entrypoint: python /root/flask-mongodb-example/python/random_demo.py
+        entrypoint: python /root/flask-mongodb-example/python/random/random_demo.py
         depends_on:
             - mongo
             - web-base-image
@@ -33,11 +33,11 @@ services:
         build:
             context: ./docker-python-pypy
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/random/requirements.txt
         image: web-standard-pypy
         ports:
             - "801:5000"
-        entrypoint: pypy /root/flask-mongodb-example/python/random_demo.py
+        entrypoint: pypy /root/flask-mongodb-example/python/random/random_demo.py
         depends_on:
             - mongo
 
@@ -46,11 +46,11 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/users/requirements.txt
         image: web-standard
         ports:
             - "81:5000"
-        entrypoint: python /root/flask-mongodb-example/python/users.py
+        entrypoint: python /root/flask-mongodb-example/python/users/users.py
         environment:
             - REDIS_PASSWORD=/run/secrets/redis_password
             - PYTHONUNBUFFERED=1
@@ -66,9 +66,9 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements-mqtt.txt
+                requirements: /root/flask-mongodb-example/python/mqtt/requirements-mqtt.txt
         image: backgorund-mqtt-image
-        entrypoint: python /root/flask-mongodb-example/python/mqtt.py
+        entrypoint: python /root/flask-mongodb-example/python/mqtt/mqtt.py
         environment:
             - MQTT_USER=/run/secrets/mqtt_user
             - MQTT_PASSWORD=/run/secrets/mqtt_password
@@ -87,11 +87,11 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/fulltextsearch/requirements.txt
         image: web-standard
         ports:
             - "82:5000"
-        entrypoint: python /root/flask-mongodb-example/python/fulltext_search.py
+        entrypoint: python /root/flask-mongodb-example/python/fulltextsearch/fulltext_search.py
         depends_on:
             - mongo
 
@@ -100,11 +100,11 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/geolocation/requirements-geolocation.txt
         image: web-geolocation-image
         ports:
             - "83:5000"
-        entrypoint: python /root/flask-mongodb-example/python/geolocation_search.py
+        entrypoint: python /root/flask-mongodb-example/python/geolocation/geolocation_search.py
         depends_on:
             - mongo
 
@@ -113,11 +113,11 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/baesian/requirements.txt
         image: web-standard
         ports:
             - "84:5000"
-        entrypoint: python /root/flask-mongodb-example/python/baesian.py
+        entrypoint: python /root/flask-mongodb-example/python/baesian/baesian.py
         depends_on:
             - mongo
 
@@ -126,11 +126,11 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements-photo.txt
+                requirements: /root/flask-mongodb-example/python/photo/requirements-photo.txt
         image: web-photo-image
         ports:
             - "85:5000"
-        entrypoint: python /root/flask-mongodb-example/python/photo_process.py
+        entrypoint: python /root/flask-mongodb-example/python/photo/photo_process.py
         volumes:
             - ./container-storage:/root/storage
         depends_on:
@@ -141,13 +141,13 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements-restplus.txt
+                requirements: /root/flask-mongodb-example/python/bookcollection/requirements-restplus.txt
         image: web-bookcollection-image
         environment:
              - PYTHONUNBUFFERED=1
         ports:
             - "86:5000"
-        entrypoint: python /root/flask-mongodb-example/python/bookcollection.py
+        entrypoint: python /root/flask-mongodb-example/python/bookcollection/bookcollection.py
         depends_on:
             - mongo
             - web-users
@@ -158,24 +158,24 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements-fastapi.txt
+                requirements: /root/flask-mongodb-example/python/fastapi/requirements-fastapi.txt
         image: web-users-fastapi-image
         ports:
             - "88:5000" # port 87 is restricted in browsers
-        entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornH11Worker --bind 0.0.0.0:5000 --log-level debug users-fastapi:app
+        entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornH11Worker --chdir /root/flask-mongodb-example/python/fastapi --bind 0.0.0.0:5000 --log-level debug users-fastapi:app
         depends_on:
             - mongo
 
-    # A tic tac toe game written in flask using flask_session. It has a simple UI
+    # A two player tic tac toe game written in flask using flask_session. It has a simple UI
     web-tictactoe:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
+                requirements: /root/flask-mongodb-example/python/tictactoe/requirements.txt
         image: web-standard
         ports:
             - "89:5000"
-        entrypoint: python /root/flask-mongodb-example/python/tictactoe.py
+        entrypoint: python /root/flask-mongodb-example/python/tictactoe/tictactoe.py
 
 
     # GraphQl implementation of CRUD users
@@ -183,7 +183,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/requirements-graphql.txt
+                requirements: /root/flask-mongodb-example/python/graphql/requirements-graphql.txt
         image: web-standard
         ports:
             - "90:5000"
