@@ -85,6 +85,8 @@ mutation.set_field("deleteUser", delete_user_resolver)
 
 
 type_defs = load_schema_from_path("graphql/schema.graphql")
+# comment the line above, uncoment the line below to run in dev mode
+# type_defs = load_schema_from_path("python/graphql/schema.graphql")
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers
 )
