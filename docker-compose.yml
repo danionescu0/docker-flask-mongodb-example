@@ -158,7 +158,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/fastapi/requirements.txt
+                requirements: /root/flask-mongodb-example/python/fastapidemo/requirements.txt
         image: web-users-fastapi-image
         ports:
             - "88:5000" # port 87 is restricted in browsers
