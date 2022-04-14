@@ -15,7 +15,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/random/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard
         ports:
             - "800:5000"
@@ -33,7 +33,7 @@ services:
         build:
             context: ./docker-python-pypy
             args:
-                requirements: /root/flask-mongodb-example/python/random/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard-pypy
         ports:
             - "801:5000"
@@ -46,7 +46,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/users/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard
         ports:
             - "81:5000"
@@ -87,7 +87,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/fulltextsearch/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard
         ports:
             - "82:5000"
@@ -113,7 +113,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/baesian/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard
         ports:
             - "84:5000"
@@ -141,7 +141,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/bookcollection/requirements-restplus.txt
+                requirements: /root/flask-mongodb-example/python/bookcollection/requirements.txt
         image: web-bookcollection-image
         environment:
              - PYTHONUNBUFFERED=1
@@ -171,7 +171,7 @@ services:
         build:
             context: ./docker-python
             args:
-                requirements: /root/flask-mongodb-example/python/tictactoe/requirements.txt
+                requirements: /root/flask-mongodb-example/python/requirements.txt
         image: web-standard
         ports:
             - "89:5000"
