@@ -10,12 +10,11 @@ https://github.com/danionescu0/docker-flask-mongodb-example/issues consider taki
 cd docker--mongodb-example
 conda create --name dockerflaskmongodbexample python=3.10.0
 conda activate dockerflaskmongodbexample
-pip install -r python/requirements.txt
-pip install -r python/requirements-fastapi.txt
-pip install -r python/requirements-mqtt.txt
-pip install -r python/requirements-photo.txt
-pip install -r python/requirements-restplus.txt
-pip install -r python/requirements-dev.txt
+````
+
+* Install propper requirements.txt coresponding to the module you will be working for, example:
+````bash
+pip install -r python/fastapidemo/requirements.txt
 ````
 
 * Add common package in pythonpath (searching for a solution to that)
@@ -23,7 +22,7 @@ pip install -r python/requirements-dev.txt
 export PYTHONPATH=/your_project_path/python/common/
 ````
 
-* If you created a new service or modified some connexions between services, you may **generate a new diagram**.
+* If you created a new service or modified some connexions between services, you may need to **generate a new diagram**.
 I have created a diagram using this tool: https://diagrams.mingrammer.com
 
 

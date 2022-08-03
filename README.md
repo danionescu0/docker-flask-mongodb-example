@@ -28,6 +28,17 @@ How to install docker compose: https://docs.docker.com/compose/install/
 
 tested with version: 1.28.4 
 
+If you're using Docker Desktop ("docker compose" comand instead of "docker-compose") and the build fails with error:
+````shell
+....failed to build LLB...
+````
+
+Consider disabling buildkit:
+````shell
+export DOCKER_BUILDKIT=0
+export COMPOSE_DOCKER_CLI_BUILD=0
+````
+
 ## Applications:
 
 The applications will run using docker-compose, below are the services descriptions, for more info click on the title:
