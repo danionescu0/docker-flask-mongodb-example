@@ -15,8 +15,7 @@ def random_numbers(demo_db) -> Generator[Collection, None, None]:
 
 def test_random_insert(random_numbers):
     requests.put(
-        url="{0}/random".format(random_host),
-        data={"upper": 100, "lower": 10},
+        url="{0}/random".format(random_host), data={"upper": 100, "lower": 10},
     ).json()
 
     response = random_numbers.get(dict())

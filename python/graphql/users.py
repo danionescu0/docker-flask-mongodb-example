@@ -40,9 +40,7 @@ class User(BaseModel):
     country: Optional[str] = Field(..., title="Country of origin", max_length=50)
 
     class Config:
-        json_encoders = {
-            datetime: lambda v: v.strftime("%Y-%m-%d")
-        }
+        json_encoders = {datetime: lambda v: v.strftime("%Y-%m-%d")}
 
 
 def list_users_resolver(obj, info) -> dict:
@@ -54,20 +52,38 @@ def list_users_resolver(obj, info) -> dict:
             "name": d["name"],
             "email": d["email"],
             "birth_date": d["birth_date"],
-            "country": d["country"]
-         } for d in user_list
+            "country": d["country"],
+        }
+        for d in user_list
     ]
     return {"success": True, "users": formatted}
 
 
-def upsert_user_resolver(obj, info, userid: int, email: str, name: str, birth_date: datetime, country: str) -> dict:
+def upsert_user_resolver(
+    obj, info, userid: int, email: str, name: str, birth_date: datetime, country: str
+) -> dict:
     try:
         payload = {
             "success": True,
-            "user": {"_id": userid, "email": email, "name": name, "birth_date": birth_date, "country": country},
+            "user": {
+                "_id": userid,
+                "email": email,
+                "name": name,
+                "birth_date": birth_date,
+                "country": country,
+            },
         }
         users.update_one(
-            {"_id": userid}, {"$set": {"email": email, "name": name, "birth_date": birth_date, "country": country}}, upsert=True
+            {"_id": userid},
+            {
+                "$set": {
+                    "email": email,
+                    "name": name,
+                    "birth_date": birth_date,
+                    "country": country,
+                }
+            },
+            upsert=True,
         )
     except ValueError:  # date format errors
         payload = {"success": False, "errors": ["errors"]}

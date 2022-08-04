@@ -33,11 +33,7 @@ template = {
             "description": 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer {token}"',
         }
     },
-    "security": [
-        {
-            "Bearer": [],
-        }
-    ],
+    "security": [{"Bearer": [],}],
 }
 
 app.config["SWAGGER"] = {

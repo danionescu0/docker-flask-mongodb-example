@@ -53,18 +53,14 @@ def test_add_vote(baesian):
 def test_get_item(baesian):
     baesian.upsert(key=item_id, data=upsert_data)
 
-    response = requests.get(
-        url="{0}/item/{1}".format(baesian_host, item_id),
-    ).json()
+    response = requests.get(url="{0}/item/{1}".format(baesian_host, item_id),).json()
     assert response["baesian_average"] == 9.0
     assert response["sum_votes"] == 18
 
 
 def test_get_items(baesian):
     baesian.upsert(key=item_id, data=upsert_data)
-    response = requests.get(
-        url="{0}/items".format(baesian_host),
-    ).json()
+    response = requests.get(url="{0}/items".format(baesian_host),).json()
 
     assert response[0]["name"] == name
     assert len(response[0]["marks"]) > 0
@@ -72,9 +68,7 @@ def test_get_items(baesian):
 
 def delete_item(baesian):
     baesian.upsert(key=item_id, data=upsert_data)
-    response = requests.delete(
-        url="{0}/item/{1}".format(baesian_host, item_id),
-    ).json()
+    response = requests.delete(url="{0}/item/{1}".format(baesian_host, item_id),).json()
 
     assert response.status_code == 200
 
