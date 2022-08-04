@@ -107,9 +107,9 @@ mutation.set_field("upsertUser", upsert_user_resolver)
 mutation.set_field("deleteUser", delete_user_resolver)
 
 # for prod
-# type_defs = load_schema_from_path("graphql/schema.graphql")
+type_defs = load_schema_from_path("graphql/schema.graphql")
 # for dev uncomment
-type_defs = load_schema_from_path("python/graphql/schema.graphql")
+# type_defs = load_schema_from_path("python/graphql/schema.graphql")
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers, datetime_scalar
 )
