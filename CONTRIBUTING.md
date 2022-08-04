@@ -12,7 +12,7 @@ conda create --name dockerflaskmongodbexample python=3.10.0
 conda activate dockerflaskmongodbexample
 ````
 
-* Install propper requirements.txt coresponding to the module you will be working for, example:
+* Install proper requirements.txt coresponding to the module you will be working for, example:
 ````bash
 pip install -r python/fastapidemo/requirements.txt
 ````

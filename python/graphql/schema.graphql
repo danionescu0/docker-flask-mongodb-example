@@ -1,3 +1,5 @@
+scalar Date
+
 schema {
     query: Query
     mutation: Mutation
@@ -7,6 +9,8 @@ type User {
     userid: Int
     email: String!
     name: String!
+    birth_date: Date,
+    country: String
 }
 
 type UserResult {
@@ -27,6 +31,6 @@ type Query {
 }
 
 type Mutation {
-    upsertUser(userid: Int, email: String!, name: String!): UserResult!
+    upsertUser(userid: Int, email: String!, name: String!, birth_date: Date, country: String): UserResult!
     deleteUser(userid: Int): UserResult!
 }

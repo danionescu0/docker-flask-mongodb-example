@@ -2,7 +2,7 @@
 [![test-build](https://github.com/danionescu0/docker-flask-mongodb-example/actions/workflows/test_build.yml/badge.svg?branch=master)](https://github.com/danionescu0/docker-flask-mongodb-example/actions/workflows/test_build.yml)
 
 **A working demo usage of multiple technologies like: Docker, Docker-compose, MongoDb, Python3, Flask framework, 
-Fastapi framework, Mosquitto, Swagger, Locusts, Grafana, InfluxDB, KrakenD, Kubernetes**
+Fastapi framework, Mosquitto, Swagger, Locusts, Grafana, InfluxDB, KrakenD, Kubernetes, Chronograf**
 
 **Please consider adding issues and enhancements**
 
@@ -68,6 +68,9 @@ The users must have "profiles" created using the User CRUD service. This API use
 It is connected with the MQTT service. Every datapoint that passes through the MQTT service will be saved in InfluxDb and displayed in Grafana.
 (port 3000)
 Default credentials are: admin / admin
+
+Also here we have Chronograf (https://www.influxdata.com/time-series-platform/chronograf/) this is a tool for exploring influxDb database
+(port 8888)
 
 **10** [User CRUD fastapi](#User-CRUD-fastapi) Create, read, update and detele operations made available with fastapi framework (port 88)
 
@@ -838,11 +841,13 @@ query AllUsers {
 
 # Get a single user
 query GetUser {
-  getUser(userid: "1") {
+  getUser(userid: 1) {
     user {
       userid
       name
       email
+      birth_date
+      country
     }
     success
     errors
@@ -854,11 +859,15 @@ mutation CreateNewUser {
     userid: 1, 
     name: "ana",
     email: "ana@gmail.com"    
+    birth_date: "2000-01-05 00:00:20"
+    country: "Romania"
   ) {
     user {
       userid
       name
       email
+      birth_date
+      country      
     }
     success
     errors
@@ -900,7 +909,6 @@ mutation DeleteUser {
 │ │ └── influx.json
 │ ├── Dockerfile
 │ └── entrypoint.sh
-├── docker-grafana.yml
 ├── docker-influxdb                          -> Influxdb docker container files
 │ ├── configuration.env
 │ ├── Dockerfile
