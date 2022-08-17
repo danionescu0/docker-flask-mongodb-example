@@ -216,7 +216,11 @@ def delete_photo(id):
 
 
 def get_response(data: dict, status: int) -> Response:
-    return Response(json.dumps(data), status=status, mimetype="application/json",)
+    return Response(
+        json.dumps(data),
+        status=status,
+        mimetype="application/json",
+    )
 
 
 if __name__ == "__main__":

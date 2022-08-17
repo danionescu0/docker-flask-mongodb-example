@@ -1,8 +1,10 @@
 from typing import Optional, List
+from datetime import datetime
 
 from pymongo import errors
 import motor.motor_asyncio
 from fastapi import FastAPI, HTTPException
+from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field, EmailStr
 
 
@@ -14,36 +16,44 @@ class User(BaseModel):
     userid: int
     email: EmailStr
     name: str = Field(..., title="Name of the user", max_length=50)
+    birth_date: Optional[datetime]
+    country: Optional[str] = Field(..., title="Country of origin", max_length=50)
+
+    class Config:
+        json_encoders = {datetime: lambda v: v.strftime("%Y-%m-%d")}
 
 
-@app.post("/users/{userid}")
+class UpdateUser(BaseModel):
+    email: Optional[EmailStr]
+    name: Optional[str] = Field(title="Name of the user", max_length=50)
+    birth_date: Optional[datetime]
+    country: Optional[str] = Field(title="Country of origin", max_length=50)
+
+    class Config:
+        json_encoders = {datetime: lambda v: v.strftime("%Y-%m-%d")}
+
+
+@app.post("/users/{userid}", response_model=User)
 async def add_user(userid: int, user: User):
     if user.email is None and user.name is None:
         raise HTTPException(
             status_code=500, detail="Email or name not present in user!"
         )
+    mongo_user = jsonable_encoder(user)
+    mongo_user["_id"] = userid
     try:
-        await users_async.insert_one(
-            {"_id": userid, "email": user.email, "name": user.name}
-        )
+        await users_async.insert_one(mongo_user)
     except errors.DuplicateKeyError as e:
         raise HTTPException(status_code=500, detail="Duplicate user id!")
     db_item = await users_async.find_one({"_id": userid})
     return format_user(db_item)
 
 
-@app.put("/users/{userid}")
-async def update_user(userid: int, user: User):
-    if user.email is None and user.name is None:
-        raise HTTPException(
-            status_code=500, detail="Email or name must be present in parameters!"
-        )
-    updated_user = {}
-    if user.email is not None:
-        updated_user["email"] = user.email
-    if user.name is not None:
-        updated_user["name"] = user.name
-    await users_async.update_one({"_id": userid}, {"$set": updated_user})
+@app.put("/users/{userid}", response_model=User)
+async def update_user(userid: int, user: UpdateUser):
+    mongo_user = jsonable_encoder(user)
+    mongo_user_no_none = {k: v for k, v in mongo_user.items() if v is not None}
+    await users_async.update_one({"_id": userid}, {"$set": mongo_user_no_none})
     return format_user(await users_async.find_one({"_id": userid}))
 
 
@@ -69,7 +79,13 @@ async def delete_user(userid: int):
     return format_user(user)
 
 
-def format_user(user):
+def format_user(user: dict) -> dict:
     if user is None:
         return None
-    return {"userid": user["_id"], "name": user["name"], "email": user["email"]}
+    return {
+        "userid": user["_id"],
+        "name": user["name"],
+        "email": user["email"],
+        "birth_date": datetime.strptime(user["birth_date"], "%Y-%m-%d"),
+        "country": user["country"],
+    }

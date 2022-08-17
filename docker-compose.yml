@@ -206,7 +206,7 @@ services:
         ports:
           - '8888:8888'
 
-    # For showing graphs on sensors
+    # Grafana, used here to show sensors graphs
     grafana:
         build: docker-grafana
         env_file: ./docker-grafana/configuration.env
@@ -255,7 +255,7 @@ services:
         ports:
             - "1883:1883"
 
-    # An api gateway
+#     An api gateway
     krakend:
         image: devopsfaith/krakend
         volumes:
@@ -291,14 +291,6 @@ services:
             - web-tictactoe
             - redis
 
-    # Used to run all python tests with pytest
-#    tests-all:
-#        build:
-#            context: ./docker-python
-#            args:
-#                requirements: /root/flask-mongodb-example/python/requirements.txt
-#        image: web-standard
-#        entrypoint: python /root/flask-mongodb-example/python/tictactoe.py
 
 volumes:
     grafana_data: {}
