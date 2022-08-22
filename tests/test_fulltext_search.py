@@ -8,7 +8,7 @@ from bson.objectid import ObjectId
 from utils import Collection
 
 
-fulltext_search_host = "http://localhost:82"
+fulltext_search_host = "http://web-fulltext-search:5000"
 
 expression_one = "ana has many more apples"
 expression_two = "john has many more apples"

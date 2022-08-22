@@ -291,7 +291,6 @@ services:
             - web-tictactoe
             - redis
 
-
 volumes:
     grafana_data: {}
     influxdb_data: {}
@@ -303,3 +302,8 @@ secrets:
         file: ./secrets/mqtt_pass.txt
     redis_password:
         file: ./secrets/redis_pass.txt
+
+networks:
+    default:
+        external:
+            name: project-network

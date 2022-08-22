@@ -6,9 +6,11 @@ from bson.objectid import ObjectId
 from utils import Collection
 
 
-geolocation_host = "http://localhost:83"
+geolocation_host = "http://web-geolocation-search:5000"
 new_york = {"name": "NewYork", "lat": 40.730610, "lng": -73.935242}
 jersey_city = {"name": "JerseyCity", "lat": 40.719074, "lng": -74.050552}
+print("request to:")
+print(geolocation_host + "/login")
 authentication_response = requests.post(
     geolocation_host + "/login",
     headers={"Content-Type": "application/x-www-form-urlencoded"},

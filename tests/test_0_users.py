@@ -3,7 +3,8 @@ from utils import Collection
 from typing import Generator
 
 
-users_host = "http://localhost:81"
+users_host = "http://web-users:5000"
+# @todo run this test on users fastapi too with pytest.mark.parametrize
 
 
 @pytest.fixture
@@ -16,7 +17,6 @@ def users(demo_db) -> Generator[Collection, None, None]:
 def test_get_user(users):
     users.upsert(120, {"name": "John", "email": "test@email.eu"})
     response = requests.get(url="{0}/users/120".format(users_host)).json()
-    print(response)
     assert response["_id"] == 120
     assert response["email"] == "test@email.eu"
     assert response["name"] == "John"

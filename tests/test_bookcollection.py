@@ -9,7 +9,7 @@ from utils import Collection, get_random_objectid
 
 
 headers = {"accept": "application/json", "Content-Type": "application/json"}
-book_collection_host = "http://localhost:86"
+book_collection_host = "http://web-book-collection:5000"
 books = [
     {
         "isbn": "978-1607965503",

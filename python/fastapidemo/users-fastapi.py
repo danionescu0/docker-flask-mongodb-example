@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field, EmailStr
 
 
 app = FastAPI()
-users_async = motor.motor_asyncio.AsyncIOMotorClient("mongodb", 27017).demo.users
+users_async = motor.motor_asyncio.AsyncIOMotorClient("localhost", 27017).demo.users
 
 
 class User(BaseModel):

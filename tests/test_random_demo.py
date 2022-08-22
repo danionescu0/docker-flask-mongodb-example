@@ -3,7 +3,7 @@ import datetime
 from utils import Collection
 from typing import Generator
 
-random_host = "http://localhost:800"
+random_host = "http://web-random:5000"
 
 
 @pytest.fixture
@@ -28,14 +28,14 @@ def test_random_insert(random_numbers):
 
     first_item = items[0]
     assert isinstance(first_item["date"], datetime.datetime)
-    assert 10 < int(first_item["value"]) < 100
+    assert 10 <= int(first_item["value"]) <= 100
 
 
 def test_random_generator():
     response = requests.get(
         url="{0}/random?lower=10&upper=100".format(random_host)
     ).json()
-    assert 10 < int(response) < 100
+    assert 10 <= int(response) <= 100
 
 
 def test_last_number_list(random_numbers):

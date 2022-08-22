@@ -5,7 +5,7 @@ from typing import Generator
 from utils import Collection
 
 
-baesian_host = "http://localhost:84"
+baesian_host = "http://web-baesian:5000"
 name = "Cicero"
 item_id = 1
 userid_seven = 7

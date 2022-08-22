@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+    run-unit-tests:
+        build:
+            context: ./docker-python
+            args:
+                requirements: /root/flask-mongodb-example/tests/requirements.txt
+        image: run-unit-tests
+        entrypoint: pytest /root/flask-mongodb-example -s --maxfail=50
+
+networks:
+    default:
+        external:
+            name: project-network

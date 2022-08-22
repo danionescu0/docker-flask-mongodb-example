@@ -1,0 +1,36 @@
+name: unit_tests
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Creating docker network
+        run: | 
+          echo ---Creating network---
+          docker network create project-network
+          echo ---Created---
+      - name: Build docker containers
+        run: | 
+          echo ---Building and starting up docker---
+          git_hash=$(git rev-parse --short "$GITHUB_SHA")
+          git_branch=${GITHUB_REF#refs/heads/}
+          echo "Git hash:"
+          echo $git_hash
+          docker-compose -f ./docker-compose.yml up -d --build
+          echo ---Containers up---
+      - name: Wait for services to get online
+        run: | 
+          echo ---Waiting for web-random to get up ---
+          sleep 50
+          echo --- UP!---
+      - name: Run tests
+        run: |
+          echo --- Running test cases ---
+          docker-compose -f ./docker-compose.test-github.yml up --build --exit-code-from run-unit-tests
+          echo --- Completed test cases ---
+

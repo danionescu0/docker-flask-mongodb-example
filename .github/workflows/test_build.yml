@@ -1,11 +1,13 @@
 name: test-build
+
 on: [push, pull_request]
+
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v1
       - name: Test
-        run: docker-compose build && docker-compose up --exit-code-from web-test 
+        run: docker network create project-network && docker-compose build && docker-compose up --exit-code-from web-test
