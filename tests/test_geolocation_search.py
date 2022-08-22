@@ -9,10 +9,16 @@ from utils import Collection
 geolocation_host = "http://localhost:83"
 new_york = {"name": "NewYork", "lat": 40.730610, "lng": -73.935242}
 jersey_city = {"name": "JerseyCity", "lat": 40.719074, "lng": -74.050552}
-token = requests.post(
-    geolocation_host + "/login", data={"username": "admin", "password": "secret"}
-).headers["jwt-token"]
-auth_header = {"Authorization": "Bearer " + token}
+authentication_response = requests.post(
+    geolocation_host + "/login",
+    headers={"Content-Type": "application/x-www-form-urlencoded"},
+    data={"username": "admin", "password": "secret"},
+)
+
+assert isinstance(authentication_response.json(), dict)
+assert "access_token" in authentication_response.json()
+token = authentication_response.json()["access_token"]
+auth_header = {"Authorization": token}
 
 
 @pytest.fixture
