@@ -146,8 +146,8 @@ port 3000 is free
 Start the microservice architecture:
 ````
 cd docker-flask-mongodb-example
-docker-compose build
-docker-compose up
+docker network create project-network
+docker-compose up --build
 ````
 
 
