@@ -179,7 +179,6 @@ def get_user(userid: int):
 
     if None == user:
         return Response("", status=404, mimetype="application/json")
-    print(json.dumps(format_user(user)))
     return Response(
         json.dumps(format_user(user)), status=200, mimetype="application/json"
     )
