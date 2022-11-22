@@ -1,6 +1,7 @@
 import json
 
 import redis
+from datetime import datetime
 from flask import Flask, request, Response
 from pymongo import MongoClient, errors
 from bson import json_util
@@ -18,6 +19,21 @@ redis_cache = redis.Redis(
     host="redis", port=6379, db=0, password=read_docker_secret("REDIS_PASSWORD")
 )
 
+
+def serialize_datetime(value: str):
+    return datetime.strptime(value, "%Y-%m-%d")
+
+
+def format_user(user: dict) -> dict:
+    if user is None:
+        return None
+    return {
+        "userid": user["_id"],
+        "name": user["name"],
+        "email": user["email"],
+        "birthdate": user["birthdate"].strftime("%Y-%m-%d") if "birthdate" in user and user["birthdate"] is not None else None,
+        "country": user["country"] if "country" in user else None,
+    }
 
 @app.route("/users/<int:userid>", methods=["POST"])
 @cache_invalidate(redis=redis_cache, key="userid")
@@ -37,6 +53,13 @@ def add_user(userid: int):
         in: formData
         type: string
         required: true
+      - name: birthdate
+        in: formData
+        type: string
+      - name: country
+        in: formData
+        type: string
+        required: false
     responses:
       200:
         description: Creation succeded
@@ -54,12 +77,14 @@ def add_user(userid: int):
                 "_id": userid,
                 "email": request_params["email"],
                 "name": request_params["name"],
+                "birthdate": serialize_datetime(request_params["birthdate"]) if "birthdate" in request_params else None,
+                "country": request_params["country"],
             }
         )
     except errors.DuplicateKeyError as e:
         return Response("Duplicate user id!", status=404, mimetype="application/json")
     return Response(
-        json.dumps(users.find_one({"_id": userid})),
+        json.dumps(format_user(users.find_one({"_id": userid}))),
         status=200,
         mimetype="application/json",
     )
@@ -83,25 +108,31 @@ def update_user(userid: int):
         in: formData
         type: string
         required: false
+      - name: birthdate
+        in: formData
+        type: string
+      - name: country
+        in: formData
+        type: string
+        required: false
     responses:
       200:
         description: Update succeded
     """
     request_params = request.form
-    if "email" not in request_params and "name" not in request_params:
-        return Response(
-            "Email or name must be present in parameters!",
-            status=404,
-            mimetype="application/json",
-        )
     set = {}
     if "email" in request_params:
         set["email"] = request_params["email"]
     if "name" in request_params:
         set["name"] = request_params["name"]
+    if "birthdate" in request_params:
+        set["birthdate"] = serialize_datetime(request_params["birthdate"]),
+    if "country" in request_params:
+        set["country"] = request_params["country"]
+
     users.update_one({"_id": userid}, {"$set": set})
     return Response(
-        json.dumps(users.find_one({"_id": userid})),
+        json.dumps(format_user(users.find_one({"_id": userid}))),
         status=200,
         mimetype="application/json",
     )
@@ -127,6 +158,10 @@ def get_user(userid: int):
             type: string
           name:
             type: string
+          birthdate:
+            type: string
+          country:
+            type: string
     responses:
       200:
         description: User model
@@ -139,7 +174,8 @@ def get_user(userid: int):
 
     if None == user:
         return Response("", status=404, mimetype="application/json")
-    return Response(json.dumps(user), status=200, mimetype="application/json")
+    print(json.dumps(format_user(user)))
+    return Response(json.dumps(format_user(user)), status=200, mimetype="application/json")
 
 
 @app.route("/users", methods=["GET"])
@@ -166,6 +202,10 @@ def get_users():
                 type: string
               name:
                 type: string
+              birthdate:
+                type: string
+              country:
+                type: string
     responses:
       200:
         description: List of user models
@@ -178,10 +218,8 @@ def get_users():
     user_list = users.find().limit(limit).skip(offset)
     if None == users:
         return Response(json.dumps([]), status=200, mimetype="application/json")
+    extracted = [format_user(d) for d in user_list]
 
-    extracted = [
-        {"userid": d["_id"], "name": d["name"], "email": d["email"]} for d in user_list
-    ]
     return Response(
         json.dumps(extracted, default=json_util.default),
         status=200,
