@@ -15,11 +15,9 @@ class RegistredUser(HttpUser):
 
         @task(1)
         def add_random_text(self):
-            data = {
-                'expression': self.__faker.text()
-            }
-            self.client.put('/fulltext', data, auth=RegistredUser.auth)
+            data = {"expression": self.__faker.text()}
+            self.client.put("/fulltext", data, auth=RegistredUser.auth)
 
         @task(2)
         def search(self):
-            self.client.get('/search/' + self.__faker.text(), auth=RegistredUser.auth)
+            self.client.get("/search/" + self.__faker.text(), auth=RegistredUser.auth)

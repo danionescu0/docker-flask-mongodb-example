@@ -11,4 +11,4 @@ jobs:
       - name: install black
         run: 'pip install black'
       - name: Lint
-        run: 'black --check --exclude stresstest-locusts/ .'
+        run: 'black --check .'

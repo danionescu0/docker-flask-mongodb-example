@@ -66,7 +66,7 @@ pytest -q tests/test_0_users.py  -s
 ````bash
 cd docker--mongodb-example
 pip install -r python/requirements-dev.txt
-black --exclude stresstest-locusts/ .
+black .
 ````
 
 * Push and create a pull request

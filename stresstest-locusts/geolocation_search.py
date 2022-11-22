@@ -14,22 +14,28 @@ class RegistredUser(HttpUser):
 
         def on_start(self):
             self.token = self.login()
-            self.client.headers = {'Authorization': 'Bearer ' + self.token}
+            self.client.headers = {"Authorization": "Bearer " + self.token}
 
         def login(self):
-            response = self.client.post("/login", data={"username": "admin", "password": "secret"})
-            return response.headers['jwt-token']
+            response = self.client.post(
+                "/login", data={"username": "admin", "password": "secret"}
+            )
+            return response.headers["jwt-token"]
 
         @task(1)
         def add_location(self):
             coordonates = self.__faker.location_on_land()
             data = {
-                'lat': coordonates[0],
-                'lng': coordonates[1],
-                'name': coordonates[2]
+                "lat": coordonates[0],
+                "lng": coordonates[1],
+                "name": coordonates[2],
             }
-            self.client.post('/location', data)
+            self.client.post("/location", data)
 
         @task(2)
         def search(self):
-            self.client.get('/location/{0}/{1}'.format(self.__faker.latitude(), self.__faker.longitude()))
+            self.client.get(
+                "/location/{0}/{1}".format(
+                    self.__faker.latitude(), self.__faker.longitude()
+                )
+            )

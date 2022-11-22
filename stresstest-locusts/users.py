@@ -11,8 +11,8 @@ class RegistredUser(HttpUser):
     class CrudStresstest(TaskSet):
         def __get_random_user(self):
             userid = str(randrange(0, 10000))
-            username = 'testuser_{0}'.format(userid)
-            email = 'some-email{0}@yahoo.com'.format(userid)
+            username = "testuser_{0}".format(userid)
+            email = "some-email{0}@yahoo.com".format(userid)
 
             return userid, username, email
 
@@ -20,18 +20,18 @@ class RegistredUser(HttpUser):
         def add_user(self):
             user_data = self.__get_random_user()
             user = {
-                'id': user_data[0],
-                'name': user_data[1],
-                'email': user_data[2],
+                "id": user_data[0],
+                "name": user_data[1],
+                "email": user_data[2],
             }
-            self.client.put('/users/' + user_data[0], user)
+            self.client.put("/users/" + user_data[0], user)
 
         @task(2)
         def update_user(self):
             user_data = self.__get_random_user()
             user = {
-                'id': user_data[0],
-                'name': 'upd_' + user_data[1],
-                'email': 'upd_' + user_data[2],
+                "id": user_data[0],
+                "name": "upd_" + user_data[1],
+                "email": "upd_" + user_data[2],
             }
-            self.client.post('/users/' + user_data[0], user)
+            self.client.post("/users/" + user_data[0], user)

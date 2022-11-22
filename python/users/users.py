@@ -31,9 +31,12 @@ def format_user(user: dict) -> dict:
         "userid": user["_id"],
         "name": user["name"],
         "email": user["email"],
-        "birthdate": user["birthdate"].strftime("%Y-%m-%d") if "birthdate" in user and user["birthdate"] is not None else None,
+        "birthdate": user["birthdate"].strftime("%Y-%m-%d")
+        if "birthdate" in user and user["birthdate"] is not None
+        else None,
         "country": user["country"] if "country" in user else None,
     }
+
 
 @app.route("/users/<int:userid>", methods=["POST"])
 @cache_invalidate(redis=redis_cache, key="userid")
@@ -77,7 +80,9 @@ def add_user(userid: int):
                 "_id": userid,
                 "email": request_params["email"],
                 "name": request_params["name"],
-                "birthdate": serialize_datetime(request_params["birthdate"]) if "birthdate" in request_params else None,
+                "birthdate": serialize_datetime(request_params["birthdate"])
+                if "birthdate" in request_params
+                else None,
                 "country": request_params["country"],
             }
         )
@@ -126,7 +131,7 @@ def update_user(userid: int):
     if "name" in request_params:
         set["name"] = request_params["name"]
     if "birthdate" in request_params:
-        set["birthdate"] = serialize_datetime(request_params["birthdate"]),
+        set["birthdate"] = (serialize_datetime(request_params["birthdate"]),)
     if "country" in request_params:
         set["country"] = request_params["country"]
 
@@ -175,7 +180,9 @@ def get_user(userid: int):
     if None == user:
         return Response("", status=404, mimetype="application/json")
     print(json.dumps(format_user(user)))
-    return Response(json.dumps(format_user(user)), status=200, mimetype="application/json")
+    return Response(
+        json.dumps(format_user(user)), status=200, mimetype="application/json"
+    )
 
 
 @app.route("/users", methods=["GET"])
