@@ -16,14 +16,15 @@ def users(demo_db) -> Generator[Collection, None, None]:
 
 
 def test_get_user(users):
-    users.upsert(120,
-                 {
-                        "name": "John",
-                        "email": "test@email.eu",
-                        "birthdate": datetime.strptime("1983-11-28", '%Y-%m-%d'),
-                        "country": "Romania"
-                    }
-                 )
+    users.upsert(
+        120,
+        {
+            "name": "John",
+            "email": "test@email.eu",
+            "birthdate": datetime.strptime("1983-11-28", "%Y-%m-%d"),
+            "country": "Romania",
+        },
+    )
     response = requests.get(url="{0}/users/120".format(users_host)).json()
     print(response)
     assert response["userid"] == 120
@@ -40,7 +41,7 @@ def test_create_user(users):
             "name": "John Doe",
             "email": "johny@email.eu",
             "birthdate": "1984-11-28",
-            "country": "Russia"
+            "country": "Russia",
         },
     )
     assert response.status_code == 200
@@ -51,7 +52,7 @@ def test_create_user(users):
     assert response[0]["_id"] == 101
     assert response[0]["email"] == "johny@email.eu"
     assert response[0]["name"] == "John Doe"
-    assert response[0]["birthdate"].strftime('%Y-%m-%d') == "1984-11-28"
+    assert response[0]["birthdate"].strftime("%Y-%m-%d") == "1984-11-28"
     assert response[0]["country"] == "Russia"
 
 
@@ -72,8 +73,20 @@ def test_get_and_delete_users(users):
     # testing get request
     print(response)
     assert response == [
-        {"userid": 105, "name": "John", "email": "john@email.com", 'birthdate': None, 'country': None},
-        {"userid": 109, "name": "Doe", "email": "doe@email.com", 'birthdate': None, 'country': None},
+        {
+            "userid": 105,
+            "name": "John",
+            "email": "john@email.com",
+            "birthdate": None,
+            "country": None,
+        },
+        {
+            "userid": 109,
+            "name": "Doe",
+            "email": "doe@email.com",
+            "birthdate": None,
+            "country": None,
+        },
     ]
 
     requests.delete(url="{}/users/105".format(users_host))
