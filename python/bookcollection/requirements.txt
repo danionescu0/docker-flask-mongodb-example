@@ -1,4 +1,4 @@
-Flask==2.0.1
+Flask==2.2.5
 Werkzeug==2.0.1
 flask-restx==0.5.1
 pymongo==3.12.1
