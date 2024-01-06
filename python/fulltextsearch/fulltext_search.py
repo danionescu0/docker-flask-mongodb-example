@@ -3,7 +3,7 @@ import json, datetime
 
 from flask import Flask, request, Response
 from flask_httpauth import HTTPBasicAuth
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug import generate_password_hash, check_password_hash
 from flasgger import Swagger
 from pymongo import MongoClient, TEXT
 from bson import json_util
