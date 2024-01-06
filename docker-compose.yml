@@ -1,6 +1,87 @@
 version: '3.8'
 
 services:
+    ## Section for database and external tools
+
+    # Database for grafana
+    influxdb:
+        build: docker-influxdb
+        env_file: ./docker-influxdb/configuration.env
+        ports:
+          - '8086:8086'
+        volumes:
+          - influxdb_data:/var/lib/influxdb
+
+    # UI for influxdb
+    chronograf:
+        image: chronograf:1.9
+        command:
+            - --influxdb-url=http://influxdb:8086
+        ports:
+          - '8888:8888'
+
+    # Grafana, used here to show sensors graphs
+    grafana:
+        build: docker-grafana
+        env_file: ./docker-grafana/configuration.env
+        links:
+          - influxdb
+        ports:
+          - '3000:3000'
+        volumes:
+          - grafana_data:/var/lib/grafana
+
+    # Genaral purpose database
+    mongo:
+        image: mongo:4.4.5-bionic
+        hostname: mongodb
+        ports:
+            - '27017:27017'
+        environment:
+            - MONGO_REPLICA_SET_NAME=dan
+        command:
+            - --storageEngine
+            - wiredTiger
+            - --replSet
+            - myrepl
+        healthcheck:
+            test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo  --quiet) -eq 1
+            interval: 10s
+            start_period: 30s
+
+    # Redis server, used here for caching
+    # uses healthcheck with redis-cli ping
+    redis:
+        build:
+            context: ./docker-redis
+        ports:
+            - '6379:6379'
+        healthcheck:
+              test: ["CMD", "redis-cli", "ping"]
+              interval: 10s
+              timeout: 3s
+              start_period: 30s
+
+    # Mosquitto MQTT broker
+    mqtt:
+        build:
+          context: ./docker-mosquitto
+        ports:
+            - "1883:1883"
+
+    # An api gateway
+    krakend:
+        image: devopsfaith/krakend
+        volumes:
+            - ${PWD}/krakend.json:/etc/krakend/krakend.json
+        ports:
+            - "8080:8080"
+        depends_on:
+            - web-random
+            - web-users
+
+    # Section for our containers
+
     # base image for building our python apps, used for speeding up the build process
     web-base-image:
         build:
@@ -188,83 +269,6 @@ services:
         ports:
             - "90:5000"
         entrypoint: python /root/flask-mongodb-example/python/graphql/users.py
-
-    # Database for grafana
-    influxdb:
-        build: docker-influxdb
-        env_file: ./docker-influxdb/configuration.env
-        ports:
-          - '8086:8086'
-        volumes:
-          - influxdb_data:/var/lib/influxdb
-
-    # UI for influxdb
-    chronograf:
-        image: chronograf:1.9
-        command:
-            - --influxdb-url=http://influxdb:8086
-        ports:
-          - '8888:8888'
-
-    # Grafana, used here to show sensors graphs
-    grafana:
-        build: docker-grafana
-        env_file: ./docker-grafana/configuration.env
-        links:
-          - influxdb
-        ports:
-          - '3000:3000'
-        volumes:
-          - grafana_data:/var/lib/grafana
-
-    # Genaral purpose database
-    mongo:
-        image: mongo:4.4.5-bionic
-        hostname: mongodb
-        ports:
-            - '27017:27017'
-        environment:
-            - MONGO_REPLICA_SET_NAME=dan
-        command:
-            - --storageEngine
-            - wiredTiger
-            - --replSet
-            - myrepl
-        healthcheck:
-            test: test $$(echo "rs.initiate().ok || rs.status().ok" | mongo  --quiet) -eq 1
-            interval: 10s
-            start_period: 30s
-
-    # Redis server, used here for caching
-    # uses healthcheck with redis-cli ping
-    redis:
-        build:
-            context: ./docker-redis
-        ports:
-            - '6379:6379'
-        healthcheck:
-              test: ["CMD", "redis-cli", "ping"]
-              interval: 10s
-              timeout: 3s
-              start_period: 30s
-
-    # Mosquitto MQTT broker
-    mqtt:
-        build:
-          context: ./docker-mosquitto
-        ports:
-            - "1883:1883"
-
-#     An api gateway
-    krakend:
-        image: devopsfaith/krakend
-        volumes:
-            - ${PWD}/krakend.json:/etc/krakend/krakend.json
-        ports:
-            - "8080:8080"
-        depends_on:
-            - web-random
-            - web-users
 
     # Used to test build of services
     web-test:
