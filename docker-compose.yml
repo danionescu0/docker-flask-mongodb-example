@@ -49,6 +49,19 @@ services:
             interval: 10s
             start_period: 30s
 
+
+    # admin credentials are admin:pass, change them
+    mongo-express:
+        image: mongo-express:latest
+        container_name: mongo-express
+        environment:
+          ME_CONFIG_MONGODB_SERVER: mongo
+        ports:
+          - "8081:8081"
+        depends_on:
+          - mongo
+
+
     # Redis server, used here for caching
     # uses healthcheck with redis-cli ping
     redis:
@@ -79,6 +92,7 @@ services:
         depends_on:
             - web-random
             - web-users
+
 
     # Section for our containers
 
