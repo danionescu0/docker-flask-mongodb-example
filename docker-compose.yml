@@ -96,28 +96,18 @@ services:
 
     # Section for our containers
 
-    # base image for building our python apps, used for speeding up the build process
-    web-base-image:
-        build:
-            context: ./docker-python/base
-            args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-base
-
     # generates random numbers and lists them
     # uses healthcheck by making a curl request to a GET endpoint
     web-random:
         build:
-            context: ./docker-python
+            context: ./docker-python/base
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard
         ports:
             - "800:5000"
         entrypoint: python /root/flask-mongodb-example/python/random/random_demo.py
         depends_on:
             - mongo
-            - web-base-image
         healthcheck:
             test: curl --silent --show-error --fail "http://localhost:5000/random?lower=0&upper10"
             interval: 10s
@@ -139,10 +129,9 @@ services:
     # Create, read, update and delete operations over a user collection
     web-users:
         build:
-            context: ./docker-python
+            context: ./docker-python/base
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard
         ports:
             - "81:5000"
         entrypoint: python /root/flask-mongodb-example/python/users/users.py
@@ -153,7 +142,6 @@ services:
             - redis_password
         depends_on:
             - mongo
-            - web-base-image
             - redis
 
     # Uses an MQTT server (Mosquitto) to allow to publish sensor updates over MQTT
@@ -180,10 +168,9 @@ services:
     # Fulltext search engine backed by fulltext MongoDb index
     web-fulltext-search:
         build:
-            context: ./docker-python
+            context: ./docker-python/base
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard
         ports:
             - "82:5000"
         entrypoint: python /root/flask-mongodb-example/python/fulltextsearch/fulltext_search.py
@@ -206,10 +193,9 @@ services:
     # Baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average)
     web-baesian:
         build:
-            context: ./docker-python
+            context: ./docker-python/base
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard
         ports:
             - "84:5000"
         entrypoint: python /root/flask-mongodb-example/python/baesian/baesian.py
@@ -264,10 +250,9 @@ services:
     # A two player tic tac toe game written in flask using flask_session. It has a simple UI
     web-tictactoe:
         build:
-            context: ./docker-python
+            context: ./docker-python/base
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard
         ports:
             - "89:5000"
         entrypoint: python /root/flask-mongodb-example/python/tictactoe/tictactoe.py
@@ -288,7 +273,6 @@ services:
     web-test:
         image: alpine
         depends_on:
-            - web-base-image
             - web-random
             - web-random-pypy
             - web-users
@@ -322,6 +306,7 @@ secrets:
         file: ./secrets/redis_pass.txt
 
 networks:
-    default:
-        external:
-            name: project-network
+  default:
+    name: project-network
+    external: true
+

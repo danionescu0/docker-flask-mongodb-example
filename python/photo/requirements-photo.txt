@@ -1,4 +1,4 @@
-Flask==2.1.1
+Flask==2.3.3
 pymongo==4.0.2
 #flasgger 0.9.5 is not compatible with Flask 2.1.1
 flasgger==0.9.7.1

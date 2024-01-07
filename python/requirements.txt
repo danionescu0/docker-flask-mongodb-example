@@ -1,7 +1,7 @@
 Flask==2.0.1
 flask-httpauth==4.3.0
 Flask-Session==0.3.2
-flasgger==0.9.7.1
+flasgger==0.9.4
 pymongo==3.12.1
 requests==2.31.0
 python-dateutil==2.8.1
