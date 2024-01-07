@@ -100,7 +100,7 @@ services:
     # uses healthcheck by making a curl request to a GET endpoint
     web-random:
         build:
-            context: ./docker-python/base
+            context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         ports:
@@ -119,7 +119,6 @@ services:
             context: ./docker-python-pypy
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
-        image: web-standard-pypy
         ports:
             - "801:5000"
         entrypoint: pypy /root/flask-mongodb-example/python/random/random_demo.py
@@ -129,7 +128,7 @@ services:
     # Create, read, update and delete operations over a user collection
     web-users:
         build:
-            context: ./docker-python/base
+            context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         ports:
@@ -150,7 +149,6 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/mqtt/requirements-mqtt.txt
-        image: backgorund-mqtt-image
         entrypoint: python /root/flask-mongodb-example/python/mqtt/mqtt.py
         environment:
             - MQTT_USER=/run/secrets/mqtt_user
@@ -168,7 +166,7 @@ services:
     # Fulltext search engine backed by fulltext MongoDb index
     web-fulltext-search:
         build:
-            context: ./docker-python/base
+            context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         ports:
@@ -183,7 +181,6 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/geolocation/requirements-geolocation.txt
-        image: web-geolocation-image
         ports:
             - "83:5000"
         entrypoint: python /root/flask-mongodb-example/python/geolocation/geolocation_search.py
@@ -193,7 +190,7 @@ services:
     # Baesian average demo (https://en.wikipedia.org/wiki/Bayesian_average)
     web-baesian:
         build:
-            context: ./docker-python/base
+            context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         ports:
@@ -208,7 +205,6 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/photo/requirements-photo.txt
-        image: web-photo-image
         ports:
             - "85:5000"
         entrypoint: python /root/flask-mongodb-example/python/photo/photo_process.py
@@ -223,7 +219,6 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/bookcollection/requirements.txt
-        image: web-bookcollection-image
         environment:
              - PYTHONUNBUFFERED=1
         ports:
@@ -240,7 +235,6 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/fastapidemo/requirements.txt
-        image: web-users-fastapi-image
         ports:
             - "88:5000" # port 87 is restricted in browsers
         entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornH11Worker --chdir /root/flask-mongodb-example/python/fastapidemo --bind 0.0.0.0:5000 --log-level debug users-fastapi:app
@@ -250,7 +244,7 @@ services:
     # A two player tic tac toe game written in flask using flask_session. It has a simple UI
     web-tictactoe:
         build:
-            context: ./docker-python/base
+            context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/requirements.txt
         ports:
@@ -264,7 +258,6 @@ services:
             context: ./docker-python
             args:
                 requirements: /root/flask-mongodb-example/python/graphql/requirements.txt
-        image: web-standard
         ports:
             - "90:5000"
         entrypoint: python /root/flask-mongodb-example/python/graphql/users.py
