@@ -21,7 +21,7 @@ jobs:
           git_branch=${GITHUB_REF#refs/heads/}
           echo "Git hash:"
           echo $git_hash
-          docker-compose -f ./docker-compose.yml up -d --build
+          docker compose -f ./docker-compose.yml up -d --build
           echo ---Containers up---
       - name: Wait for services to get online
         run: | 
@@ -31,6 +31,6 @@ jobs:
       - name: Run tests
         run: |
           echo --- Running test cases ---
-          docker-compose -f ./docker-compose.test-github.yml up --build --exit-code-from run-unit-tests
+          docker compose -f ./docker-compose.test-github.yml up --build --exit-code-from run-unit-tests
           echo --- Completed test cases ---
 

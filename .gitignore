@@ -1,4 +1,5 @@
 \.idea
 \docker-python/project/base
+\docker-nextjs/.next
 python_app.log
 *.pyc

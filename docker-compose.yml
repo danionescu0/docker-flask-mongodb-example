@@ -213,78 +213,87 @@ services:
         depends_on:
             - mongo
 
-    # A virtual book library
-    web-book-collection:
-        build:
-            context: ./docker-python
-            args:
-                requirements: /root/flask-mongodb-example/python/bookcollection/requirements.txt
+    web-photo-process-ui:
+        build: ./docker-nextjs
+        ports:
+          - "3001:3000"
         environment:
-             - PYTHONUNBUFFERED=1
-        ports:
-            - "86:5000"
-        entrypoint: python /root/flask-mongodb-example/python/bookcollection/bookcollection.py
+          - NEXT_PUBLIC_API_URL=http://localhost:85
         depends_on:
-            - mongo
-            - web-users
+          - web-photo-process
 
-    # Wame functionality as web-users but build with fastapi
-    # runs with gunicorn on two processor cores [-w 2]
-    web-users-fast-api:
-        build:
-            context: ./docker-python
-            args:
-                requirements: /root/flask-mongodb-example/python/fastapidemo/requirements.txt
-        ports:
-            - "88:5000" # port 87 is restricted in browsers
-        entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornH11Worker --chdir /root/flask-mongodb-example/python/fastapidemo --bind 0.0.0.0:5000 --log-level debug users-fastapi:app
-        depends_on:
-            - mongo
-
-    # A two player tic tac toe game written in flask using flask_session. It has a simple UI
-    web-tictactoe:
-        build:
-            context: ./docker-python
-            args:
-                requirements: /root/flask-mongodb-example/python/requirements.txt
-        ports:
-            - "89:5000"
-        entrypoint: python /root/flask-mongodb-example/python/tictactoe/tictactoe.py
-
-
-    # GraphQl implementation of CRUD users
-    web-users-graphql:
-        build:
-            context: ./docker-python
-            args:
-                requirements: /root/flask-mongodb-example/python/graphql/requirements.txt
-        ports:
-            - "90:5000"
-        entrypoint: python /root/flask-mongodb-example/python/graphql/users.py
-
-    # Used to test build of services
-    web-test:
-        image: alpine
-        depends_on:
-            - web-random
-            - web-random-pypy
-            - web-users
-            - background-mqtt
-            - web-fulltext-search
-            - web-geolocation-search
-            - web-baesian
-            - web-photo-process
-            - web-book-collection
-            - web-users-fast-api
-            - web-users-graphql
-            - influxdb
-            - chronograf
-            - grafana
-            - mongo
-            - mqtt
-            - krakend
-            - web-tictactoe
-            - redis
+#    # A virtual book library
+#    web-book-collection:
+#        build:
+#            context: ./docker-python
+#            args:
+#                requirements: /root/flask-mongodb-example/python/bookcollection/requirements.txt
+#        environment:
+#             - PYTHONUNBUFFERED=1
+#        ports:
+#            - "86:5000"
+#        entrypoint: python /root/flask-mongodb-example/python/bookcollection/bookcollection.py
+#        depends_on:
+#            - mongo
+#            - web-users
+#
+#    # Wame functionality as web-users but build with fastapi
+#    # runs with gunicorn on two processor cores [-w 2]
+#    web-users-fast-api:
+#        build:
+#            context: ./docker-python
+#            args:
+#                requirements: /root/flask-mongodb-example/python/fastapidemo/requirements.txt
+#        ports:
+#            - "88:5000" # port 87 is restricted in browsers
+#        entrypoint: gunicorn -w 2 -k uvicorn.workers.UvicornH11Worker --chdir /root/flask-mongodb-example/python/fastapidemo --bind 0.0.0.0:5000 --log-level debug users-fastapi:app
+#        depends_on:
+#            - mongo
+#
+#    # A two player tic tac toe game written in flask using flask_session. It has a simple UI
+#    web-tictactoe:
+#        build:
+#            context: ./docker-python
+#            args:
+#                requirements: /root/flask-mongodb-example/python/requirements.txt
+#        ports:
+#            - "89:5000"
+#        entrypoint: python /root/flask-mongodb-example/python/tictactoe/tictactoe.py
+#
+#
+#    # GraphQl implementation of CRUD users
+#    web-users-graphql:
+#        build:
+#            context: ./docker-python
+#            args:
+#                requirements: /root/flask-mongodb-example/python/graphql/requirements.txt
+#        ports:
+#            - "90:5000"
+#        entrypoint: python /root/flask-mongodb-example/python/graphql/users.py
+#
+#    # Used to test build of services
+#    web-test:
+#        image: alpine
+#        depends_on:
+#            - web-random
+#            - web-random-pypy
+#            - web-users
+#            - background-mqtt
+#            - web-fulltext-search
+#            - web-geolocation-search
+#            - web-baesian
+#            - web-photo-process
+#            - web-book-collection
+#            - web-users-fast-api
+#            - web-users-graphql
+#            - influxdb
+#            - chronograf
+#            - grafana
+#            - mongo
+#            - mqtt
+#            - krakend
+#            - web-tictactoe
+#            - redis
 
 volumes:
     grafana_data: {}

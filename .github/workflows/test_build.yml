@@ -10,4 +10,4 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v1
       - name: Test
-        run: docker network create project-network && docker-compose build && docker-compose up --exit-code-from web-test
+        run: docker network create project-network && docker compose build && docker compose up --exit-code-from web-test

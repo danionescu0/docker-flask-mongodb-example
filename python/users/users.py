@@ -31,9 +31,11 @@ def format_user(user: dict) -> dict:
         "userid": user["_id"],
         "name": user["name"],
         "email": user["email"],
-        "birthdate": user["birthdate"].strftime("%Y-%m-%d")
-        if "birthdate" in user and user["birthdate"] is not None
-        else None,
+        "birthdate": (
+            user["birthdate"].strftime("%Y-%m-%d")
+            if "birthdate" in user and user["birthdate"] is not None
+            else None
+        ),
         "country": user["country"] if "country" in user else None,
     }
 
@@ -80,9 +82,11 @@ def add_user(userid: int):
                 "_id": userid,
                 "email": request_params["email"],
                 "name": request_params["name"],
-                "birthdate": serialize_datetime(request_params["birthdate"])
-                if "birthdate" in request_params
-                else None,
+                "birthdate": (
+                    serialize_datetime(request_params["birthdate"])
+                    if "birthdate" in request_params
+                    else None
+                ),
                 "country": request_params["country"],
             }
         )
