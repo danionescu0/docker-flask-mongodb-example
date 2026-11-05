@@ -85,7 +85,7 @@ pagination_parser.add_argument("offset", type=int, help="Offset")
 
 def get_user(id: int) -> User:
     try:
-        response = requests.get(url="{0}/users/{1}".format(users_host, str(id)))
+        response = requests.get(url="{0}/users/{1}".format(users_host, str(id)), timeout=30)
     except Exception as e:
         logger.error("Error getting user data error: {0}".format(str(e)))
         return User(False, id, None, None)
